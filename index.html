@@ -639,7 +639,10 @@ function renderNewsList(cat,page,limit){
   return html;
 }
 function refreshNewsList(cat,page){const el=document.querySelector('.content-area');if(el){const t={company:'公司新闻',announce:'通知公告',industry:'行业新闻'};el.innerHTML=`<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--p)">全部${t[cat]}</h3>${renderNewsList(cat,page,10)}`}}
-function getNewsDetail(param){const[cat,id]=param.split('_');const items=getNewsData()[cat]||[];const n=items.find(x=>x.id===parseInt(id));if(!n) return'<p>新闻不存在</p>';return`<h3 style="font-size:1.4rem;margin-bottom:8px;color:var(--p)">${n.title}</h3><p style="color:var(--g600);font-size:.85rem;margin-bottom:20px">发布时间：${n.date} | 来源：本站 | 浏览：${Math.floor(Math.random()*500)+100}次</p><div style="border-top:1px solid var(--g200);padding-top:20px;line-height:2"><p>${n.summary}</p><p style="margin-top:16px">（此处为演示内容。实际网站将展示完整新闻正文，可能包含图片、数据图表等多媒体元素。）</p></div><div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--g100)"><a href="#news" onclick="navigate('news')" style="color:var(--p)">← 返回新闻列表</a></div>`;}
+function getNewsDetail(param){const[cat,id]=param.split('_');const items=getNewsData()[cat]||[];const n=items.find(x=>x.id===parseInt(id));if(!n) return'<p>新闻不存在</p>';
+  const imgs=n.images&&n.images.length?`<div style="display:flex;flex-wrap:wrap;gap:8px;margin:16px 0">${n.images.map(img=>`<div style="flex:1;min-width:200px;max-width:48%"><img src="${img}" style="width:100%;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1)" onclick="previewImage('新闻图片','${img}')"></div>`).join('')}</div>`:'';
+  const content=n.content?`<div style="line-height:2;white-space:pre-wrap;word-break:break-word">${n.content.replace(/\n/g,'<br>')}</div>`:'';
+  return`<h3 style="font-size:1.4rem;margin-bottom:8px;color:var(--p)">${n.title}</h3><p style="color:var(--g600);font-size:.85rem;margin-bottom:20px">发布时间：${n.date} | 来源：本站 | 浏览：${Math.floor(Math.random()*500)+100}次</p><div style="border-top:1px solid var(--g200);padding-top:20px">${imgs}${content||`<p>${n.summary}</p>`}</div><div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--g100)"><a href="#news" onclick="navigate('news')" style="color:var(--p)">← 返回新闻列表</a></div>`;}
 
 // ============================================
 // SERVICE
@@ -851,14 +854,26 @@ function previewImage(name,data){
 }
 function downloadImage(name,data){const a=document.createElement('a');a.href=data;a.download=name;a.click();showToast('下载已开始','success')}
 async function uploadImages(files){
-  let count=0;
+  if(!files||!files.length)return;
+  const total=files.length;let done=0,skipped=0;
+  showToast(`开始上传 ${total} 张图片...`,'info');
   for(const file of files){
-    if(file.size>50*1048576){showToast(`文件 ${file.name} 过大，跳过`,'error');continue}
-    const reader=new FileReader();
-    reader.onload=async()=>{await dbPut('images',{name:file.name,size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});count++;if(count===files.length||count%5===0)renderPage()};
-    reader.readAsDataURL(file);
+    if(!file.type.startsWith('image/')){skipped++;continue}
+    if(file.size>50*1048576){showToast(`${file.name} 超过50MB，跳过`,'error');skipped++;continue}
+    try{
+      const data=await new Promise((resolve,reject)=>{
+        const reader=new FileReader();
+        reader.onload=()=>resolve(reader.result);
+        reader.onerror=()=>reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+      await dbPut('images',{name:file.name,size:file.size,type:file.type,data,createdAt:new Date().toISOString()});
+      done++;
+    }catch(e){skipped++;console.error('Upload error:',e)}
   }
-  setTimeout(()=>{renderPage();showToast(`已上传 ${files.length} 张图片`,'success')},500);
+  await renderPage();
+  if(done>0) showToast(`✅ 成功上传 ${done} 张图片${skipped?`，跳过 ${skipped} 张`:''}`,'success');
+  else showToast('没有图片被上传','error');
 }
 async function clearAllImages(){
   const images=await dbGetAll('images');
@@ -948,22 +963,87 @@ async function deleteVideo(id){if(confirm('确认删除此视频？此操作不�
 function adminNews(){
   const news=getNewsData();
   const allNews=[];for(const cat of['company','announce','industry']){if(news[cat]) news[cat].forEach(n=>{n._cat=cat;allNews.push(n)})}
-  return`<h3>📰 新闻管理</h3><p style="color:var(--g600);margin-bottom:16px">管理网站新闻内容（共 ${allNews.length} 篇）</p><button class="btn btn-primary btn-sm" onclick="showNewsModal()">+ 添加新闻</button><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>分类</th><th>标题</th><th>日期</th><th>摘要</th><th>操作</th></tr></thead><tbody>${allNews.sort((a,b)=>b.id-a.id).map(n=>`<tr><td>${n.id}</td><td>${n._cat==='company'?'公司新闻':n._cat==='announce'?'通知公告':'行业新闻'}</td><td>${n.title}</td><td>${n.date}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.summary}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editNewsModal('${n._cat}',${n.id})">编辑</button> <button class="btn btn-sm btn-danger" onclick="deleteNews('${n._cat}',${n.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+  return`<h3>📰 新闻管理</h3><p style="color:var(--g600);margin-bottom:16px">管理网站新闻内容 — 支持图片插入和富文本（共 ${allNews.length} 篇）</p>
+  <button class="btn btn-primary btn-sm" onclick="showNewsModal()">+ 添加新闻</button>
+  <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p);margin-left:8px" onclick="document.getElementById('newsBatchInput').click()">📁 批量导入</button>
+  <input type="file" id="newsBatchInput" accept="image/*" multiple style="display:none" onchange="batchNewsImages(this.files)">
+  <table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>图片</th><th>分类</th><th>标题</th><th>日期</th><th>摘要</th><th>操作</th></tr></thead><tbody>${allNews.sort((a,b)=>b.id-a.id).map(n=>`<tr><td>${n.id}</td><td>${n.images&&n.images.length?`<img src="${n.images[0]}" style="width:50px;height:35px;object-fit:cover;border-radius:3px" title="${n.images.length}张图片">`:'—'}</td><td>${n._cat==='company'?'公司新闻':n._cat==='announce'?'通知公告':'行业新闻'}</td><td><strong>${n.title}</strong>${n.content?`<br><small style="color:var(--g600)">${n.content.substring(0,50)}...</small>`:''}</td><td>${n.date}</td><td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8rem">${n.summary}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editNewsModal('${n._cat}',${n.id})">✏️编辑</button> <button class="btn btn-sm btn-danger" onclick="deleteNews('${n._cat}',${n.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
 }
+function batchNewsImages(files){
+  for(const f of files){
+    if(!f.type.startsWith('image/'))continue;
+    const r=new FileReader();
+    r.onload=()=>{
+      const allNews=getNewsData();
+      const newId=Math.max(0,...Object.values(allNews).flat().map(x=>x.id))+1;
+      if(!allNews.company)allNews.company=[];
+      allNews.company.push({id:newId,title:f.name.replace(/\.[^.]+$/,''),date:new Date().toISOString().split('T')[0],summary:'图片新闻',content:'',images:[r.result]});
+      saveNewsData(allNews);renderPage();
+    };
+    r.readAsDataURL(f);
+  }
+  showToast(`已批量导入 ${files.length} 条图片新闻`,'success');
+}
+// ====== NEWS EDITOR WITH IMAGE UPLOAD ======
+let _newsImages=[]; // Temp storage during editing
 function showNewsModal(n=null){
   const isEdit=!!n;
-  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal"><h3>${isEdit?'编辑':'添加'}新闻</h3><div class="form-group"><label>分类</label><select id="newsCat"><option value="company" ${n?._cat==='company'?'selected':''}>公司新闻</option><option value="announce" ${n?._cat==='announce'?'selected':''}>通知公告</option><option value="industry" ${n?._cat==='industry'?'selected':''}>行业新闻</option></select></div><div class="form-group"><label>标题</label><input type="text" id="newsTitle" value="${n?.title||''}"></div><div class="form-group"><label>日期</label><input type="date" id="newsDate" value="${n?.date||new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>摘要</label><textarea id="newsSummary" rows="3">${n?.summary||''}</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveNewsBtn">保存</button></div></div>`;
+  _newsImages=n?.images?[...n.images]:[];
+  const imgHtml=_newsImages.map((img,i)=>`<div style="position:relative;display:inline-block;margin:4px;border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1)"><img src="${img}" style="height:80px;object-fit:cover"><button onclick="event.stopPropagation();_newsImages.splice(${i},1);refreshNewsPreview()" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.85);color:#fff;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1">×</button></div>`).join('');
+  const modal=document.createElement('div');modal.className='modal-overlay';
+  modal.innerHTML=`<div class="modal" style="max-width:700px;max-height:90vh"><h3>${isEdit?'编辑':'添加'}新闻</h3>
+  <div class="card-grid cols-3">
+    <div class="form-group"><label>分类</label><select id="newsCat">${['company|公司新闻','announce|通知公告','industry|行业新闻'].map(x=>{const[k,t]=x.split('|');return`<option value="${k}" ${(n?._cat||'company')===k?'selected':''}>${t}</option>`}).join('')}</select></div>
+    <div class="form-group"><label>日期</label><input type="date" id="newsDate" value="${n?.date||new Date().toISOString().split('T')[0]}"></div>
+    <div class="form-group"><label>标题</label><input type="text" id="newsTitle" value="${n?.title||''}" placeholder="新闻标题"></div>
+  </div>
+  <div class="form-group"><label>摘要（列表页显示）</label><input type="text" id="newsSummary" value="${n?.summary||''}" placeholder="简短摘要"></div>
+  <div class="form-group"><label>正文内容</label><textarea id="newsContent" rows="6" style="width:100%;padding:10px;border:1px solid var(--g200);border-radius:6px;font-family:inherit;font-size:.9rem;resize:vertical">${n?.content||''}</textarea></div>
+  <div class="form-group"><label>📷 插入图片（可选，支持拖拽）</label>
+    <div class="file-upload-zone" id="newsImgZone" style="padding:20px;min-height:60px" onclick="document.getElementById('newsImgInput').click()">
+      <span>📁 点击或拖拽图片到此区域插入正文</span>
+      <input type="file" id="newsImgInput" accept="image/*" multiple onchange="addNewsImages(this.files)" style="display:none">
+    </div>
+    <div id="newsImgPreview" style="margin-top:8px">${imgHtml}</div>
+    ${_newsImages.length?`<button class="btn btn-sm btn-danger" style="margin-top:4px" onclick="_newsImages=[];refreshNewsPreview()">🗑 清除全部图片</button>`:''}
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove();_newsImages=[]">取消</button><button class="btn btn-primary" id="saveNewsBtn">${isEdit?'更新新闻':'发布新闻'}</button></div></div>`;
   document.body.appendChild(modal);
-  document.getElementById('saveNewsBtn').onclick=()=>{
-    const data={title:document.getElementById('newsTitle').value,date:document.getElementById('newsDate').value,summary:document.getElementById('newsSummary').value};
-    if(!data.title){showToast('请输入标题','error');return}
+  // Drag & drop for news images
+  setTimeout(()=>{
+    const zone=document.getElementById('newsImgZone');if(!zone)return;
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--a)';zone.style.background='rgba(200,135,46,.06)'});
+    zone.addEventListener('dragleave',()=>{zone.style.borderColor='';zone.style.background=''});
+    zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='';zone.style.background='';if(e.dataTransfer.files.length) addNewsImages(e.dataTransfer.files)});
+  },100);
+  document.getElementById('saveNewsBtn').onclick=async()=>{
+    const title=document.getElementById('newsTitle').value.trim();
+    const content=document.getElementById('newsContent').value.trim();
+    const summary=document.getElementById('newsSummary').value.trim();
+    if(!title){showToast('请输入标题','error');return}
     const cat=document.getElementById('newsCat').value;
+    const data={title,date:document.getElementById('newsDate').value,summary:summary||content.substring(0,100),content,images:_newsImages.length?_newsImages:null};
     const allNews=getNewsData();
     if(isEdit){const idx=allNews[cat].findIndex(x=>x.id===n.id);if(idx>=0){data.id=n.id;allNews[cat][idx]=data}}
-    else{data.id=Math.max(0,...Object.values(allNews).flat().map(x=>x.id))+1;if(!allNews[cat]) allNews[cat]=[];allNews[cat].push(data)}
-    saveNewsData(allNews);modal.remove();renderPage();showToast(isEdit?'已更新':'已添加','success');
+    else{data.id=Math.max(0,...Object.values(allNews).flat().map(x=>x.id))+1;if(!allNews[cat])allNews[cat]=[];allNews[cat].push(data)}
+    saveNewsData(allNews);modal.remove();_newsImages=[];renderPage();showToast(isEdit?'新闻已更新':'新闻已发布','success');
   };
-  modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+  modal.addEventListener('click',e=>{if(e.target===modal){modal.remove();_newsImages=[]}});
+}
+function addNewsImages(files){
+  let loaded=0;
+  for(const file of files){
+    if(!file.type.startsWith('image/')){showToast(`${file.name} 不是图片`,'error');continue}
+    if(file.size>10*1048576){showToast(`${file.name} 超过10MB`,'error');continue}
+    const reader=new FileReader();
+    reader.onload=()=>{_newsImages.push(reader.result);loaded++;if(loaded===files.length)refreshNewsPreview()};
+    reader.readAsDataURL(file);
+  }
+  if(files.length) showToast(`正在处理 ${files.length} 张图片...`,'info');
+}
+function refreshNewsPreview(){
+  const container=document.getElementById('newsImgPreview');if(!container)return;
+  container.innerHTML=_newsImages.map((img,i)=>`<div style="position:relative;display:inline-block;margin:4px;border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1)"><img src="${img}" style="height:80px;object-fit:cover"><button onclick="event.stopPropagation();_newsImages.splice(${i},1);refreshNewsPreview()" style="position:absolute;top:2px;right:2px;background:rgba(220,38,38,.85);color:#fff;border:none;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:12px;line-height:1">×</button></div>`).join('')+( _newsImages.length?`<button class="btn btn-sm btn-danger" style="margin:4px;vertical-align:top" onclick="_newsImages=[];refreshNewsPreview()">🗑 清空</button>`:'');
 }
 function editNewsModal(cat,id){
   const news=getNewsData();const n=(news[cat]||[]).find(x=>x.id===id);
