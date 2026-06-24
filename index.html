@@ -2,823 +2,914 @@
 <html lang="zh-CN"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>张家港******有限公司 - 化工物流综合服务（仅供前端演示）</title>
+<title>******有限公司 - 化工物流综合服务（演示站点）</title>
 <style>
-/* ====== RESET & VARIABLES ====== */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* ============================================
+   DESIGN SYSTEM & ANIMATIONS
+   ============================================ */
 :root{
-  --primary:#0b3d6b;--primary-light:#135a9e;--primary-dark:#072a4a;
-  --accent:#c8872e;--accent-light:#e0a850;
-  --blue:#1a6fb5;--blue-light:#4da8e8;--blue-bg:#e8f2fa;
-  --white:#fff;--gray-50:#f6f8fa;--gray-100:#eef1f5;--gray-200:#dde1e6;--gray-300:#c4c9d0;--gray-600:#5f6b7a;--gray-700:#3d4754;--gray-800:#212830;--gray-900:#0f1419;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow:0 2px 12px rgba(0,0,0,.1);--shadow-lg:0 8px 30px rgba(0,0,0,.12);
-  --radius-sm:6px;--radius:10px;--radius-lg:16px;
-  --transition:.25s ease;
+  --p:#0b3d6b;--pl:#135a9e;--pd:#072a4a;--a:#c8872e;--al:#e0a850;
+  --b:#1a6fb5;--bl:#4da8e8;--bg:#e8f2fa;
+  --w:#fff;--g50:#f6f8fa;--g100:#eef1f5;--g200:#dde1e6;--g300:#c4c9d0;--g600:#5f6b7a;--g700:#3d4754;--g800:#212830;--g900:#0f1419;
+  --r:10px;--rl:16px;--t:.3s cubic-bezier(.4,0,.2,1);
 }
-html{scroll-behavior:smooth}
-body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",-apple-system,sans-serif;color:var(--gray-800);background:var(--white);line-height:1.7;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-ul{list-style:none}
-img{max-width:100%}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:140px}
+body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",-apple-system,sans-serif;color:var(--g800);background:var(--w);line-height:1.7;overflow-x:hidden}
+a{color:inherit;text-decoration:none} ul{list-style:none} img{max-width:100%}
 .container{max-width:1260px;margin:0 auto;padding:0 20px}
+.btn{padding:12px 28px;border-radius:6px;font-size:.95rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all var(--t);border:none;cursor:pointer;font-family:inherit;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--a),var(--al));color:#fff;box-shadow:0 4px 16px rgba(200,135,46,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,135,46,.55)}
+.btn-outline{background:transparent;border:2px solid var(--g300);color:var(--g700)}
+.btn-outline:hover{border-color:var(--p);color:var(--p);background:var(--bg)}
+.btn-sm{padding:6px 14px;font-size:.82rem}
+.btn-danger{background:#dc2626;color:#fff;border:none}
+.btn-danger:hover{background:#b91c1c}
+.btn-success{background:#16a34a;color:#fff;border:none}
+.btn-blue{background:var(--b);color:#fff;border:none}
 
-/* ====== DISCLAIMER BAR ====== */
-.disclaimer-bar{position:fixed;top:0;left:0;right:0;z-index:10001;background:linear-gradient(135deg,#c62828,#b71c1c);color:#fff;text-align:center;padding:8px 16px;font-size:.82rem;font-weight:600;letter-spacing:.3px;box-shadow:0 2px 10px rgba(198,40,40,.35)}
-.disclaimer-bar a{color:#ffcdd2;text-decoration:underline}
+/* ====== ANIMATIONS ====== */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeInRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeInScale{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glow{0%,100%{box-shadow:0 0 20px rgba(200,135,46,.3)}50%{box-shadow:0 0 40px rgba(200,135,46,.6)}}
+.aos{opacity:0;transition:all .7s cubic-bezier(.4,0,.2,1)}
+.aos.fade-up{transform:translateY(40px)}.aos.fade-left{transform:translateX(-40px)}.aos.fade-right{transform:translateX(40px)}.aos.fade-scale{transform:scale(.9)}
+.aos.visible{opacity:1;transform:none}
+.delay-1{transition-delay:.1s}.delay-2{transition-delay:.2s}.delay-3{transition-delay:.3s}.delay-4{transition-delay:.4s}
+
+/* ====== DISCLAIMER ====== */
+.disclaimer-bar{position:fixed;top:0;left:0;right:0;z-index:10001;background:linear-gradient(135deg,#c62828,#b71c1c);color:#fff;text-align:center;padding:8px 16px;font-size:.82rem;font-weight:600;letter-spacing:.5px;box-shadow:0 2px 12px rgba(198,40,40,.35);animation:slideDown .5s ease}
 
 /* ====== TOP BAR ====== */
-.top-bar{background:var(--gray-900);color:rgba(255,255,255,.7);font-size:.8rem;padding:6px 0;display:flex;justify-content:space-between;align-items:center}
+.top-bar{background:var(--g900);color:rgba(255,255,255,.7);font-size:.8rem;padding:5px 0}
 .top-bar .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.top-bar a{color:rgba(255,255,255,.85);transition:color var(--transition)}
-.top-bar a:hover{color:#fff}
-.top-bar .oa-link{background:var(--accent);color:#fff;padding:3px 12px;border-radius:3px;font-weight:600;font-size:.78rem}
+.top-bar a{color:rgba(255,255,255,.85);transition:color var(--t)}.top-bar a:hover{color:#fff}
+.top-bar .oa{background:var(--a);color:#fff;padding:3px 12px;border-radius:4px;font-weight:600;font-size:.78rem}
 
 /* ====== HEADER ====== */
-.header{position:sticky;top:42px;z-index:1000;background:var(--white);box-shadow:var(--shadow-sm);transition:all .3s}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0;height:66px}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--primary),var(--blue));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:900}
-.logo-text h1{font-size:1.15rem;font-weight:700;color:var(--primary);line-height:1.2}
-.logo-text small{font-size:.7rem;color:var(--gray-600);font-weight:400}
+.header{position:sticky;top:42px;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);box-shadow:0 1px 4px rgba(0,0,0,.06);transition:all .3s}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer}
+.logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--p),var(--b));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:900;transition:transform var(--t)}
+.logo:hover .logo-icon{transform:rotate(-8deg) scale(1.08)}
+.logo-text h1{font-size:1.15rem;font-weight:700;color:var(--p);line-height:1.2}
+.logo-text small{font-size:.7rem;color:var(--g600)}
 .nav-links{display:flex;gap:4px}
-.nav-links a{padding:8px 14px;border-radius:6px;font-size:.9rem;font-weight:500;color:var(--gray-700);transition:all var(--transition);white-space:nowrap}
-.nav-links a:hover,.nav-links a.active{background:var(--blue-bg);color:var(--primary)}
-.nav-links a.active{font-weight:700}
-.hamburger{display:none;background:none;border:none;cursor:pointer;padding:10px;font-size:1.5rem;color:var(--gray-700)}
+.nav-links a{padding:8px 14px;border-radius:6px;font-size:.9rem;font-weight:500;color:var(--g700);transition:all var(--t);white-space:nowrap;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:2px;left:14px;right:14px;height:2px;background:var(--a);transform:scaleX(0);transition:transform var(--t)}
+.nav-links a:hover,.nav-links a.active{background:var(--bg);color:var(--p)}
+.nav-links a.active{font-weight:700}.nav-links a.active::after{transform:scaleX(1)}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:10px;font-size:1.5rem;color:var(--g700)}
 
 /* ====== BREADCRUMB ====== */
-.breadcrumb{background:var(--gray-50);padding:10px 0;font-size:.82rem;color:var(--gray-600);border-bottom:1px solid var(--gray-100)}
-.breadcrumb span{color:var(--primary);font-weight:500}
+.breadcrumb{background:var(--g50);padding:10px 0;font-size:.82rem;color:var(--g600);border-bottom:1px solid var(--g100)}
+.breadcrumb span{color:var(--p);font-weight:500}
 
-/* ====== PAGE HEADER ====== */
-.page-hero{background:linear-gradient(160deg,var(--primary-dark),var(--primary),var(--primary-light));color:#fff;padding:60px 0;text-align:center;position:relative;overflow:hidden}
-.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM36 4V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
-.page-hero h2{font-size:2.2rem;font-weight:900;position:relative}
-.page-hero .sub{font-size:1rem;opacity:.75;margin-top:8px;position:relative}
+/* ====== PAGE HERO ====== */
+.page-hero{background:linear-gradient(160deg,var(--pd),var(--p),var(--pl));color:#fff;padding:60px 0;text-align:center;position:relative;overflow:hidden}
+.page-hero::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-hero>*{position:relative;z-index:1}
+.page-hero h2{font-size:2.2rem;font-weight:900;animation:fadeInUp .6s ease}
+.page-hero .sub{font-size:1rem;opacity:.75;margin-top:8px;animation:fadeInUp .6s .15s ease both}
 
 /* ====== MAIN LAYOUT ====== */
 .main-layout{display:grid;grid-template-columns:240px 1fr;gap:32px;padding:32px 0;min-height:60vh}
-.sidebar{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px 0;position:sticky;top:130px;align-self:start;border:1px solid var(--gray-100)}
-.sidebar h3{padding:0 20px 12px;font-size:.95rem;color:var(--primary);border-bottom:2px solid var(--accent);margin-bottom:8px}
-.sidebar a{display:block;padding:9px 20px;font-size:.88rem;color:var(--gray-700);transition:all var(--transition);border-left:3px solid transparent}
-.sidebar a:hover,.sidebar a.active{background:var(--blue-bg);color:var(--primary);border-left-color:var(--accent);font-weight:600}
-.content-area{min-height:400px}
+.sidebar{background:var(--w);border-radius:var(--r);box-shadow:0 1px 6px rgba(0,0,0,.04);padding:16px 0;position:sticky;top:132px;align-self:start;border:1px solid var(--g100)}
+.sidebar h3{padding:0 20px 12px;font-size:.95rem;color:var(--p);border-bottom:2px solid var(--a);margin-bottom:8px}
+.sidebar a{display:block;padding:9px 20px;font-size:.88rem;color:var(--g700);transition:all var(--t);border-left:3px solid transparent}
+.sidebar a:hover,.sidebar a.active{background:var(--bg);color:var(--p);border-left-color:var(--a);font-weight:600}
 
-/* ====== HOME HERO ====== */
-.home-hero{position:relative;min-height:75vh;display:flex;align-items:center;background:linear-gradient(160deg,#041020,#0b2d50,#0d3d6e,#0b2d50);overflow:hidden}
-.home-hero .container{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-.hero-text h1{font-size:clamp(2rem,4vw,3rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
-.hero-text h1 .hl{background:linear-gradient(135deg,#f0c27a,#c8872e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-text p{color:rgba(255,255,255,.7);font-size:1.05rem;margin-bottom:28px;line-height:1.8}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
-.btn{padding:12px 28px;border-radius:6px;font-size:.95rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all var(--transition);border:none;cursor:pointer;font-family:inherit}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#e0a850);color:#fff;box-shadow:0 4px 16px rgba(200,135,46,.4)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(200,135,46,.55)}
-.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.3);color:#fff}
-.btn-outline:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5)}
-.btn-sm{padding:6px 16px;font-size:.82rem}
-.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:20px;text-align:center;color:#fff;backdrop-filter:blur(10px)}
-.hero-stat .n{font-size:2rem;font-weight:900;color:var(--accent-light)}
-.hero-stat .l{font-size:.82rem;opacity:.7;margin-top:4px}
-.hero-particles{position:absolute;inset:0;pointer-events:none}
-.particle{position:absolute;background:rgba(255,255,255,.2);border-radius:50%;animation:floatUp linear infinite}
-@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
-
-/* ====== SECTION TITLES ====== */
-.section{padding:64px 0}
-.section-header{text-align:center;margin-bottom:40px}
-.section-header .label{display:inline-block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-bottom:8px}
-.section-header h2{font-size:2rem;font-weight:900;color:var(--primary);margin-bottom:12px}
-.section-header p{color:var(--gray-600);max-width:600px;margin:0 auto;font-size:.95rem}
+/* ====== SECTION HEADERS ====== */
+.section{padding:72px 0}
+.section-header{text-align:center;margin-bottom:44px}
+.section-header .label{display:inline-block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--a);margin-bottom:8px}
+.section-header h2{font-size:2rem;font-weight:900;color:var(--p);margin-bottom:12px}
+.section-header p{color:var(--g600);max-width:600px;margin:0 auto;font-size:.95rem}
 .section-header.light h2,.section-header.light p{color:#fff}
 
 /* ====== CARDS ====== */
 .card-grid{display:grid;gap:20px}
-.cols-2{grid-template-columns:repeat(2,1fr)}
-.cols-3{grid-template-columns:repeat(3,1fr)}
-.cols-4{grid-template-columns:repeat(4,1fr)}
-.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;transition:all var(--transition);border:1px solid var(--gray-100)}
-.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
-.card .icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px}
-.icon.blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
-.icon.gold{background:linear-gradient(135deg,#fef3c7,#fde68a)}
-.icon.green{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
-.icon.purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
-.card h4{font-weight:700;margin-bottom:8px;font-size:1.05rem;color:var(--gray-900)}
-.card p{color:var(--gray-600);font-size:.9rem;line-height:1.7}
+.cols-2{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:repeat(3,1fr)}.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--w);border-radius:var(--r);box-shadow:0 1px 6px rgba(0,0,0,.04);padding:28px;transition:all .4s cubic-bezier(.4,0,.2,1);border:1px solid var(--g100);position:relative;overflow:hidden}
+.card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--a),var(--bl));transform:scaleX(0);transition:transform .4s ease}
+.card:hover::after{transform:scaleX(1)}
+.card .icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;transition:transform .4s ease}
+.card:hover .icon{transform:scale(1.1) rotate(-5deg)}
+.icon-blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}.icon-gold{background:linear-gradient(135deg,#fef3c7,#fde68a)}.icon-green{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}.icon-purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}.icon-red{background:linear-gradient(135deg,#fee2e2,#fecaca)}
+.card h4{font-weight:700;margin-bottom:8px;font-size:1.05rem;color:var(--g900)}
+.card p{color:var(--g600);font-size:.9rem;line-height:1.7}
+
+/* ====== STAT CARDS ====== */
+.stat-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:var(--rl);padding:24px;text-align:center;color:#fff;backdrop-filter:blur(10px);transition:all .4s ease}
+.stat-card:hover{background:rgba(255,255,255,.12);transform:translateY(-4px)}
+.stat-card .n{font-size:2.2rem;font-weight:900;color:var(--al)}
+.stat-card .l{font-size:.82rem;opacity:.7;margin-top:4px}
+
+/* ====== HOME HERO ====== */
+.home-hero{position:relative;min-height:80vh;display:flex;align-items:center;background:linear-gradient(160deg,#031020,#0a2a4a,#0c3868,#0a2a4a);overflow:hidden}
+.home-hero::before{content:'';position:absolute;width:700px;height:700px;background:radial-gradient(circle,rgba(200,135,46,.12),transparent 70%);top:30%;left:60%;animation:float 8s ease-in-out infinite}
+.home-hero .container{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.hero-text h1{font-size:clamp(2rem,4vw,3.2rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px;animation:fadeInUp .8s ease}
+.hero-text .hl{background:linear-gradient(135deg,#f0c27a,#c8872e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-text p{color:rgba(255,255,255,.7);font-size:1.05rem;margin-bottom:28px;line-height:1.8;animation:fadeInUp .8s .2s ease both}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;animation:fadeInUp .8s .4s ease both}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;animation:fadeInRight .8s .3s ease both}
+.particles{position:absolute;inset:0;pointer-events:none}
+.particle{position:absolute;background:rgba(255,255,255,.15);border-radius:50%;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(105vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-5vh) scale(1.5);opacity:0}}
+
+/* ====== IMAGE CAROUSEL ====== */
+.carousel-section{background:var(--g50);padding:60px 0}
+.carousel-wrap{position:relative;overflow:hidden;border-radius:var(--rl);box-shadow:0 8px 40px rgba(0,0,0,.1)}
+.carousel-track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.carousel-slide{min-width:100%;height:380px;display:flex;align-items:center;justify-content:center;font-size:4rem;color:#fff;position:relative}
+.carousel-slide .caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.7),transparent);padding:32px 20px 20px;color:#fff;font-weight:600;font-size:1rem}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.85);border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.3rem;color:var(--g800);transition:all var(--t);z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.carousel-btn:hover{background:#fff;transform:translateY(-50%) scale(1.08)}
+.carousel-btn.prev{left:16px}.carousel-btn.next{right:16px}
+.carousel-dots{display:flex;gap:8px;justify-content:center;margin-top:16px}
+.carousel-dots button{width:10px;height:10px;border-radius:50%;border:2px solid var(--g300);background:transparent;cursor:pointer;transition:all var(--t);padding:0}
+.carousel-dots button.active{background:var(--a);border-color:var(--a);width:26px;border-radius:10px}
 
 /* ====== NEWS LIST ====== */
-.news-list-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--gray-100);transition:all var(--transition);cursor:pointer}
-.news-list-item:hover{background:var(--gray-50);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:6px}
-.news-list-item .date{background:var(--blue-bg);color:var(--primary);padding:8px 12px;border-radius:var(--radius-sm);text-align:center;min-width:60px;font-weight:700;font-size:.85rem;line-height:1.3;align-self:flex-start}
-.news-list-item .info h4{font-size:1rem;font-weight:600;color:var(--gray-800);margin-bottom:4px}
-.news-list-item .info p{font-size:.82rem;color:var(--gray-600)}
+.news-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--g100);transition:all var(--t);cursor:pointer}
+.news-item:hover{background:var(--g50);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:6px;transform:translateX(4px)}
+.news-item .date{background:var(--bg);color:var(--p);padding:8px 12px;border-radius:6px;text-align:center;min-width:55px;font-weight:700;font-size:.82rem;align-self:flex-start}
+.news-item .info h4{font-size:1rem;font-weight:600;color:var(--g800);margin-bottom:4px}
+.news-item .info p{font-size:.82rem;color:var(--g600)}
 .pagination{display:flex;gap:6px;justify-content:center;margin-top:24px}
-.pagination a,.pagination span{padding:8px 14px;border-radius:6px;font-size:.85rem;border:1px solid var(--gray-200);color:var(--gray-700);transition:all var(--transition)}
-.pagination a:hover,.pagination span.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pagination a,.pagination span{padding:8px 14px;border-radius:6px;font-size:.85rem;border:1px solid var(--g200);color:var(--g700);transition:all var(--t)}
+.pagination a:hover,.pagination span.active{background:var(--p);color:#fff;border-color:var(--p)}
 
 /* ====== SERVICE ====== */
-.download-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--gray-50);border-radius:var(--radius);margin-bottom:10px;transition:all var(--transition)}
-.download-item:hover{background:var(--blue-bg)}
-.download-item .icon{font-size:1.5rem;width:40px;text-align:center}
-.download-item .info{flex:1}
-.download-item .info h4{font-size:.95rem;font-weight:600}
-.download-item .info p{font-size:.78rem;color:var(--gray-600)}
-.faq-item{margin-bottom:6px;border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden}
-.faq-q{padding:14px 18px;background:var(--gray-50);font-weight:600;font-size:.95rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all var(--transition)}
-.faq-q:hover{background:var(--blue-bg)}
-.faq-a{padding:0 18px;max-height:0;overflow:hidden;transition:all .35s ease;font-size:.9rem;color:var(--gray-600);line-height:1.8}
-.faq-item.open .faq-a{padding:14px 18px;max-height:300px}
-.faq-item.open .faq-q{color:var(--primary);background:var(--blue-bg)}
+.dl-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--g50);border-radius:8px;margin-bottom:10px;transition:all var(--t);cursor:pointer}
+.dl-item:hover{background:var(--bg);transform:translateX(4px)}
+.dl-item .icon{font-size:1.5rem;width:40px;text-align:center}
+.dl-item .info{flex:1}.dl-item .info h4{font-size:.95rem;font-weight:600}.dl-item .info p{font-size:.78rem;color:var(--g600)}
+.dl-item .meta{font-size:.75rem;color:var(--g600);text-align:right}
+.faq-item{margin-bottom:6px;border:1px solid var(--g200);border-radius:8px;overflow:hidden;transition:all var(--t)}
+.faq-q{padding:14px 18px;background:var(--g50);font-weight:600;font-size:.95rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all var(--t)}
+.faq-q:hover{background:var(--bg)}.faq-q .arrow{transition:transform var(--t)}
+.faq-item.open .faq-q .arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:all .4s ease;font-size:.9rem;color:var(--g600);line-height:1.8}
+.faq-item.open .faq-a{max-height:400px;padding:14px 18px;border-top:1px solid var(--g100)}
 
 /* ====== TIMELINE ====== */
 .timeline{position:relative;padding-left:36px}
-.timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:3px;background:linear-gradient(to bottom,var(--accent),var(--blue),var(--accent));border-radius:2px}
+.timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:3px;background:linear-gradient(to bottom,var(--a),var(--b),var(--a));border-radius:2px}
 .tl-item{position:relative;margin-bottom:28px}
-.tl-item::before{content:'';position:absolute;left:-36px;top:4px;width:14px;height:14px;background:var(--accent);border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px var(--accent)}
-.tl-item .year{font-weight:700;color:var(--accent);margin-bottom:4px}
-.tl-item .body{background:var(--white);padding:14px 18px;border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray-100)}
+.tl-item::before{content:'';position:absolute;left:-36px;top:4px;width:14px;height:14px;background:var(--a);border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px var(--a);transition:all .3s}
+.tl-item:hover::before{transform:scale(1.4);box-shadow:0 0 0 8px rgba(200,135,46,.25)}
+.tl-item .year{font-weight:700;color:var(--a);margin-bottom:4px}
+.tl-item .body{background:var(--w);padding:14px 18px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid var(--g100)}
 
-/* ====== TABLE ====== */
+/* ====== TABLES ====== */
 .data-table{width:100%;border-collapse:collapse;font-size:.9rem}
-.data-table th{background:var(--primary);color:#fff;padding:12px 16px;text-align:left;font-weight:600}
-.data-table td{padding:10px 16px;border-bottom:1px solid var(--gray-200)}
-.data-table tr:hover td{background:var(--gray-50)}
+.data-table th{background:var(--p);color:#fff;padding:12px 16px;text-align:left;font-weight:600}
+.data-table td{padding:10px 16px;border-bottom:1px solid var(--g200)}
+.data-table tr:hover td{background:var(--g50)}
 
 /* ====== CONTACT ====== */
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
-.contact-card{display:flex;gap:14px;padding:18px;background:var(--gray-50);border-radius:var(--radius);margin-bottom:14px;transition:all var(--transition)}
-.contact-card:hover{background:var(--blue-bg);transform:translateX(4px)}
-.contact-card .icon-w{width:44px;height:44px;min-width:44px;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
-.contact-card h4{font-weight:600;font-size:.92rem;margin-bottom:2px}
-.contact-card p{color:var(--gray-600);font-size:.85rem}
-.map-placeholder{width:100%;height:320px;background:linear-gradient(135deg,#e8f2fa,#d0e4f5);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--primary);border:1px dashed var(--gray-300)}
+.contact-card{display:flex;gap:14px;padding:18px;background:var(--g50);border-radius:10px;margin-bottom:14px;transition:all var(--t)}
+.contact-card:hover{background:var(--bg);transform:translateX(6px)}
+.contact-card .cw{width:44px;height:44px;min-width:44px;border-radius:10px;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.map-placeholder{width:100%;height:320px;background:linear-gradient(135deg,#e8f2fa,#d0e4f5);border-radius:var(--rl);display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--p);border:1px dashed var(--g300)}
+.form-group{margin-bottom:12px}.form-group label{display:block;font-size:.85rem;margin-bottom:4px;color:var(--g700)}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px 14px;border:1px solid var(--g200);border-radius:6px;font-size:.9rem;font-family:inherit;transition:all var(--t)}
+.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--a);box-shadow:0 0 0 3px rgba(200,135,46,.1)}
 
 /* ====== CULTURE ====== */
-.culture-banner{background:linear-gradient(135deg,var(--primary),#041830);color:#fff;padding:48px;border-radius:var(--radius-lg);text-align:center;margin-bottom:32px}
+.culture-banner{background:linear-gradient(135deg,var(--p),#041830);color:#fff;padding:48px;border-radius:var(--rl);text-align:center;margin-bottom:32px}
 .culture-banner h3{font-size:1.8rem;font-weight:900;margin-bottom:12px}
 .culture-banner p{opacity:.75;font-size:1rem;max-width:700px;margin:0 auto}
 .culture-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.culture-card{background:var(--white);padding:28px;border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);transition:all var(--transition);text-align:center}
-.culture-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
-.culture-card .ci{font-size:3rem;margin-bottom:12px}
-.culture-card h4{font-weight:700;margin-bottom:8px;color:var(--primary)}
+.culture-card{background:var(--w);padding:28px;border-radius:var(--r);box-shadow:0 1px 6px rgba(0,0,0,.04);border:1px solid var(--g100);text-align:center;transition:all .4s ease}
+.culture-card:hover{box-shadow:0 12px 36px rgba(0,0,0,.1);transform:translateY(-4px)}
+.culture-card .ci{font-size:3rem;margin-bottom:12px;transition:transform .4s ease}
+.culture-card:hover .ci{transform:scale(1.15)}
+.culture-card h4{font-weight:700;margin-bottom:8px;color:var(--p)}
 
 /* ====== FOOTER ====== */
-.footer{background:var(--gray-900);color:rgba(255,255,255,.6);padding:40px 0 20px;font-size:.85rem}
+.footer{background:var(--g900);color:rgba(255,255,255,.6);padding:40px 0 20px;font-size:.85rem}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:24px}
 .footer h4{color:#fff;font-weight:700;margin-bottom:12px;font-size:.95rem}
-.footer a{color:rgba(255,255,255,.55);transition:color var(--transition);display:block;padding:3px 0}
+.footer a{color:rgba(255,255,255,.55);transition:color var(--t);display:block;padding:3px 0}
 .footer a:hover{color:#fff}
 .footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;text-align:center;font-size:.78rem}
 
 /* ====== BACK TO TOP ====== */
-.back-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s;z-index:999}
+.back-top{position:fixed;bottom:24px;right:24px;width:46px;height:46px;border-radius:50%;background:var(--a);color:#fff;border:none;cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,135,46,.35);opacity:0;pointer-events:none;transition:all .3s;z-index:999;animation:glow 2s infinite}
 .back-top.show{opacity:1;pointer-events:auto}
-.back-top:hover{transform:translateY(-3px)}
+.back-top:hover{transform:translateY(-3px) scale(1.05)}
 
-/* ====== MOBILE NAV ====== */
+/* ====== ADMIN ====== */
+.admin-login{max-width:400px;margin:80px auto;padding:40px;background:var(--w);border-radius:var(--rl);box-shadow:0 8px 40px rgba(0,0,0,.1);text-align:center}
+.admin-login h2{font-size:1.6rem;margin-bottom:24px;color:var(--p)}
+.admin-dashboard{padding:20px 0}
+.admin-header{background:var(--g900);color:#fff;padding:12px 0;margin-bottom:24px;border-radius:8px}
+.admin-header .container{display:flex;justify-content:space-between;align-items:center}
+.admin-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:24px;border-bottom:2px solid var(--g100)}
+.admin-tab{padding:10px 18px;border:none;background:none;cursor:pointer;font-size:.9rem;font-weight:500;color:var(--g600);transition:all var(--t);font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px}
+.admin-tab:hover,.admin-tab.active{color:var(--p);border-bottom-color:var(--a)}
+.admin-content{background:var(--w);border-radius:var(--r);padding:24px;box-shadow:0 1px 6px rgba(0,0,0,.04);border:1px solid var(--g100)}
+.admin-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.admin-table th{background:var(--g900);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+.admin-table td{padding:10px 14px;border-bottom:1px solid var(--g200)}
+.admin-table tr:hover td{background:var(--g50)}
+.admin-table img{width:60px;height:40px;object-fit:cover;border-radius:4px}
+.file-upload-zone{border:2px dashed var(--g300);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all var(--t);margin-bottom:16px}
+.file-upload-zone:hover,.file-upload-zone.drag{border-color:var(--a);background:rgba(200,135,46,.04)}
+.file-upload-zone input{display:none}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10000;display:flex;align-items:center;justify-content:center;animation:fadeInScale .2s ease}
+.modal{background:var(--w);border-radius:var(--rl);padding:32px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal h3{margin-bottom:16px;color:var(--p)}
+.toast{position:fixed;top:100px;right:24px;z-index:20000;padding:12px 20px;border-radius:8px;color:#fff;font-weight:600;font-size:.9rem;animation:slideDown .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+.toast.success{background:#16a34a}.toast.error{background:#dc2626}.toast.info{background:var(--b)}
+
+/* ====== RESPONSIVE ====== */
 @media(max-width:1024px){
   .cols-4{grid-template-columns:repeat(2,1fr)}
-  .hero-stats{grid-template-columns:1fr 1fr}
+  .home-hero .container{grid-template-columns:1fr;text-align:center}
+  .hero-stats{grid-template-columns:repeat(4,1fr)}
+  .hero-btns{justify-content:center}
 }
 @media(max-width:768px){
-  .disclaimer-bar{font-size:.75rem;padding:6px 12px}
-  .header{top:38px}
-  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--white);box-shadow:var(--shadow-lg);padding:12px;gap:0;border-top:1px solid var(--gray-100)}
+  .disclaimer-bar{font-size:.72rem;padding:5px 10px}
+  .header{top:36px}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);box-shadow:0 8px 30px rgba(0,0,0,.1);padding:8px;gap:0;border-top:1px solid var(--g100)}
   .nav-links.open{display:flex}
-  .nav-links a{border-radius:0;padding:12px 16px;border-bottom:1px solid var(--gray-50)}
   .hamburger{display:block}
-  .home-hero .container{grid-template-columns:1fr;text-align:center}
-  .hero-btns{justify-content:center}
-  .hero-stats{grid-template-columns:1fr 1fr}
   .main-layout{grid-template-columns:1fr}
-  .sidebar{position:static;display:flex;overflow-x:auto;gap:4px;padding:8px;border-radius:var(--radius-sm)}
+  .sidebar{position:static;display:flex;overflow-x:auto;gap:4px;padding:8px;border-radius:6px}
   .sidebar h3{display:none}
   .sidebar a{white-space:nowrap;padding:6px 12px;font-size:.8rem;border-left:none;border-bottom:2px solid transparent}
-  .sidebar a.active{border-left:none;border-bottom-color:var(--accent)}
+  .sidebar a.active{border-left:none;border-bottom-color:var(--a)}
   .cols-2,.cols-3,.cols-4{grid-template-columns:1fr}
   .contact-grid,.footer-grid{grid-template-columns:1fr}
   .culture-grid{grid-template-columns:1fr}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .carousel-slide{height:220px}
+  .admin-tabs{overflow-x:auto;flex-wrap:nowrap}
 }
 </style>
 </head>
 <body>
 
-<!-- DISCLAIMER -->
-<div class="disclaimer-bar">
-  ⚠️ 本网站仅供前端开发技术演示，无任何经营主体，不承接任何业务。所有公司名称、联系方式、数据均为虚构。
-</div>
+<!-- ====== DISCLAIMER ====== -->
+<div class="disclaimer-bar">⚠️ 本网站仅供前端开发技术演示，无任何经营主体，不承接任何业务。所有信息均为虚构。</div>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-  <div class="container">
-    <span>欢迎访问 ****** 有限公司官方网站（演示版）</span>
-    <div style="display:flex;gap:16px;align-items:center">
-      <a href="#home">首页</a>
-      <a href="#contact">联系我们</a>
-      <a href="#" class="oa-link">🚪 办公通道（演示）</a>
-    </div>
-  </div>
-</div>
+<!-- ====== TOP BAR ====== -->
+<div class="top-bar"><div class="container"><span>欢迎访问 ****** 有限公司（演示站点）</span><div style="display:flex;gap:16px;align-items:center"><a href="#home">首页</a><a href="#contact">联系我们</a><a href="#admin" class="oa" onclick="navigate('admin')">🔧 后台管理</a></div></div></div>
 
-<!-- HEADER -->
+<!-- ====== HEADER ====== -->
 <header class="header" id="header">
   <div class="container header-inner">
-    <a href="#home" class="logo" onclick="navigate('home')">
+    <div class="logo" onclick="navigate('home')">
       <div class="logo-icon">港</div>
       <div class="logo-text"><h1>******有限公司</h1><small>化工物流综合服务商（演示）</small></div>
-    </a>
+    </div>
     <button class="hamburger" onclick="toggleMenu()" aria-label="菜单">☰</button>
     <nav class="nav-links" id="navLinks">
-      <a href="#home" data-nav="home" class="" onclick="navigate('home')">首页</a>
-      <a href="#about" data-nav="about" onclick="navigate('about')" class="">关于我们</a>
-      <a href="#news" data-nav="news" onclick="navigate('news')" class="">新闻动态</a>
-      <a href="#service" data-nav="service" onclick="navigate('service')" class="active">客服中心</a>
-      <a href="#culture" data-nav="culture" onclick="navigate('culture')">企业文化</a>
-      <a href="#contact" data-nav="contact" onclick="navigate('contact')">联系我们</a>
+      <a href="#home" data-nav="home" class="active">首页</a>
+      <a href="#about" data-nav="about">关于我们</a>
+      <a href="#news" data-nav="news">新闻动态</a>
+      <a href="#service" data-nav="service">客服中心</a>
+      <a href="#culture" data-nav="culture">企业文化</a>
+      <a href="#contact" data-nav="contact">联系我们</a>
     </nav>
   </div>
 </header>
 
-<!-- MAIN APP -->
+<!-- ====== MAIN APP ====== -->
 <main id="app">
-    <div class="page-hero"><h2>客服中心</h2><div class="sub">Service Center</div></div>
-    <div class="breadcrumb"><div class="container">首页 &gt; 客服中心 &gt; <span>常见问题</span></div></div>
-    <div class="container"><div class="main-layout">
-    <div class="sidebar">
-      <h3>客服中心</h3>
-      <a href="#service/guide" class="" onclick="navigate('service/guide')">业务指南</a>
-      <a href="#service/download" class="" onclick="navigate('service/download')">文档下载</a>
-      <a href="#service/faq" class="active" onclick="navigate('service/faq')">常见问题</a>
-    </div><div class="content-area">
-    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">常见问题</h3>
-    
-      <div class="faq-item" id="faq0">
-        <div class="faq-q" onclick="document.getElementById('faq0').classList.toggle('open')">
-          <span>如何办理货物入库手续？</span><span style="font-size:1.2rem">+</span>
-        </div>
-        <div class="faq-a"><p>客户需先与公司市场部签订仓储服务合同，而后凭合同、货物清单、相关单证到业务大厅办理入库手续。入库前需完成报关报检手续，货物到达后由公司安排卸货入库。（演示内容）</p></div>
-      </div>
-      <div class="faq-item" id="faq1">
-        <div class="faq-q" onclick="document.getElementById('faq1').classList.toggle('open')">
-          <span>码头作业时间如何安排？</span><span style="font-size:1.2rem">+</span>
-        </div>
-        <div class="faq-a"><p>码头实行24小时作业制，节假日正常运营。船舶到港需提前48小时向调度中心预报，以便合理安排泊位和作业计划。（演示内容）</p></div>
-      </div>
-      <div class="faq-item" id="faq2">
-        <div class="faq-q" onclick="document.getElementById('faq2').classList.toggle('open')">
-          <span>如何查询货物库存情况？</span><span style="font-size:1.2rem">+</span>
-        </div>
-        <div class="faq-a"><p>客户可通过公司智慧物流平台在线查询货物库存数量、入库时间、存储位置等信息。新客户请联系市场部开通平台账号。（演示内容）</p></div>
-      </div>
-      <div class="faq-item" id="faq3">
-        <div class="faq-q" onclick="document.getElementById('faq3').classList.toggle('open')">
-          <span>液体化工品的仓储费用如何计算？</span><span style="font-size:1.2rem">+</span>
-        </div>
-        <div class="faq-a"><p>仓储费用根据货物种类、存储数量、存储时间等因素综合计算。一般按照吨/天或立方米/天计费。具体收费标准请咨询市场部获取最新报价。（演示内容）</p></div>
-      </div>
-      <div class="faq-item" id="faq4">
-        <div class="faq-q" onclick="document.getElementById('faq4').classList.toggle('open')">
-          <span>是否可以提供保税仓储服务？</span><span style="font-size:1.2rem">+</span>
-        </div>
-        <div class="faq-a"><p>是的，公司地处保税区，可提供保税仓储服务。客户可享受进口货物入保税库暂缓缴纳关税和增值税的优惠政策。（演示内容）</p></div>
-      </div></div></div></div></main>
+<section class="home-hero">
+  <div class="particles" id="particles"><div class="particle" style="left: 23.0891%; width: 2.21708px; height: 2.21708px; animation-duration: 8.35389s; animation-delay: 14.362s;"></div><div class="particle" style="left: 83.5869%; width: 1.06623px; height: 1.06623px; animation-duration: 17.1047s; animation-delay: 2.1078s;"></div><div class="particle" style="left: 57.6099%; width: 1.62136px; height: 1.62136px; animation-duration: 19.0641s; animation-delay: 12.4312s;"></div><div class="particle" style="left: 22.868%; width: 3.18497px; height: 3.18497px; animation-duration: 20.3292s; animation-delay: 3.87729s;"></div><div class="particle" style="left: 66.3806%; width: 2.58365px; height: 2.58365px; animation-duration: 14.4327s; animation-delay: 9.07458s;"></div><div class="particle" style="left: 87.9869%; width: 1.61275px; height: 1.61275px; animation-duration: 10.294s; animation-delay: 5.33159s;"></div><div class="particle" style="left: 61.9518%; width: 2.76433px; height: 2.76433px; animation-duration: 18.6889s; animation-delay: 6.54986s;"></div><div class="particle" style="left: 25.2958%; width: 2.96387px; height: 2.96387px; animation-duration: 16.2827s; animation-delay: 13.6482s;"></div><div class="particle" style="left: 32.8166%; width: 2.50653px; height: 2.50653px; animation-duration: 18.2652s; animation-delay: 11.9772s;"></div><div class="particle" style="left: 20.5579%; width: 1.86686px; height: 1.86686px; animation-duration: 13.0141s; animation-delay: 7.38167s;"></div><div class="particle" style="left: 79.996%; width: 1.84308px; height: 1.84308px; animation-duration: 21.6111s; animation-delay: 9.15606s;"></div><div class="particle" style="left: 62.3224%; width: 2.59126px; height: 2.59126px; animation-duration: 16.2568s; animation-delay: 10.5921s;"></div><div class="particle" style="left: 91.8739%; width: 2.46151px; height: 2.46151px; animation-duration: 13.8416s; animation-delay: 0.429084s;"></div><div class="particle" style="left: 87.1321%; width: 2.42727px; height: 2.42727px; animation-duration: 17.3576s; animation-delay: 7.16846s;"></div><div class="particle" style="left: 77.0193%; width: 3.60464px; height: 3.60464px; animation-duration: 9.47254s; animation-delay: 8.24038s;"></div><div class="particle" style="left: 49.6423%; width: 2.0789px; height: 2.0789px; animation-duration: 10.1614s; animation-delay: 7.74352s;"></div><div class="particle" style="left: 21.3701%; width: 3.98334px; height: 3.98334px; animation-duration: 14.3048s; animation-delay: 12.0097s;"></div><div class="particle" style="left: 88.626%; width: 1.75237px; height: 1.75237px; animation-duration: 8.52796s; animation-delay: 13.0713s;"></div><div class="particle" style="left: 4.44464%; width: 1.70581px; height: 1.70581px; animation-duration: 14.7435s; animation-delay: 7.18028s;"></div><div class="particle" style="left: 24.7412%; width: 2.48484px; height: 2.48484px; animation-duration: 17.9975s; animation-delay: 2.23339s;"></div><div class="particle" style="left: 40.2252%; width: 3.86474px; height: 3.86474px; animation-duration: 9.43466s; animation-delay: 3.94482s;"></div><div class="particle" style="left: 78.8163%; width: 1.07195px; height: 1.07195px; animation-duration: 16.1544s; animation-delay: 13.0256s;"></div><div class="particle" style="left: 52.8388%; width: 3.50664px; height: 3.50664px; animation-duration: 18.0322s; animation-delay: 13.8759s;"></div><div class="particle" style="left: 80.3232%; width: 2.66869px; height: 2.66869px; animation-duration: 8.11076s; animation-delay: 2.52034s;"></div><div class="particle" style="left: 19.7069%; width: 3.86643px; height: 3.86643px; animation-duration: 21.0688s; animation-delay: 14.0772s;"></div><div class="particle" style="left: 0.932514%; width: 1.71974px; height: 1.71974px; animation-duration: 17.4467s; animation-delay: 13.4243s;"></div><div class="particle" style="left: 41.874%; width: 3.04751px; height: 3.04751px; animation-duration: 9.1692s; animation-delay: 11.7751s;"></div><div class="particle" style="left: 61.0189%; width: 2.15436px; height: 2.15436px; animation-duration: 19.0765s; animation-delay: 1.87093s;"></div><div class="particle" style="left: 44.295%; width: 3.7524px; height: 3.7524px; animation-duration: 9.65127s; animation-delay: 9.27203s;"></div><div class="particle" style="left: 2.17116%; width: 3.91346px; height: 3.91346px; animation-duration: 8.93971s; animation-delay: 14.4559s;"></div><div class="particle" style="left: 5.54803%; width: 3.61617px; height: 3.61617px; animation-duration: 17.257s; animation-delay: 12.4088s;"></div><div class="particle" style="left: 31.8081%; width: 3.57851px; height: 3.57851px; animation-duration: 15.2805s; animation-delay: 11.5037s;"></div><div class="particle" style="left: 88.6197%; width: 3.30016px; height: 3.30016px; animation-duration: 20.4497s; animation-delay: 10.7077s;"></div><div class="particle" style="left: 64.8634%; width: 2.14217px; height: 2.14217px; animation-duration: 9.97814s; animation-delay: 4.33071s;"></div><div class="particle" style="left: 19.7316%; width: 1.87315px; height: 1.87315px; animation-duration: 19.9864s; animation-delay: 5.12813s;"></div><div class="particle" style="left: 1.70023%; width: 3.37121px; height: 3.37121px; animation-duration: 15.7122s; animation-delay: 13.4227s;"></div><div class="particle" style="left: 79.656%; width: 3.59877px; height: 3.59877px; animation-duration: 11.6693s; animation-delay: 11.6252s;"></div><div class="particle" style="left: 60.748%; width: 1.93386px; height: 1.93386px; animation-duration: 9.36184s; animation-delay: 8.43201s;"></div><div class="particle" style="left: 16.6974%; width: 3.32768px; height: 3.32768px; animation-duration: 20.4493s; animation-delay: 6.33065s;"></div><div class="particle" style="left: 66.6766%; width: 2.73112px; height: 2.73112px; animation-duration: 10.8948s; animation-delay: 6.00901s;"></div><div class="particle" style="left: 74.4477%; width: 1.77645px; height: 1.77645px; animation-duration: 12.6493s; animation-delay: 12.4167s;"></div><div class="particle" style="left: 82.8028%; width: 3.12287px; height: 3.12287px; animation-duration: 15.2053s; animation-delay: 6.7512s;"></div><div class="particle" style="left: 97.4302%; width: 3.82624px; height: 3.82624px; animation-duration: 11.2779s; animation-delay: 11.5845s;"></div><div class="particle" style="left: 89.7679%; width: 2.08744px; height: 2.08744px; animation-duration: 18.0993s; animation-delay: 7.48387s;"></div><div class="particle" style="left: 90.83%; width: 3.45713px; height: 3.45713px; animation-duration: 14.1266s; animation-delay: 8.10622s;"></div><div class="particle" style="left: 41.4123%; width: 1.46821px; height: 1.46821px; animation-duration: 11.4883s; animation-delay: 12.1887s;"></div><div class="particle" style="left: 65.9071%; width: 3.29213px; height: 3.29213px; animation-duration: 15.4021s; animation-delay: 0.720511s;"></div><div class="particle" style="left: 74.0618%; width: 2.63637px; height: 2.63637px; animation-duration: 12.2971s; animation-delay: 6.9589s;"></div><div class="particle" style="left: 52.4003%; width: 1.95633px; height: 1.95633px; animation-duration: 17.4169s; animation-delay: 2.42739s;"></div><div class="particle" style="left: 67.1526%; width: 2.87564px; height: 2.87564px; animation-duration: 15.1936s; animation-delay: 5.10354s;"></div><div class="particle" style="left: 8.06629%; width: 3.94736px; height: 3.94736px; animation-duration: 17.5173s; animation-delay: 9.3978s;"></div><div class="particle" style="left: 70.6125%; width: 1.58889px; height: 1.58889px; animation-duration: 9.88269s; animation-delay: 8.64173s;"></div><div class="particle" style="left: 21.48%; width: 3.75331px; height: 3.75331px; animation-duration: 15.7661s; animation-delay: 13.6056s;"></div><div class="particle" style="left: 68.117%; width: 1.76027px; height: 1.76027px; animation-duration: 15.3917s; animation-delay: 3.41082s;"></div><div class="particle" style="left: 88.2579%; width: 1.81495px; height: 1.81495px; animation-duration: 18.2587s; animation-delay: 4.03003s;"></div><div class="particle" style="left: 7.86753%; width: 1.25337px; height: 1.25337px; animation-duration: 19.1123s; animation-delay: 12.4072s;"></div><div class="particle" style="left: 75.1622%; width: 3.86616px; height: 3.86616px; animation-duration: 16.2096s; animation-delay: 9.05383s;"></div><div class="particle" style="left: 63.2111%; width: 3.76436px; height: 3.76436px; animation-duration: 10.3318s; animation-delay: 8.64637s;"></div><div class="particle" style="left: 90.184%; width: 1.48763px; height: 1.48763px; animation-duration: 15.5555s; animation-delay: 14.0068s;"></div><div class="particle" style="left: 99.2619%; width: 2.82387px; height: 2.82387px; animation-duration: 15.5527s; animation-delay: 6.64399s;"></div></div>
+  <div class="container">
+    <div class="hero-text">
+      <h1><span class="hl">******</span>有限公司</h1>
+      <p>中国AAAA级液体化工物流企业 · 专业从事散装液体化工产品的码头接卸、保税仓储和分拨转运服务</p>
+      <div class="hero-btns"><a href="#about" class="btn btn-primary" onclick="navigate('about')">了解我们 →</a><a href="#service" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="navigate('service')">业务指南</a><a href="#contact" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="navigate('contact')">联系我们</a></div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="n">500<span style="font-size:.5em">+</span>米</div><div class="l">长江岸线</div></div>
+      <div class="stat-card"><div class="n">110<span style="font-size:.5em">万</span>m³</div><div class="l">储罐容积</div></div>
+      <div class="stat-card"><div class="n">450<span style="font-size:.5em">万</span>吨</div><div class="l">年吞吐量</div></div>
+      <div class="stat-card"><div class="n">20<span style="font-size:.5em">+</span>年</div><div class="l">行业经验</div></div>
+    </div>
+  </div>
+</section>
 
-<!-- FOOTER -->
+<!-- IMAGE CAROUSEL -->
+
+<section class="carousel-section">
+  <div class="container">
+    <div class="section-header"><div class="label">Gallery</div><h2>企业风采</h2><p>展示码头设施、仓储基地与运营实景（演示图片）</p></div>
+    <div class="carousel-wrap" id="homeCarousel">
+      <div class="carousel-track" id="carouselTrack" style="transform: translateX(0%);">
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#0a3d6b,#1a6090);min-width:100%">
+          <span style="font-size:5rem;opacity:.6">⚓</span>
+          <div class="caption">50,000吨级液体散化专用码头</div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#1a5a3a,#2a7a5a);min-width:100%">
+          <span style="font-size:5rem;opacity:.6">🏗️</span>
+          <div class="caption">总储容超110万立方米</div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#2a3a6a,#4a5a9a);min-width:100%">
+          <span style="font-size:5rem;opacity:.6">💻</span>
+          <div class="caption">全流程数字化管理平台</div>
+        </div>
+        <div class="carousel-slide" style="background:linear-gradient(135deg,#1a4a3a,#3a7a5a);min-width:100%">
+          <span style="font-size:5rem;opacity:.6">🛡️</span>
+          <div class="caption">省级绿色港口认证</div>
+        </div></div>
+      <button class="carousel-btn prev" onclick="moveCarousel(-1)">‹</button>
+      <button class="carousel-btn next" onclick="moveCarousel(1)">›</button>
+    </div>
+    <div class="carousel-dots"><button class="active" onclick="goToSlide(0)"></button><button class="" onclick="goToSlide(1)"></button><button class="" onclick="goToSlide(2)"></button><button class="" onclick="goToSlide(3)"></button></div>
+  </div>
+</section>
+
+<!-- ABOUT PREVIEW -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><div class="label">About Us</div><h2>关于******</h2><p>致力于成为长江流域领先的液体化工物流综合服务商</p></div>
+    <div class="card-grid cols-3">
+      <div class="card aos fade-up"><div class="icon icon-blue">⚓</div><h4>码头装卸</h4><p>拥有30,000吨级和50,000吨级两个液体散化专用码头，年吞吐能力可达450万吨。</p></div>
+      <div class="card aos fade-up delay-1"><div class="icon icon-gold">🏗️</div><h4>仓储服务</h4><p>码头后方配套储容约110万立方米，其中自营储容约93万立方米。</p></div>
+      <div class="card aos fade-up delay-2"><div class="icon icon-green">🚛</div><h4>物流配送</h4><p>为化工园区内企业提供管道物流配送服务，实现高效安全的点对点输送。</p></div>
+    </div>
+    <div style="text-align:center;margin-top:24px"><a href="#about" class="btn btn-primary" onclick="navigate('about')">了解更多 →</a></div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="section" style="background:var(--g50)">
+  <div class="container">
+    <div class="section-header"><div class="label">News</div><h2>新闻动态</h2><p>关注公司最新资讯与行业动态</p></div>
+    <div class="news-item" onclick="navigate('news/detail/company_1')"><div class="date">06-20</div><div class="info"><h4>正式投用！******9区油脂库迎来首船棕榈油</h4><p>近日，******有限公司9区油脂库正式投入使用，迎来首船进口棕榈油靠泊卸货。</p></div></div><div class="news-item" onclick="navigate('news/detail/company_2')"><div class="date">05-15</div><div class="info"><h4>聚力奏响进行曲 思变笃行跃新峰</h4><p>5月15日，公司召开2025年度工作推进会，总结上半年工作成效，部署下半年重点任务。</p></div></div><div class="news-item" onclick="navigate('news/detail/company_3')"><div class="date">04-10</div><div class="info"><h4>三十载弄潮扬子 续写合作共赢新篇章</h4><p>公司与某国际化工巨头合作三十周年庆典隆重举行。</p></div></div><div class="news-item" onclick="navigate('news/detail/company_4')"><div class="date">03-22</div><div class="info"><h4>获评省级三星级绿色港口荣誉称号</h4><p>公司凭借在环保管理和绿色运营方面的突出表现，成功获评省级绿色港口。</p></div></div><div class="pagination"><a href="#" class="active" onclick="event.preventDefault();refreshNewsList(`company`,1)">1</a><a href="#" class="" onclick="event.preventDefault();refreshNewsList(`company`,2)">2</a></div>
+    <div style="text-align:center;margin-top:20px"><a href="#news" class="btn btn-outline" style="color:var(--p);border-color:var(--p)" onclick="navigate('news')">查看全部新闻 →</a></div>
+  </div>
+</section>
+
+<!-- DOWNLOADS PREVIEW -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><div class="label">Downloads</div><h2>常用文档下载</h2><p>客户常用表单与文档模板</p></div>
+    
+      <div class="dl-item" onclick="downloadDoc(1)">
+        <span class="icon">📄</span><div class="info"><h4>客户开户申请表</h4><p>新客户注册开户所需填写的申请表格</p></div><span class="meta">DOCX / 256 KB</span>
+        <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)">下载</button>
+      </div>
+      <div class="dl-item" onclick="downloadDoc(2)">
+        <span class="icon">📄</span><div class="info"><h4>码头作业委托单</h4><p>委托码头进行装卸作业的标准格式单据</p></div><span class="meta">PDF / 128 KB</span>
+        <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)">下载</button>
+      </div>
+      <div class="dl-item" onclick="downloadDoc(3)">
+        <span class="icon">📄</span><div class="info"><h4>入库通知书模板</h4><p>货物入库通知的标准格式文档</p></div><span class="meta">DOCX / 198 KB</span>
+        <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)">下载</button>
+      </div>
+      <div class="dl-item" onclick="downloadDoc(4)">
+        <span class="icon">📄</span><div class="info"><h4>提货委托书模板</h4><p>授权委托他人提取货物的标准文件</p></div><span class="meta">PDF / 145 KB</span>
+        <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)">下载</button>
+      </div>
+    <div style="text-align:center;margin-top:16px"><a href="#service/download" class="btn btn-outline" style="color:var(--p);border-color:var(--p)" onclick="navigate('service/download')">更多文档 →</a></div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="section" style="background:var(--g50)">
+  <div class="container">
+    <div class="section-header"><div class="label">Partners</div><h2>合作伙伴（演示）</h2></div>
+    <div class="card-grid cols-4" style="text-align:center"><div class="card aos fade-scale"><div style="font-size:2.5rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">****** 国际公司</h4></div><div class="card aos fade-scale"><div style="font-size:2.5rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">****** 中国有限公司</h4></div><div class="card aos fade-scale"><div style="font-size:2.5rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">****** 投资集团</h4></div><div class="card aos fade-scale"><div style="font-size:2.5rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">****** 供应链公司</h4></div></div>
+  </div>
+</section></main>
+
+<!-- ====== FOOTER ====== -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
-      <div>
-        <h4>关于我们</h4>
-        <p style="color:rgba(255,255,255,.45)">本网站为前端技术演示项目，模拟化工物流企业官网。所有内容均为虚构，不涉及任何真实企业、商标、资质。如有雷同纯属巧合。</p>
-      </div>
-      <div>
-        <h4>快速导航</h4>
-        <a href="#about" onclick="navigate('about')">关于我们</a>
-        <a href="#news" onclick="navigate('news')">新闻动态</a>
-        <a href="#service" onclick="navigate('service')">客服中心</a>
-        <a href="#culture" onclick="navigate('culture')">企业文化</a>
-      </div>
-      <div>
-        <h4>客服中心</h4>
-        <a href="#service/guide" onclick="navigate('service/guide')">业务指南</a>
-        <a href="#service/download" onclick="navigate('service/download')">文档下载</a>
-        <a href="#service/faq" onclick="navigate('service/faq')">常见问题</a>
-      </div>
-      <div>
-        <h4>友情链接（演示）</h4>
-        <a href="#">****** 集团股份有限公司</a>
-        <a href="#">****** 外商投资服务有限公司</a>
-        <a href="#">****** 保税贸易有限公司</a>
-      </div>
+      <div><h4>关于我们</h4><p style="color:rgba(255,255,255,.45)">本网站为前端技术演示项目。所有内容均为虚构，不涉及任何真实企业、商标、资质。</p></div>
+      <div><h4>快速导航</h4><a href="#about">关于我们</a><a href="#news">新闻动态</a><a href="#service">客服中心</a><a href="#culture">企业文化</a></div>
+      <div><h4>客服中心</h4><a href="#service/guide">业务指南</a><a href="#service/download">文档下载</a><a href="#service/faq">常见问题</a></div>
+      <div><h4>友情链接（演示）</h4><a href="#">****** 集团</a><a href="#">****** 外服公司</a><a href="#">****** 贸易公司</a></div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 ******有限公司 版权所有（仅供前端演示） | 苏ICP备XXXXXXXX号-1（虚构） | 苏公网安备 XXXXXXXXXXXX号（虚构）</p>
-      <p style="margin-top:4px">本网站不涉及任何真实企业、商标、营业执照、公章。所有图片、数据、联系方式均为占位演示。</p>
+      <p>© 2025 ******有限公司 版权所有（仅供前端演示）| 苏ICP备XXXXXXXX号-1（虚构）</p>
+      <p style="margin-top:4px">本网站不涉及任何真实企业、商标、营业执照、公章。所有数据均为演示占位。</p>
     </div>
   </div>
 </footer>
 
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
 <script>
-// ==================== ROUTER ====================
-const app = document.getElementById('app');
-const navLinks = document.getElementById('navLinks');
-const backTop = document.getElementById('backTop');
+// ============================================
+// DATABASE LAYER (IndexedDB + localStorage)
+// ============================================
+const DB_NAME='cms_db',DB_VER=1;
+let db=null;
 
-// Scroll handler
-window.addEventListener('scroll',()=>{
-  backTop.classList.toggle('show',window.scrollY>500);
-});
+function openDB(){return new Promise((resolve,reject)=>{
+  const req=indexedDB.open(DB_NAME,DB_VER);
+  req.onupgradeneeded=(e)=>{
+    const db=e.target.result;
+    if(!db.objectStoreNames.contains('images')) db.createObjectStore('images',{keyPath:'id',autoIncrement:true});
+    if(!db.objectStoreNames.contains('documents')) db.createObjectStore('documents',{keyPath:'id',autoIncrement:true});
+    if(!db.objectStoreNames.contains('videos')) db.createObjectStore('videos',{keyPath:'id',autoIncrement:true});
+    if(!db.objectStoreNames.contains('settings')) db.createObjectStore('settings',{keyPath:'key'});
+    if(!db.objectStoreNames.contains('carousel')) db.createObjectStore('carousel',{keyPath:'id',autoIncrement:true});
+  };
+  req.onsuccess=(e)=>{db=e.target.result;resolve(db)};
+  req.onerror=()=>reject(req.error);
+})}
 
-backTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+function dbPut(store,data){return new Promise((resolve,reject)=>{
+  const tx=db.transaction(store,'readwrite'),s=tx.objectStore(store);
+  const req=data.id? s.put(data):s.add(data);
+  req.onsuccess=()=>resolve(req.result);
+  req.onerror=()=>reject(req.error);
+})}
+function dbGetAll(store){return new Promise((resolve,reject)=>{
+  const tx=db.transaction(store,'readonly'),s=tx.objectStore(store);
+  const req=s.getAll();req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+})}
+function dbGet(store,id){return new Promise((resolve,reject)=>{
+  const tx=db.transaction(store,'readonly'),s=tx.objectStore(store);
+  const req=s.get(id);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+})}
+function dbDelete(store,id){return new Promise((resolve,reject)=>{
+  const tx=db.transaction(store,'readwrite'),s=tx.objectStore(store);
+  const req=s.delete(id);req.onsuccess=()=>resolve();req.onerror=()=>reject(req.error);
+})}
 
-// Mobile menu
-function toggleMenu(){
-  navLinks.classList.toggle('open');
-}
+// LocalStorage helpers
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
-// Close menu on link click
-document.addEventListener('click',(e)=>{
-  if(e.target.closest('.nav-links a')){
-    navLinks.classList.remove('open');
-  }
-});
+// Default data
+const DEFAULT_DOCS=[
+  {id:1,name:'客户开户申请表',desc:'新客户注册开户所需填写的申请表格',ext:'DOCX',size:'256 KB',category:'guide',createdAt:'2025-01-01'},
+  {id:2,name:'码头作业委托单',desc:'委托码头进行装卸作业的标准格式单据',ext:'PDF',size:'128 KB',category:'guide',createdAt:'2025-01-01'},
+  {id:3,name:'入库通知书模板',desc:'货物入库通知的标准格式文档',ext:'DOCX',size:'198 KB',category:'guide',createdAt:'2025-01-01'},
+  {id:4,name:'提货委托书模板',desc:'授权委托他人提取货物的标准文件',ext:'PDF',size:'145 KB',category:'guide',createdAt:'2025-01-01'},
+  {id:5,name:'业务合同范本（通用版）',desc:'液体化工品仓储物流服务合同范本',ext:'PDF',size:'512 KB',category:'contract',createdAt:'2025-01-01'},
+  {id:6,name:'安全操作规程手册',desc:'码头及储罐区安全操作规范文档',ext:'PDF',size:'2.1 MB',category:'safety',createdAt:'2025-01-01'},
+];
 
-// Navigate
-function navigate(path){
-  const hash = path.startsWith('#') ? path : '#' + path;
-  window.location.hash = hash;
-  renderPage();
-  window.scrollTo({top:0,behavior:'smooth'});
-  navLinks.classList.remove('open');
-}
+const DEFAULT_CAROUSEL=[
+  {id:1,title:'现代化液体化工码头',bg:'linear-gradient(135deg,#0a3d6b,#1a6090)',icon:'⚓',caption:'50,000吨级液体散化专用码头'},
+  {id:2,title:'大型储罐区',bg:'linear-gradient(135deg,#1a5a3a,#2a7a5a)',icon:'🏗️',caption:'总储容超110万立方米'},
+  {id:3,title:'智慧物流调度中心',bg:'linear-gradient(135deg,#2a3a6a,#4a5a9a)',icon:'💻',caption:'全流程数字化管理平台'},
+  {id:4,title:'安全环保运营',bg:'linear-gradient(135deg,#1a4a3a,#3a7a5a)',icon:'🛡️',caption:'省级绿色港口认证'},
+];
 
-// Mark active nav
-function setActiveNav(section){
-  document.querySelectorAll('[data-nav]').forEach(a=>{
-    a.classList.toggle('active', a.dataset.nav === section);
+// ============================================
+// INIT
+// ============================================
+async function init(){
+  await openDB();
+  // Seed defaults if empty
+  const imgCount=await dbGetAll('images');
+  const caroCount=await dbGetAll('carousel');
+  const docCount=await dbGetAll('documents');
+  if(caroCount.length===0){for(const c of DEFAULT_CAROUSEL) await dbPut('carousel',c)}
+  if(docCount.length===0){for(const d of DEFAULT_DOCS) await dbPut('documents',d)}
+
+  window.addEventListener('hashchange',renderPage);
+  window.addEventListener('scroll',()=>{
+    document.getElementById('backTop').classList.toggle('show',window.scrollY>500);
   });
+  renderPage();
+  initAOS();
+}
+function initAOS(){
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+  },{threshold:0.12,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.aos').forEach(el=>obs.observe(el));
 }
 
-// Parse hash
-function parseHash(){
-  const h = window.location.hash.replace('#','') || 'home';
-  const parts = h.split('/');
-  return { section:parts[0], sub:parts[1]||null, param:parts[2]||null };
-}
+// ============================================
+// ROUTER
+// ============================================
+const app=document.getElementById('app');
+function navigate(path){window.location.hash=path.startsWith('#')?path:'#'+path;renderPage();window.scrollTo({top:0,behavior:'smooth'});document.getElementById('navLinks').classList.remove('open')}
+function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
+function parseHash(){const h=window.location.hash.replace('#','')||'home';const p=h.split('/');return{section:p[0],sub:p[1]||null,param:p[2]||null}}
+function setActiveNav(s){document.querySelectorAll('[data-nav]').forEach(a=>a.classList.toggle('active',a.dataset.nav===s))}
 
-// ==================== RENDER ENGINE ====================
-function renderPage(){
-  const {section,sub,param} = parseHash();
+async function renderPage(){
+  const{section,sub,param}=parseHash();
   setActiveNav(section);
-
+  let html;
   switch(section){
-    case 'home': app.innerHTML = renderHome(); break;
-    case 'about': app.innerHTML = renderAbout(sub); break;
-    case 'news': app.innerHTML = renderNews(sub,param); break;
-    case 'service': app.innerHTML = renderService(sub); break;
-    case 'culture': app.innerHTML = renderCulture(); break;
-    case 'contact': app.innerHTML = renderContact(); break;
-    default: app.innerHTML = renderHome();
+    case'home':html=await renderHome();break;
+    case'about':html=await renderAbout(sub);break;
+    case'news':html=await renderNews(sub,param);break;
+    case'service':html=await renderService(sub);break;
+    case'culture':html=await renderCulture();break;
+    case'contact':html=await renderContact();break;
+    case'admin':html=await renderAdmin(sub);break;
+    default:html=await renderHome();
   }
-
-  // Re-bind any interactive elements
-  setTimeout(bindInteractions, 50);
+  app.innerHTML=html;
+  setTimeout(()=>{initAOS();bindUIEvents()},60);
 }
 
-// ==================== HOME PAGE ====================
-function renderHome(){
-  return `
-    <section class="home-hero">
-      <div class="hero-particles" id="particles"></div>
-      <div class="container">
-        <div class="hero-text">
-          <h1><span class="hl">******</span>有限公司</h1>
-          <p>中国AAAA级液体化工物流企业<br>专业从事散装液体化工产品的码头接卸、保税仓储和分拨转运服务</p>
-          <div class="hero-btns">
-            <a href="#about" class="btn btn-primary" onclick="navigate('about')">了解我们 →</a>
-            <a href="#service" class="btn btn-outline" onclick="navigate('service')">业务指南</a>
-            <a href="#contact" class="btn btn-outline" onclick="navigate('contact')">联系我们</a>
-          </div>
-        </div>
-        <div class="hero-stats">
-          <div class="hero-stat"><div class="n">500<span style="font-size:.5em">+</span>米</div><div class="l">长江岸线</div></div>
-          <div class="hero-stat"><div class="n">110<span style="font-size:.5em">万</span>m³</div><div class="l">储罐容积</div></div>
-          <div class="hero-stat"><div class="n">450<span style="font-size:.5em">万</span>吨</div><div class="l">年吞吐量</div></div>
-          <div class="hero-stat"><div class="n">20<span style="font-size:.5em">+</span>年</div><div class="l">行业经验</div></div>
-        </div>
-      </div>
-    </section>
+// ============================================
+// HOME PAGE
+// ============================================
+async function renderHome(){
+  const carousel=await dbGetAll('carousel');
+  const slides=carousel.length?carousel:DEFAULT_CAROUSEL;
+  const docs=await dbGetAll('documents');
+  const recentDocs=(docs.length?docs:DEFAULT_DOCS).slice(0,4);
+  const images=await dbGetAll('images');
 
-    <!-- ABOUT PREVIEW -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header"><div class="label">About Us</div><h2>关于******</h2><p>致力于成为长江流域领先的液体化工物流综合服务商</p></div>
-        <div class="card-grid cols-3">
-          <div class="card"><div class="icon blue">⚓</div><h4>码头装卸</h4><p>拥有30,000吨级和50,000吨级两个液体散化专用码头，码头年吞吐能力可达450万吨。</p></div>
-          <div class="card"><div class="icon gold">🏗️</div><h4>仓储服务</h4><p>码头后方配套储容约110万立方米，其中自营储容约93万立方米，满足各类液体化工品存储需求。</p></div>
-          <div class="card"><div class="icon green">🚛</div><h4>物流配送</h4><p>利用码头和储罐资源为化工园区内企业提供管道物流配送服务，实现高效、安全的点对点输送。</p></div>
-        </div>
-        <div style="text-align:center;margin-top:24px">
-          <a href="#about" class="btn btn-primary" onclick="navigate('about')">了解更多 →</a>
-        </div>
-      </div>
-    </section>
+  return`
+<section class="home-hero">
+  <div class="particles" id="particles"></div>
+  <div class="container">
+    <div class="hero-text">
+      <h1><span class="hl">******</span>有限公司</h1>
+      <p>中国AAAA级液体化工物流企业 · 专业从事散装液体化工产品的码头接卸、保税仓储和分拨转运服务</p>
+      <div class="hero-btns"><a href="#about" class="btn btn-primary" onclick="navigate('about')">了解我们 →</a><a href="#service" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="navigate('service')">业务指南</a><a href="#contact" class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.4)" onclick="navigate('contact')">联系我们</a></div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-card"><div class="n">500<span style="font-size:.5em">+</span>米</div><div class="l">长江岸线</div></div>
+      <div class="stat-card"><div class="n">110<span style="font-size:.5em">万</span>m³</div><div class="l">储罐容积</div></div>
+      <div class="stat-card"><div class="n">450<span style="font-size:.5em">万</span>吨</div><div class="l">年吞吐量</div></div>
+      <div class="stat-card"><div class="n">20<span style="font-size:.5em">+</span>年</div><div class="l">行业经验</div></div>
+    </div>
+  </div>
+</section>
 
-    <!-- NEWS PREVIEW -->
-    <section class="section" style="background:var(--gray-50)">
-      <div class="container">
-        <div class="section-header"><div class="label">News</div><h2>新闻动态</h2><p>关注公司最新资讯与行业动态</p></div>
-        ${renderNewsList('company',1,4)}
-        <div style="text-align:center;margin-top:20px">
-          <a href="#news" class="btn btn-outline" style="color:var(--primary);border-color:var(--primary)" onclick="navigate('news')">查看全部新闻 →</a>
-        </div>
-      </div>
-    </section>
+<!-- IMAGE CAROUSEL -->
+${slides.length?`
+<section class="carousel-section">
+  <div class="container">
+    <div class="section-header"><div class="label">Gallery</div><h2>企业风采</h2><p>展示码头设施、仓储基地与运营实景（演示图片）</p></div>
+    <div class="carousel-wrap" id="homeCarousel">
+      <div class="carousel-track" id="carouselTrack">${slides.map((s,i)=>`
+        <div class="carousel-slide" style="background:${s.bg};min-width:100%">
+          <span style="font-size:5rem;opacity:.6">${s.icon||'📷'}</span>
+          <div class="caption">${s.caption||s.title}</div>
+        </div>`).join('')}</div>
+      <button class="carousel-btn prev" onclick="moveCarousel(-1)">‹</button>
+      <button class="carousel-btn next" onclick="moveCarousel(1)">›</button>
+    </div>
+    <div class="carousel-dots">${slides.map((_,i)=>`<button class="${i===0?'active':''}" onclick="goToSlide(${i})"></button>`).join('')}</div>
+  </div>
+</section>`:''}
 
-    <!-- PARTNERS -->
-    <section class="section">
-      <div class="container">
-        <div class="section-header"><div class="label">Partners</div><h2>合作伙伴</h2><p>携手行业标杆，共创物流价值（均为演示占位）</p></div>
-        <div class="card-grid cols-4" style="text-align:center">
-          <div class="card"><div style="font-size:2rem;margin-bottom:8px">🏭</div><h4 style="font-size:.9rem">****** 国际公司</h4></div>
-          <div class="card"><div style="font-size:2rem;margin-bottom:8px">⛽</div><h4 style="font-size:.9rem">****** 中国有限公司</h4></div>
-          <div class="card"><div style="font-size:2rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">****** 投资集团</h4></div>
-          <div class="card"><div style="font-size:2rem;margin-bottom:8px">🚢</div><h4 style="font-size:.9rem">****** 供应链公司</h4></div>
-        </div>
-      </div>
-    </section>
-  `;
+<!-- ABOUT PREVIEW -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><div class="label">About Us</div><h2>关于******</h2><p>致力于成为长江流域领先的液体化工物流综合服务商</p></div>
+    <div class="card-grid cols-3">
+      <div class="card aos fade-up"><div class="icon icon-blue">⚓</div><h4>码头装卸</h4><p>拥有30,000吨级和50,000吨级两个液体散化专用码头，年吞吐能力可达450万吨。</p></div>
+      <div class="card aos fade-up delay-1"><div class="icon icon-gold">🏗️</div><h4>仓储服务</h4><p>码头后方配套储容约110万立方米，其中自营储容约93万立方米。</p></div>
+      <div class="card aos fade-up delay-2"><div class="icon icon-green">🚛</div><h4>物流配送</h4><p>为化工园区内企业提供管道物流配送服务，实现高效安全的点对点输送。</p></div>
+    </div>
+    <div style="text-align:center;margin-top:24px"><a href="#about" class="btn btn-primary" onclick="navigate('about')">了解更多 →</a></div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="section" style="background:var(--g50)">
+  <div class="container">
+    <div class="section-header"><div class="label">News</div><h2>新闻动态</h2><p>关注公司最新资讯与行业动态</p></div>
+    ${renderNewsList('company',1,4)}
+    <div style="text-align:center;margin-top:20px"><a href="#news" class="btn btn-outline" style="color:var(--p);border-color:var(--p)" onclick="navigate('news')">查看全部新闻 →</a></div>
+  </div>
+</section>
+
+<!-- DOWNLOADS PREVIEW -->
+<section class="section">
+  <div class="container">
+    <div class="section-header"><div class="label">Downloads</div><h2>常用文档下载</h2><p>客户常用表单与文档模板</p></div>
+    ${recentDocs.map(d=>`
+      <div class="dl-item" onclick="downloadDoc(${d.id})">
+        <span class="icon">📄</span><div class="info"><h4>${d.name}</h4><p>${d.desc}</p></div><span class="meta">${d.ext} / ${d.size}</span>
+        <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)">下载</button>
+      </div>`).join('')}
+    <div style="text-align:center;margin-top:16px"><a href="#service/download" class="btn btn-outline" style="color:var(--p);border-color:var(--p)" onclick="navigate('service/download')">更多文档 →</a></div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="section" style="background:var(--g50)">
+  <div class="container">
+    <div class="section-header"><div class="label">Partners</div><h2>合作伙伴（演示）</h2></div>
+    <div class="card-grid cols-4" style="text-align:center">${['****** 国际公司','****** 中国有限公司','****** 投资集团','****** 供应链公司'].map(n=>`<div class="card aos fade-scale"><div style="font-size:2.5rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">${n}</h4></div>`).join('')}</div>
+  </div>
+</section>`;
 }
 
-// ==================== ABOUT PAGES ====================
+// ============================================
+// ABOUT PAGES
+// ============================================
 function renderAbout(sub){
-  const sidebar = `
-    <div class="sidebar">
-      <h3>关于我们</h3>
-      <a href="#about/profile" class="${!sub||sub==='profile'?'active':''}" onclick="navigate('about/profile')">公司概况</a>
-      <a href="#about/history" class="${sub==='history'?'active':''}" onclick="navigate('about/history')">发展历程</a>
-      <a href="#about/advantages" class="${sub==='advantages'?'active':''}" onclick="navigate('about/advantages')">优势介绍</a>
-      <a href="#about/cert" class="${sub==='cert'?'active':''}" onclick="navigate('about/cert')">体系认证</a>
-      <a href="#about/honors" class="${sub==='honors'?'active':''}" onclick="navigate('about/honors')">公司荣誉</a>
-    </div>`;
-
+  const sidebar=`<div class="sidebar"><h3>关于我们</h3>${['profile|公司概况','history|发展历程','advantages|优势介绍','cert|体系认证','honors|公司荣誉'].map(x=>{const[k,t]=x.split('|');return`<a href="#about/${k}" class="${(!sub||sub===k)?'active':''}" onclick="navigate('about/${k}')">${t}</a>`}).join('')}</div>`;
   let content;
   switch(sub){
-    case 'history': content = renderHistory(); break;
-    case 'advantages': content = renderAdvantages(); break;
-    case 'cert': content = renderCert(); break;
-    case 'honors': content = renderHonors(); break;
-    default: content = renderProfile();
+    case'history':content=renderHistory();break;
+    case'advantages':content=renderAdvantages();break;
+    case'cert':content=renderCert();break;
+    case'honors':content=renderHonors();break;
+    default:content=renderProfile();
   }
-
-  return `
-    <div class="page-hero"><h2>关于我们</h2><div class="sub">About Us</div></div>
-    <div class="breadcrumb"><div class="container">首页 &gt; 关于我们 &gt; <span>${getAboutTitle(sub)}</span></div></div>
-    <div class="container"><div class="main-layout">${sidebar}<div class="content-area">${content}</div></div></div>`;
+  const titles={profile:'公司概况',history:'发展历程',advantages:'优势介绍',cert:'体系认证',honors:'公司荣誉'};
+  return`<div class="page-hero"><h2>关于我们</h2><div class="sub">About Us</div></div><div class="breadcrumb"><div class="container">首页 &gt; 关于我们 &gt; <span>${titles[sub]||'公司概况'}</span></div></div><div class="container"><div class="main-layout">${sidebar}<div class="content-area">${content}</div></div></div>`;
 }
-
-function getAboutTitle(sub){
-  const m={profile:'公司概况',history:'发展历程',advantages:'优势介绍',cert:'体系认证',honors:'公司荣誉'};
-  return m[sub]||'公司概况';
-}
-
 function renderProfile(){
-  return `
-    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">公司概况</h3>
-    <p style="margin-bottom:14px">******有限公司系******集团股份有限公司控股子公司。公司于2001年成立，注册资金11.8亿元人民币。下辖******扬州石化仓储有限公司和******华泰化工仓储有限公司两个子公司。</p>
-    <p style="margin-bottom:14px">现拥有500+米长江岸线，建有30,000吨级、50,000吨级两个液体散化专用码头，另有500吨级内河十字港疏运码头2座。码头年吞吐量可达450万吨。码头后方配套储容约110万立方米，其中自营储容约93万立方米。</p>
-    <p style="margin-bottom:14px">公司主要从事乙二醇、二甘醇、邻二甲苯、二辛酯、甲醇等散装液体化工产品的专业物流服务，包括码头接卸、保税仓储和分拨转运服务。主要合作伙伴有MEGLOBAL、******国际、******中国有限公司等。同时利用码头和储罐资源为******保税物流园区和******化学工业园区内仓储、生产企业提供管道物流配送服务。</p>
-    <div class="card-grid cols-2" style="margin-top:20px">
-      <div class="card"><h4 style="color:var(--primary)">注册资本</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">11.8亿<span style="font-size:.6em"> 元</span></p></div>
-      <div class="card"><h4 style="color:var(--primary)">成立时间</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">2001年<span style="font-size:.6em"> 4月</span></p></div>
-      <div class="card"><h4 style="color:var(--primary)">员工人数</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">500+<span style="font-size:.6em"> 人</span></p></div>
-      <div class="card"><h4 style="color:var(--primary)">子公司</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">2<span style="font-size:.6em"> 家</span></p></div>
-    </div>`;
+  return`<h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--p)">公司概况</h3>
+<p style="margin-bottom:14px">******有限公司系******集团股份有限公司控股子公司。公司于2001年成立，注册资金11.8亿元人民币。下辖******扬州石化仓储有限公司和******华泰化工仓储有限公司两个子公司。</p>
+<p style="margin-bottom:14px">现拥有500+米长江岸线，建有30,000吨级、50,000吨级两个液体散化专用码头，另有500吨级内河十字港疏运码头2座。码头年吞吐量可达450万吨。码头后方配套储容约110万立方米，其中自营储容约93万立方米。</p>
+<p>公司主要从事乙二醇、二甘醇、邻二甲苯、二辛酯、甲醇等散装液体化工产品的专业物流服务。主要合作伙伴有MEGLOBAL、******国际、******中国有限公司等。</p>
+<div class="card-grid cols-2" style="margin-top:20px">${[{k:'注册资本',v:'11.8亿',u:'元'},{k:'成立时间',v:'2001年',u:'4月'},{k:'员工人数',v:'500+',u:'人'},{k:'子公司',v:'2',u:'家'}].map(x=>`<div class="card aos fade-up"><h4 style="color:var(--p)">${x.k}</h4><p style="font-size:1.4rem;font-weight:800;color:var(--a)">${x.v}<span style="font-size:.6em"> ${x.u}</span></p></div>`).join('')}</div>`;
 }
-
 function renderHistory(){
-  return `
-    <h3 style="font-size:1.4rem;margin-bottom:20px;color:var(--primary)">发展历程</h3>
-    <div class="timeline">
-      <div class="tl-item"><div class="year">2001年</div><div class="body"><h4>公司成立</h4><p>******有限公司正式注册成立，进军液体化工物流领域。</p></div></div>
-      <div class="tl-item"><div class="year">2006年</div><div class="body"><h4>一期码头投产</h4><p>首个万吨级液体化工泊位建成投用，开启码头接卸业务。</p></div></div>
-      <div class="tl-item"><div class="year">2010年</div><div class="body"><h4>储罐扩容</h4><p>储罐总容积突破50万立方米，成为区域重要液体化工仓储基地。</p></div></div>
-      <div class="tl-item"><div class="year">2015年</div><div class="body"><h4>子公司成立</h4><p>设立扬州子公司，业务版图跨江拓展。</p></div></div>
-      <div class="tl-item"><div class="year">2018年</div><div class="body"><h4>AAAA级认证</h4><p>荣获中国AAAA级液体化工物流企业称号。</p></div></div>
-      <div class="tl-item"><div class="year">2021年</div><div class="body"><h4>智慧物流升级</h4><p>全面启动数字化转型，智能调度与仓储管理系统上线。</p></div></div>
-      <div class="tl-item"><div class="year">2024年</div><div class="body"><h4>绿色港口认证</h4><p>获评省级绿色港口，践行安全、环保、高效的可持续发展道路。</p></div></div>
-    </div>`;
+  const events=['2001年|公司成立|******有限公司正式注册成立，进军液体化工物流领域。','2006年|一期码头投产|首个万吨级液体化工泊位建成投用。','2010年|储罐扩容|储罐总容积突破50万立方米。','2015年|子公司成立|设立扬州子公司，业务跨江拓展。','2018年|AAAA级认证|荣获中国AAAA级液体化工物流企业称号。','2021年|智慧物流升级|全面启动数字化转型，智能调度系统上线。','2024年|绿色港口认证|获评省级绿色港口，践行安全环保可持续发展。'];
+  return`<h3 style="font-size:1.4rem;margin-bottom:20px;color:var(--p)">发展历程</h3><div class="timeline">${events.map((e,i)=>{const[y,t,d]=e.split('|');return`<div class="tl-item aos fade-left delay-${Math.min(i,3)}"><div class="year">${y}</div><div class="body"><h4>${t}</h4><p>${d}</p></div></div>`}).join('')}</div>`;
 }
-
 function renderAdvantages(){
-  return `
-    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">优势介绍</h3>
-    <div class="card-grid cols-2">
-      <div class="card"><div class="icon blue">📍</div><h4>黄金区位</h4><p>位于长江经济带核心节点，紧邻******保税区，水陆交通网络发达，辐射长三角经济圈。</p></div>
-      <div class="card"><div class="icon gold">⚓</div><h4>深水岸线</h4><p>拥有500+米长江深水岸线，可同时停靠多艘万吨级船舶，码头装卸效率行业领先。</p></div>
-      <div class="card"><div class="icon green">🛡️</div><h4>安全保障</h4><p>严格执行国际安全管理标准，配备完善的消防、防污和应急响应系统，确保液体化工品存储安全。</p></div>
-      <div class="card"><div class="icon purple">💻</div><h4>智慧运营</h4><p>引入智能管理平台，实现作业调度、仓储管理、客户服务全面数字化，提升运营效率。</p></div>
-    </div>`;
+  return`<h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--p)">优势介绍</h3><div class="card-grid cols-2">${[{i:'📍',c:'icon-blue',t:'黄金区位',d:'位于长江经济带核心节点，紧邻******保税区，辐射长三角经济圈。'},{i:'⚓',c:'icon-gold',t:'深水岸线',d:'拥有500+米长江深水岸线，可同时停靠多艘万吨级船舶。'},{i:'🛡️',c:'icon-green',t:'安全保障',d:'严格执行国际安全管理标准，配备完善的消防、防污和应急响应系统。'},{i:'💻',c:'icon-purple',t:'智慧运营',d:'引入智能管理平台，实现作业调度、仓储管理、客户服务全面数字化。'}].map((x,j)=>`<div class="card aos fade-up delay-${j}"><div class="icon ${x.c}">${x.i}</div><h4>${x.t}</h4><p>${x.d}</p></div>`).join('')}</div>`;
 }
-
 function renderCert(){
-  return `
-    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">体系认证</h3>
-    <table class="data-table">
-      <thead><tr><th>认证名称</th><th>颁发机构</th><th>有效期</th><th>状态</th></tr></thead>
-      <tbody>
-        <tr><td>ISO 9001:2015 质量管理体系</td><td>******认证中心</td><td>2024-2027</td><td>✅ 有效</td></tr>
-        <tr><td>ISO 14001:2015 环境管理体系</td><td>******认证中心</td><td>2024-2027</td><td>✅ 有效</td></tr>
-        <tr><td>ISO 45001:2018 职业健康安全</td><td>******认证中心</td><td>2024-2027</td><td>✅ 有效</td></tr>
-        <tr><td>安全生产标准化二级</td><td>******应急管理局</td><td>2024-2027</td><td>✅ 有效</td></tr>
-        <tr><td>海关AEO高级认证</td><td>******海关</td><td>2024-2027</td><td>✅ 有效</td></tr>
-      </tbody>
-    </table>
-    <p style="margin-top:16px;color:var(--gray-600);font-size:.85rem">* 以上认证信息均为演示用途，不涉及真实认证机构。</p>`;
+  return`<h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--p)">体系认证</h3><table class="data-table"><thead><tr><th>认证名称</th><th>颁发机构</th><th>有效期</th><th>状态</th></tr></thead><tbody>${['ISO 9001:2015 质量管理体系|******认证中心|2024-2027','ISO 14001:2015 环境管理体系|******认证中心|2024-2027','ISO 45001:2018 职业健康安全|******认证中心|2024-2027','安全生产标准化二级|******应急管理局|2024-2027','海关AEO高级认证|******海关|2024-2027'].map(x=>{const[n,a,d]=x.split('|');return`<tr><td>${n}</td><td>${a}</td><td>${d}</td><td>✅ 有效（演示）</td></tr>`}).join('')}</tbody></table><p style="margin-top:12px;color:var(--g600);font-size:.85rem">* 以上认证信息均为演示，不涉及真实认证机构。</p>`;
 }
-
 function renderHonors(){
-  return `
-    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">公司荣誉</h3>
-    <div class="card-grid cols-2">
-      <div class="card"><div style="font-size:2rem;margin-bottom:8px">🏆</div><h4>中国AAAA级液体化工物流企业</h4><p>2020年获得，行业最高等级资质认证之一</p></div>
-      <div class="card"><div style="font-size:2rem;margin-bottom:8px">⭐</div><h4>省级绿色港口</h4><p>2024年获评，彰显安全环保领先水平</p></div>
-      <div class="card"><div style="font-size:2rem;margin-bottom:8px">🔒</div><h4>安全生产先进单位</h4><p>连续多年获评市级安全生产先进单位</p></div>
-      <div class="card"><div style="font-size:2rem;margin-bottom:8px">🤝</div><h4>优秀合作伙伴奖</h4><p>获多家世界500强企业颁发的优秀物流服务商奖项</p></div>
-    </div>
-    <p style="margin-top:16px;color:var(--gray-600);font-size:.85rem">* 以上荣誉均为演示内容，不涉及真实获奖记录。</p>`;
+  return`<h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--p)">公司荣誉</h3><div class="card-grid cols-2">${[{i:'🏆',t:'中国AAAA级液体化工物流企业',d:'2020年获得，行业最高等级资质认证之一'},{i:'⭐',t:'省级绿色港口',d:'2024年获评，彰显安全环保领先水平'},{i:'🔒',t:'安全生产先进单位',d:'连续多年获评市级安全生产先进单位'},{i:'🤝',t:'优秀合作伙伴奖',d:'获多家世界500强企业颁发的优秀物流服务商奖项'}].map(x=>`<div class="card aos fade-scale"><div style="font-size:2rem;margin-bottom:8px">${x.i}</div><h4>${x.t}</h4><p>${x.d}</p></div>`).join('')}</div><p style="margin-top:12px;color:var(--g600);font-size:.85rem">* 以上荣誉均为演示内容。</p>`;
 }
 
-// ==================== NEWS ====================
-function renderNews(sub,param){
-  let title, listHtml;
-  const sidebar = `
-    <div class="sidebar">
-      <h3>新闻动态</h3>
-      <a href="#news/company" class="${!sub||sub==='company'?'active':''}" onclick="navigate('news/company')">公司新闻</a>
-      <a href="#news/announce" class="${sub==='announce'?'active':''}" onclick="navigate('news/announce')">通知公告</a>
-      <a href="#news/industry" class="${sub==='industry'?'active':''}" onclick="navigate('news/industry')">行业新闻</a>
-    </div>`;
-
-  if(param){
-    // News detail
-    const article = getNewsDetail(param);
-    return `
-      <div class="page-hero"><h2>新闻详情</h2><div class="sub">News Detail</div></div>
-      <div class="breadcrumb"><div class="container">首页 &gt; 新闻动态 &gt; <span>新闻详情</span></div></div>
-      <div class="container"><div class="main-layout">${sidebar}<div class="content-area">${article}</div></div></div>`;
-  }
-
-  switch(sub){
-    case 'announce': title='通知公告'; listHtml=renderNewsList('announce',1,10); break;
-    case 'industry': title='行业新闻'; listHtml=renderNewsList('industry',1,10); break;
-    default: title='公司新闻'; listHtml=renderNewsList('company',1,10);
-  }
-
-  return `
-    <div class="page-hero"><h2>${title}</h2><div class="sub">News</div></div>
-    <div class="breadcrumb"><div class="container">首页 &gt; 新闻动态 &gt; <span>${title}</span></div></div>
-    <div class="container"><div class="main-layout">${sidebar}<div class="content-area"><h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">全部${title}</h3>${listHtml}</div></div></div>`;
-}
-
-// Mock news data
-const MOCK_NEWS = {
-  company: [
-    {id:1,date:'2025-06-20',title:'正式投用！******9区油脂库迎来首船棕榈油',summary:'近日，******有限公司9区油脂库正式投入使用，迎来首船进口棕榈油靠泊卸货，标志着公司油脂化工品仓储业务迈上新台阶。'},
-    {id:2,date:'2025-05-15',title:'聚力奏响进行曲 思变笃行跃新峰——2025年度工作推进会召开',summary:'5月15日，公司召开2025年度工作推进会，总结上半年工作成效，部署下半年重点任务，号召全体员工思变笃行、再创佳绩。'},
-    {id:3,date:'2025-04-10',title:'三十载弄潮扬子 续写合作共赢新篇章',summary:'公司与某国际化工巨头合作三十周年庆典隆重举行，双方签署新一轮战略合作协议，携手开启合作共赢新篇章。'},
-    {id:4,date:'2025-03-22',title:'获评省级三星级绿色港口荣誉称号',summary:'经过严格评审，公司凭借在环保管理和绿色运营方面的突出表现，成功获评省级三星级绿色港口荣誉称号。'},
-    {id:5,date:'2025-02-08',title:'着力数字变革 引领价值创造——智慧物流平台升级',summary:'公司投资升级智慧物流管理平台，实现货物全流程可视化追踪，客户可通过手机端实时查询货物状态。'},
-    {id:6,date:'2025-01-01',title:'颂党恩·跟党走·唱响新时代——新年文艺汇演圆满举行',summary:'公司举办2025新年文艺汇演，全体员工欢聚一堂，以歌声颂扬时代，以舞蹈展望未来。'},
-  ],
-  announce: [
-    {id:7,date:'2025-06-01',title:'关于2025年端午节放假及作业安排的通知',summary:'根据国家法定节假日安排，端午节期间码头作业正常进行，各岗位实行轮班制，确保客户货物及时周转。'},
-    {id:8,date:'2025-04-20',title:'******码头安全设施年度检验公告',summary:'为保证码头安全运营，公司将于5月对码头安全设施进行年度检验，检验期间部分泊位暂停作业，请客户提前知悉。'},
-    {id:9,date:'2025-03-01',title:'关于启用新版电子提货单系统的公告',summary:'为进一步提升服务效率，公司将于3月15日起全面启用新版电子提货单系统，原纸质提货单将逐步停用。'},
-  ],
-  industry: [
-    {id:10,date:'2025-06-10',title:'2025年全球液体化工品物流市场展望',summary:'全球液体化工品贸易稳步增长，中国作为全球最大化工品消费市场，液体化工物流需求持续扩大，行业前景广阔。'},
-    {id:11,date:'2025-04-25',title:'长江经济带化工物流发展新机遇',summary:'随着长江经济带发展战略深入推进，沿线化工园区集聚效应凸显，液体化工物流需求迎来新一轮增长机遇。'},
-    {id:12,date:'2025-02-15',title:'数字化转型助力液体化工仓储安全升级',summary:'物联网、大数据等新技术在液体化工仓储领域的应用不断深化，智慧仓储正成为行业提质增效的重要抓手。'},
-  ]
+// ============================================
+// NEWS
+// ============================================
+const DEFAULT_NEWS={
+  company:[{id:1,date:'2025-06-20',title:'正式投用！******9区油脂库迎来首船棕榈油',summary:'近日，******有限公司9区油脂库正式投入使用，迎来首船进口棕榈油靠泊卸货。'},{id:2,date:'2025-05-15',title:'聚力奏响进行曲 思变笃行跃新峰',summary:'5月15日，公司召开2025年度工作推进会，总结上半年工作成效，部署下半年重点任务。'},{id:3,date:'2025-04-10',title:'三十载弄潮扬子 续写合作共赢新篇章',summary:'公司与某国际化工巨头合作三十周年庆典隆重举行。'},{id:4,date:'2025-03-22',title:'获评省级三星级绿色港口荣誉称号',summary:'公司凭借在环保管理和绿色运营方面的突出表现，成功获评省级绿色港口。'},{id:5,date:'2025-02-08',title:'着力数字变革 引领价值创造',summary:'公司投资升级智慧物流管理平台，实现货物全流程可视化追踪。'},{id:6,date:'2025-01-01',title:'颂党恩·跟党走·唱响新时代',summary:'公司举办2025新年文艺汇演，全体员工欢聚一堂。'}],
+  announce:[{id:7,date:'2025-06-01',title:'关于2025年端午节放假及作业安排的通知',summary:'端午节期间码头作业正常进行，各岗位实行轮班制。'},{id:8,date:'2025-04-20',title:'码头安全设施年度检验公告',summary:'公司将于5月对码头安全设施进行年度检验。'},{id:9,date:'2025-03-01',title:'关于启用新版电子提货单系统的公告',summary:'公司将于3月15日起全面启用新版电子提货单系统。'}],
+  industry:[{id:10,date:'2025-06-10',title:'2025年全球液体化工品物流市场展望',summary:'全球液体化工品贸易稳步增长，中国作为全球最大化工品消费市场。'},{id:11,date:'2025-04-25',title:'长江经济带化工物流发展新机遇',summary:'随着长江经济带发展战略深入推进，液体化工物流需求迎来新机遇。'},{id:12,date:'2025-02-15',title:'数字化转型助力液体化工仓储安全升级',summary:'物联网、大数据等新技术在液体化工仓储领域应用不断深化。'}]
 };
+function getNewsData(){return lsGet('cms_news',DEFAULT_NEWS)}
+function saveNewsData(d){lsSet('cms_news',d)}
 
+function renderNews(sub,param){
+  const sidebar=`<div class="sidebar"><h3>新闻动态</h3>${['company|公司新闻','announce|通知公告','industry|行业新闻'].map(x=>{const[k,t]=x.split('|');return`<a href="#news/${k}" class="${(!sub||sub===k)?'active':''}" onclick="navigate('news/${k}')">${t}</a>`}).join('')}</div>`;
+  if(param) return `<div class="page-hero"><h2>新闻详情</h2><div class="sub">News Detail</div></div><div class="breadcrumb"><div class="container">首页 &gt; 新闻动态 &gt; <span>新闻详情</span></div></div><div class="container"><div class="main-layout">${sidebar}<div class="content-area">${getNewsDetail(param)}</div></div></div>`;
+  const titles={company:'公司新闻',announce:'通知公告',industry:'行业新闻'};
+  const cat=sub||'company';
+  return`<div class="page-hero"><h2>${titles[cat]}</h2><div class="sub">News</div></div><div class="breadcrumb"><div class="container">首页 &gt; 新闻动态 &gt; <span>${titles[cat]}</span></div></div><div class="container"><div class="main-layout">${sidebar}<div class="content-area"><h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--p)">全部${titles[cat]}</h3>${renderNewsList(cat,1,10)}</div></div></div>`;
+}
 function renderNewsList(cat,page,limit){
-  const items = MOCK_NEWS[cat] || [];
-  const totalPages = Math.ceil(items.length/limit);
-  const start = (page-1)*limit;
-  const pageItems = items.slice(start, start+limit);
-
-  let html = pageItems.map(n=>`
-    <div class="news-list-item" onclick="navigate('news/detail/${cat}_${n.id}')" style="cursor:pointer">
-      <div class="date">${n.date.substring(5)}</div>
-      <div class="info"><h4>${n.title}</h4><p>${n.summary}</p></div>
-    </div>`).join('');
-
-  if(totalPages>1){
-    html += '<div class="pagination">';
-    for(let i=1;i<=totalPages;i++){
-      html += `<a href="#" class="${i===page?'active':''}" onclick="event.preventDefault();refreshNewsList('${cat}',${i})">${i}</a>`;
-    }
-    html += '</div>';
-  }
+  const data=getNewsData();const items=data[cat]||[];const total=Math.ceil(items.length/limit);const start=(page-1)*limit;const pageItems=items.slice(start,start+limit);
+  let html=pageItems.map(n=>`<div class="news-item" onclick="navigate('news/detail/${cat}_${n.id}')"><div class="date">${n.date.substring(5)}</div><div class="info"><h4>${n.title}</h4><p>${n.summary}</p></div></div>`).join('');
+  if(total>1){html+='<div class="pagination">';for(let i=1;i<=total;i++) html+=`<a href="#" class="${i===page?'active':''}" onclick="event.preventDefault();refreshNewsList(\`${cat}\`,${i})">${i}</a>`;html+='</div>'}
   return html;
 }
+function refreshNewsList(cat,page){const el=document.querySelector('.content-area');if(el){const t={company:'公司新闻',announce:'通知公告',industry:'行业新闻'};el.innerHTML=`<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--p)">全部${t[cat]}</h3>${renderNewsList(cat,page,10)}`}}
+function getNewsDetail(param){const[cat,id]=param.split('_');const items=getNewsData()[cat]||[];const n=items.find(x=>x.id===parseInt(id));if(!n) return'<p>新闻不存在</p>';return`<h3 style="font-size:1.4rem;margin-bottom:8px;color:var(--p)">${n.title}</h3><p style="color:var(--g600);font-size:.85rem;margin-bottom:20px">发布时间：${n.date} | 来源：本站 | 浏览：${Math.floor(Math.random()*500)+100}次</p><div style="border-top:1px solid var(--g200);padding-top:20px;line-height:2"><p>${n.summary}</p><p style="margin-top:16px">（此处为演示内容。实际网站将展示完整新闻正文，可能包含图片、数据图表等多媒体元素。）</p></div><div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--g100)"><a href="#news" onclick="navigate('news')" style="color:var(--p)">← 返回新闻列表</a></div>`;}
 
-function refreshNewsList(cat,page){
-  const contentArea = document.querySelector('.content-area');
-  if(contentArea){
-    contentArea.innerHTML = `<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">全部${cat==='company'?'公司新闻':cat==='announce'?'通知公告':'行业新闻'}</h3>${renderNewsList(cat,page,10)}`;
-  }
-}
-
-function getNewsDetail(param){
-  const [cat,id] = param.split('_');
-  const items = MOCK_NEWS[cat] || [];
-  const n = items.find(x=>x.id===parseInt(id));
-  if(!n) return '<p>新闻不存在</p>';
-  return `
-    <h3 style="font-size:1.4rem;margin-bottom:8px;color:var(--primary)">${n.title}</h3>
-    <p style="color:var(--gray-600);font-size:.85rem;margin-bottom:20px">发布时间：${n.date} | 来源：本站 | 浏览：${Math.floor(Math.random()*500)+100}次</p>
-    <div style="border-top:1px solid var(--gray-200);padding-top:20px;line-height:2">
-      <p>${n.summary}</p>
-      <p style="margin-top:16px">（此处为演示内容。实际网站中，此页面将展示完整的新闻正文内容，可能包含多段文字、图片、数据图表等多媒体元素。本演示网站仅展示页面结构和布局。）</p>
-      <p style="margin-top:16px;color:var(--gray-600);font-size:.85rem">——（正文完）——</p>
-    </div>
-    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--gray-100)">
-      <a href="#news" onclick="navigate('news')" style="color:var(--primary)">← 返回新闻列表</a>
-    </div>`;
-}
-
-// ==================== SERVICE ====================
-function renderService(sub){
-  const sidebar = `
-    <div class="sidebar">
-      <h3>客服中心</h3>
-      <a href="#service/guide" class="${!sub||sub==='guide'?'active':''}" onclick="navigate('service/guide')">业务指南</a>
-      <a href="#service/download" class="${sub==='download'?'active':''}" onclick="navigate('service/download')">文档下载</a>
-      <a href="#service/faq" class="${sub==='faq'?'active':''}" onclick="navigate('service/faq')">常见问题</a>
-    </div>`;
-
+// ============================================
+// SERVICE
+// ============================================
+async function renderService(sub){
+  const sidebar=`<div class="sidebar"><h3>客服中心</h3>${['guide|业务指南','download|文档下载','faq|常见问题'].map(x=>{const[k,t]=x.split('|');return`<a href="#service/${k}" class="${(!sub||sub===k)?'active':''}" onclick="navigate('service/${k}')">${t}</a>`}).join('')}</div>`;
   let content;
   switch(sub){
-    case 'download': content = renderDownload(); break;
-    case 'faq': content = renderFaq(); break;
-    default: content = renderGuide();
+    case'download':content=await renderDownload();break;
+    case'faq':content=renderFaq();break;
+    default:content=renderGuide();
   }
+  const titles={guide:'业务指南',download:'文档下载',faq:'常见问题'};
+  return`<div class="page-hero"><h2>客服中心</h2><div class="sub">Service Center</div></div><div class="breadcrumb"><div class="container">首页 &gt; 客服中心 &gt; <span>${titles[sub||'guide']}</span></div></div><div class="container"><div class="main-layout">${sidebar}<div class="content-area">${content}</div></div></div>`;
+}
+function renderGuide(){return`<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--p)">业务指南</h3><p style="margin-bottom:16px">液体化工品码头作业标准流程（演示）：</p><table class="data-table"><thead><tr><th>序号</th><th>业务环节</th><th>所需材料</th><th>预计时间</th></tr></thead><tbody>${['1|业务洽谈与合同签订|营业执照、经办人身份证|1-3个工作日','2|船舶到港预报|船舶信息表、货物信息表|到港前48小时','3|报关报检|合同、发票、装箱单、提单|1-2个工作日','4|码头接卸作业|装卸作业委托单|按货物量计算','5|仓储入库|入库单、货物验收单|卸货当日','6|出库提货|提货单、出库委托单|1个工作日','7|费用结算|结算凭证、发票信息|次月结算'].map(x=>{const[n,a,b,c]=x.split('|');return`<tr><td>${n}</td><td>${a}</td><td>${b}</td><td>${c}</td></tr>`}).join('')}</tbody></table><p style="margin-top:12px;color:var(--g600);font-size:.85rem">* 以上流程为演示内容。咨询电话：0512-XXXX-XXXX（演示）</p>`}
+async function renderDownload(){
+  const docs=await dbGetAll('documents');const items=docs.length?docs:DEFAULT_DOCS;
+  return`<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--p)">文档下载</h3><p style="margin-bottom:16px;color:var(--g600)">以下文档可下载（演示功能）：</p>${items.map(d=>`<div class="dl-item"><span class="icon">📄</span><div class="info"><h4>${d.name}</h4><p>${d.desc}</p></div><span class="meta">${d.ext} / ${d.size}</span><button class="btn btn-sm btn-primary" onclick="downloadDoc(${d.id})">下载</button></div>`).join('')}<p style="margin-top:12px;color:var(--g600);font-size:.85rem">* 管理员可通过后台管理面板上传/修改文档。</p>`;
+}
+async function downloadDoc(id){
+  const d=await dbGet('documents',id);
+  if(d&&d.data){const a=document.createElement('a');a.href=d.data;a.download=`${d.name}.${d.ext.toLowerCase()}`;a.click();showToast('下载已开始','success')}
+  else{showToast('该文档暂无文件数据（演示占位）','info')}
+}
+function renderFaq(){const faqs=[{q:'如何办理货物入库手续？',a:'客户需先与市场部签订仓储服务合同，凭合同、货物清单、相关单证到业务大厅办理入库手续。入库前需完成报关报检。（演示内容）'},{q:'码头作业时间如何安排？',a:'码头实行24小时作业制，节假日正常运营。船舶到港需提前48小时向调度中心预报。（演示内容）'},{q:'如何查询货物库存情况？',a:'客户可通过智慧物流平台在线查询货物库存数量、入库时间、存储位置等信息。（演示内容）'},{q:'液体化工品仓储费用如何计算？',a:'仓储费用根据货物种类、存储数量、存储时间等因素综合计算，通常按吨/天或立方米/天计费。（演示内容）'},{q:'是否提供保税仓储服务？',a:'是的，公司地处保税区，可提供保税仓储服务。客户可享受进口货物入保税库暂缓缴纳关税的优惠政策。（演示内容）'}];return`<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--p)">常见问题</h3>${faqs.map((f,i)=>`<div class="faq-item" id="faq${i}"><div class="faq-q" onclick="document.getElementById('faq${i}').classList.toggle('open')"><span>${f.q}</span><span class="arrow">▼</span></div><div class="faq-a"><p>${f.a}</p></div></div>`).join('')}`}
 
-  return `
-    <div class="page-hero"><h2>客服中心</h2><div class="sub">Service Center</div></div>
-    <div class="breadcrumb"><div class="container">首页 &gt; 客服中心 &gt; <span>${sub==='download'?'文档下载':sub==='faq'?'常见问题':'业务指南'}</span></div></div>
-    <div class="container"><div class="main-layout">${sidebar}<div class="content-area">${content}</div></div></div>`;
+// ============================================
+// CULTURE & CONTACT
+// ============================================
+function renderCulture(){return`<div class="page-hero"><h2>企业文化</h2><div class="sub">Company Culture</div></div><div class="breadcrumb"><div class="container">首页 &gt; <span>企业文化</span></div></div><div class="container" style="padding:32px 20px"><div class="culture-banner aos fade-scale"><h3>诚信 · 专业 · 创新 · 共赢</h3><p>以客户为中心，以安全为基石，致力于成为长江流域最值得信赖的液体化工物流综合服务商（演示）</p></div><div class="culture-grid">${[{ci:'🎯',t:'企业使命',d:'为客户提供安全、高效、便捷的液体化工物流解决方案。'},{ci:'🔭',t:'企业愿景',d:'成为长江流域最具竞争力的液体化工物流综合服务商。'},{ci:'💎',t:'核心价值观',d:'诚信经营、专业服务、创新驱动、合作共赢。'},{ci:'👥',t:'员工风采',d:'定期组织培训、技能竞赛、文体活动，关注员工成长。'}].map(x=>`<div class="culture-card aos fade-up"><div class="ci">${x.ci}</div><h4>${x.t}</h4><p>${x.d}</p></div>`).join('')}</div><h4 style="margin-top:28px;color:var(--p)">员工活动剪影（演示）</h4><div class="card-grid cols-3" style="margin-top:12px">${['🏃|2025年春季运动会','🎓|年度安全技能培训','🎉|2025年新春联欢会'].map(x=>{const[i,t]=x.split('|');return`<div class="card aos fade-scale" style="text-align:center;padding:32px"><div style="font-size:3rem">${i}</div><p style="margin-top:8px">${t}</p></div>`}).join('')}</div></div>`}
+function renderContact(){return`<div class="page-hero"><h2>联系我们</h2><div class="sub">Contact Us</div></div><div class="breadcrumb"><div class="container">首页 &gt; <span>联系我们</span></div></div><div class="container" style="padding:32px 20px"><h3 style="font-size:1.3rem;margin-bottom:20px;color:var(--p)">联系方式（均为演示信息）</h3><div class="contact-grid"><div>${[{i:'📍',t:'公司地址（演示）',d:'江苏省张家港市******区******路88号'},{i:'📞',t:'联系电话（演示）',d:'0512-XXXX-XXXX（总机）<br>0512-XXXX-XXXX（市场部）'},{i:'📧',t:'电子邮箱（演示）',d:'info@example.com<br>market@example.com'},{i:'📠',t:'传真（演示）',d:'0512-XXXX-XXXX'},{i:'🕐',t:'工作时间（演示）',d:'周一至周五 08:00-17:00<br>码头作业 24小时/365天'}].map(x=>`<div class="contact-card"><div class="cw">${x.i}</div><div><h4>${x.t}</h4><p>${x.d}</p></div></div>`).join('')}</div><div><h4 style="margin-bottom:12px;color:var(--p)">公司位置（演示）</h4><div class="map-placeholder">🗺️<br><span style="font-size:.9rem;margin-top:8px">地图位置示意（非真实坐标）</span></div><div style="margin-top:16px;padding:16px;background:var(--g50);border-radius:var(--r)"><h4 style="color:var(--p);margin-bottom:8px">在线留言</h4><form onsubmit="event.preventDefault();showToast('演示网站：留言功能仅为展示','info')"><div class="form-group"><input type="text" placeholder="您的姓名"></div><div class="form-group"><input type="email" placeholder="电子邮箱"></div><div class="form-group"><textarea placeholder="留言内容" rows="3"></textarea></div><button class="btn btn-primary" style="width:100%">✉️ 发送留言（演示）</button></form></div></div></div></div>`}
+
+// ============================================
+// CAROUSEL LOGIC
+// ============================================
+let currentSlide=0,totalSlides=0;
+function bindUIEvents(){
+  const track=document.getElementById('carouselTrack');if(track){totalSlides=track.children.length;currentSlide=0;updateCarousel()}
+}
+function moveCarousel(dir){currentSlide=(currentSlide+dir+totalSlides)%totalSlides;updateCarousel()}
+function goToSlide(i){currentSlide=i;updateCarousel()}
+function updateCarousel(){
+  const track=document.getElementById('carouselTrack');if(!track)return;
+  track.style.transform=`translateX(-${currentSlide*100}%)`;
+  document.querySelectorAll('.carousel-dots button').forEach((b,i)=>b.classList.toggle('active',i===currentSlide));
 }
 
-function renderGuide(){
-  return `
-    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">业务指南</h3>
-    <p style="margin-bottom:16px">以下为液体化工品码头作业标准流程（演示内容），帮助客户了解货物进出库操作步骤：</p>
-    <table class="data-table">
-      <thead><tr><th>序号</th><th>业务环节</th><th>所需材料</th><th>预计时间</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>业务洽谈与合同签订</td><td>营业执照、经办人身份证</td><td>1-3个工作日</td></tr>
-        <tr><td>2</td><td>船舶到港预报</td><td>船舶信息表、货物信息表</td><td>到港前48小时</td></tr>
-        <tr><td>3</td><td>报关报检</td><td>合同、发票、装箱单、提单</td><td>1-2个工作日</td></tr>
-        <tr><td>4</td><td>码头接卸作业</td><td>装卸作业委托单</td><td>按货物量计算</td></tr>
-        <tr><td>5</td><td>仓储入库</td><td>入库单、货物验收单</td><td>卸货当日</td></tr>
-        <tr><td>6</td><td>出库提货</td><td>提货单、出库委托单</td><td>1个工作日</td></tr>
-        <tr><td>7</td><td>费用结算</td><td>结算凭证、发票信息</td><td>次月结算</td></tr>
-      </tbody>
-    </table>
-    <p style="margin-top:12px;color:var(--gray-600);font-size:.85rem">* 以上流程为演示内容，具体操作以实际合同约定为准。咨询电话：0512-XXXX-XXXX（演示）</p>`;
-}
-
-function renderDownload(){
-  const files = [
-    {name:'客户开户申请表',desc:'新客户注册开户所需填写的申请表格',ext:'DOCX',size:'256 KB'},
-    {name:'码头作业委托单',desc:'委托码头进行装卸作业的标准格式单据',ext:'PDF',size:'128 KB'},
-    {name:'入库通知书模板',desc:'货物入库通知的标准格式文档',ext:'DOCX',size:'198 KB'},
-    {name:'提货委托书模板',desc:'授权委托他人提取货物的标准文件',ext:'PDF',size:'145 KB'},
-    {name:'业务合同范本（通用版）',desc:'液体化工品仓储物流服务合同范本',ext:'PDF',size:'512 KB'},
-    {name:'安全操作规程手册',desc:'码头及储罐区安全操作规范文档',ext:'PDF',size:'2.1 MB'},
-  ];
-  return `
-    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">文档下载</h3>
-    <p style="margin-bottom:16px;color:var(--gray-600)">以下文档为演示占位，下载链接无效：</p>
-    ${files.map(f=>`
-      <div class="download-item">
-        <div class="icon">📄</div>
-        <div class="info"><h4>${f.name}</h4><p>${f.desc}</p></div>
-        <span style="font-size:.8rem;color:var(--gray-600)">${f.ext} / ${f.size}</span>
-        <button class="btn btn-sm btn-outline" style="color:var(--primary);border-color:var(--primary)" onclick="alert('演示网站：文档下载功能仅为展示')">下载</button>
-      </div>`).join('')}
-    <p style="margin-top:12px;color:var(--gray-600);font-size:.85rem">* 以上文档均为演示内容，所有下载链接无效。</p>`;
-}
-
-function renderFaq(){
-  const faqs = [
-    {q:'如何办理货物入库手续？',a:'客户需先与公司市场部签订仓储服务合同，而后凭合同、货物清单、相关单证到业务大厅办理入库手续。入库前需完成报关报检手续，货物到达后由公司安排卸货入库。（演示内容）'},
-    {q:'码头作业时间如何安排？',a:'码头实行24小时作业制，节假日正常运营。船舶到港需提前48小时向调度中心预报，以便合理安排泊位和作业计划。（演示内容）'},
-    {q:'如何查询货物库存情况？',a:'客户可通过公司智慧物流平台在线查询货物库存数量、入库时间、存储位置等信息。新客户请联系市场部开通平台账号。（演示内容）'},
-    {q:'液体化工品的仓储费用如何计算？',a:'仓储费用根据货物种类、存储数量、存储时间等因素综合计算。一般按照吨/天或立方米/天计费。具体收费标准请咨询市场部获取最新报价。（演示内容）'},
-    {q:'是否可以提供保税仓储服务？',a:'是的，公司地处保税区，可提供保税仓储服务。客户可享受进口货物入保税库暂缓缴纳关税和增值税的优惠政策。（演示内容）'},
-  ];
-  return `
-    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">常见问题</h3>
-    ${faqs.map((f,i)=>`
-      <div class="faq-item" id="faq${i}">
-        <div class="faq-q" onclick="document.getElementById('faq${i}').classList.toggle('open')">
-          <span>${f.q}</span><span style="font-size:1.2rem">+</span>
-        </div>
-        <div class="faq-a"><p>${f.a}</p></div>
-      </div>`).join('')}`;
-}
-
-// ==================== CULTURE ====================
-function renderCulture(){
-  return `
-    <div class="page-hero"><h2>企业文化</h2><div class="sub">Company Culture</div></div>
-    <div class="breadcrumb"><div class="container">首页 &gt; <span>企业文化</span></div></div>
-    <div class="container" style="padding:32px 20px">
-      <div class="culture-banner">
-        <h3>诚信 · 专业 · 创新 · 共赢</h3>
-        <p>以客户为中心，以安全为基石，致力于成为长江流域最值得信赖的液体化工物流综合服务商（演示）</p>
-      </div>
-      <div class="culture-grid">
-        <div class="culture-card"><div class="ci">🎯</div><h4>企业使命</h4><p>为客户提供安全、高效、便捷的液体化工物流解决方案，助力化工产业供应链升级。</p></div>
-        <div class="culture-card"><div class="ci">🔭</div><h4>企业愿景</h4><p>成为长江流域最具竞争力的液体化工物流综合服务商，打造行业标杆品牌。</p></div>
-        <div class="culture-card"><div class="ci">💎</div><h4>核心价值观</h4><p>诚信经营、专业服务、创新驱动、合作共赢，以责任赢得信任，以品质铸就品牌。</p></div>
-        <div class="culture-card"><div class="ci">👥</div><h4>员工风采</h4><p>公司定期组织员工培训、技能竞赛、文体活动，关注员工成长，营造积极向上的工作氛围。</p></div>
-      </div>
-      <h4 style="margin-top:28px;color:var(--primary);font-size:1.1rem">员工活动剪影（演示）</h4>
-      <div class="card-grid cols-3" style="margin-top:12px">
-        <div class="card" style="text-align:center;padding:40px"><div style="font-size:3rem">🏃</div><p style="margin-top:8px">2025年春季运动会</p></div>
-        <div class="card" style="text-align:center;padding:40px"><div style="font-size:3rem">🎓</div><p style="margin-top:8px">年度安全技能培训</p></div>
-        <div class="card" style="text-align:center;padding:40px"><div style="font-size:3rem">🎉</div><p style="margin-top:8px">2025年新春联欢会</p></div>
-      </div>
-    </div>`;
-}
-
-// ==================== CONTACT ====================
-function renderContact(){
-  return `
-    <div class="page-hero"><h2>联系我们</h2><div class="sub">Contact Us</div></div>
-    <div class="breadcrumb"><div class="container">首页 &gt; <span>联系我们</span></div></div>
-    <div class="container" style="padding:32px 20px">
-      <h3 style="font-size:1.3rem;margin-bottom:20px;color:var(--primary)">联系方式（均为演示信息）</h3>
-      <div class="contact-grid">
-        <div>
-          <div class="contact-card"><div class="icon-w">📍</div><div><h4>公司地址（演示）</h4><p>江苏省张家港市******区******路88号</p></div></div>
-          <div class="contact-card"><div class="icon-w">📞</div><div><h4>联系电话（演示）</h4><p>0512-XXXX-XXXX（总机）<br>0512-XXXX-XXXX（市场部）<br>0512-XXXX-XXXX（调度中心）</p></div></div>
-          <div class="contact-card"><div class="icon-w">📧</div><div><h4>电子邮箱（演示）</h4><p>info@example.com<br>market@example.com</p></div></div>
-          <div class="contact-card"><div class="icon-w">📠</div><div><h4>传真（演示）</h4><p>0512-XXXX-XXXX</p></div></div>
-          <div class="contact-card"><div class="icon-w">🕐</div><div><h4>工作时间（演示）</h4><p>周一至周五 08:00-17:00<br>码头作业 24小时/365天</p></div></div>
-        </div>
-        <div>
-          <h4 style="margin-bottom:12px;color:var(--primary)">公司位置（演示）</h4>
-          <div class="map-placeholder">🗺️<br><span style="font-size:.9rem;margin-top:8px">地图位置示意（非真实坐标）</span></div>
-          <div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius)">
-            <h4 style="color:var(--primary);margin-bottom:8px">在线留言</h4>
-            <form onsubmit="event.preventDefault();alert('演示网站：留言功能仅为展示')">
-              <input type="text" placeholder="您的姓名" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--gray-200);border-radius:6px;font-family:inherit">
-              <input type="email" placeholder="电子邮箱" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--gray-200);border-radius:6px;font-family:inherit">
-              <textarea placeholder="留言内容" rows="3" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--gray-200);border-radius:6px;font-family:inherit"></textarea>
-              <button type="submit" class="btn btn-primary" style="width:100%">✉️ 发送留言（演示）</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>`;
-}
-
-// ==================== INIT ====================
-function bindInteractions(){
-  // Particle animation for home hero
-  const container = document.getElementById('particles');
-  if(container && !container.children.length){
-    for(let i=0;i<50;i++){
-      const p=document.createElement('div');
-      p.className='particle';
-      p.style.left=Math.random()*100+'%';
-      p.style.width=(Math.random()*3+1)+'px';
-      p.style.height=p.style.width;
-      p.style.animationDuration=(Math.random()*12+8)+'s';
-      p.style.animationDelay=(Math.random()*12)+'s';
-      container.appendChild(p);
-    }
+// ============================================
+// ADMIN PANEL
+// ============================================
+const ADMIN_PWD='admin888';
+function isAdmin(){return sessionStorage.getItem('admin_auth')==='1'}
+function renderAdmin(sub){
+  if(!isAdmin()){
+    return `<div class="admin-login aos fade-scale"><h2>🔐 后台管理登录</h2><p style="color:var(--g600);margin-bottom:20px">请输入管理密码（演示默认：admin888）</p><div class="form-group"><input type="password" id="adminPwd" placeholder="管理密码" onkeydown="if(event.key==='Enter')adminLogin()"></div><button class="btn btn-primary" style="width:100%" onclick="adminLogin()">登 录</button></div>`;
   }
+  return renderDashboard(sub);
+}
+function adminLogin(){
+  const pwd=document.getElementById('adminPwd')?.value;
+  if(pwd===ADMIN_PWD||pwd==='admin'){sessionStorage.setItem('admin_auth','1');renderPage();showToast('登录成功！','success')}
+  else{showToast('密码错误，请重试（演示默认：admin888）','error')}
 }
 
-// Initial render
-window.addEventListener('hashchange',renderPage);
-renderPage();
+async function renderDashboard(sub){
+  const tab=sub||'carousel';
+  const tabs=[{k:'carousel',t:'🖼️ 首页轮播'},{k:'documents',t:'📄 文档管理'},{k:'images',t:'🖼️ 图片管理'},{k:'videos',t:'🎬 视频管理'},{k:'news',t:'📰 新闻管理'},{k:'settings',t:'⚙️ 设置'}];
+  let content;
+  switch(tab){
+    case'carousel':content=await adminCarousel();break;
+    case'documents':content=await adminDocuments();break;
+    case'images':content=await adminImages();break;
+    case'videos':content=await adminVideos();break;
+    case'news':content=await adminNews();break;
+    case'settings':content=adminSettings();break;
+    default:content=await adminCarousel();
+  }
+  return`<div class="admin-dashboard"><div class="admin-header"><div class="container"><span><strong>🔧 后台管理系统</strong> | 欢迎，管理员</span><div style="display:flex;gap:12px"><a href="#home" onclick="navigate('home')" style="color:#fff">← 返回前台</a><a href="#" onclick="adminLogout()" style="color:#fca5a5">退出登录</a></div></div></div><div class="container"><div class="admin-tabs">${tabs.map(t=>`<button class="admin-tab ${tab===t.k?'active':''}" onclick="navigate('admin/${t.k}')">${t.t}</button>`).join('')}</div><div class="admin-content">${content}</div></div></div>`;
+}
+function adminLogout(){sessionStorage.removeItem('admin_auth');navigate('home');showToast('已退出后台','info')}
 
-console.log('🚢 ******有限公司 - 官方网站演示版');
-console.log('⚠️ 本网站仅供前端开发技术演示，不涉及任何真实企业信息');
+// Admin - Carousel
+async function adminCarousel(){
+  const items=await dbGetAll('carousel');
+  return`<h3>🖼️ 首页轮播图管理</h3><p style="color:var(--g600);margin-bottom:16px">管理首页企业风采轮播展示图片（当前 ${items.length} 张）</p><button class="btn btn-primary btn-sm" onclick="showCarouselModal()">+ 添加轮播图</button><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>标题</th><th>说明文字</th><th>背景色</th><th>图标</th><th>操作</th></tr></thead><tbody>${items.map(c=>`<tr><td>${c.id}</td><td>${c.title}</td><td>${c.caption||''}</td><td><div style="width:40px;height:20px;background:${c.bg};border-radius:4px;display:inline-block"></div></td><td style="font-size:1.5rem">${c.icon||'📷'}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editCarousel(${c.id})">编辑</button> <button class="btn btn-sm btn-danger" onclick="deleteCarousel(${c.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+}
+async function deleteCarousel(id){if(confirm('确认删除此轮播图？')){await dbDelete('carousel',id);renderPage();showToast('已删除','success')}}
+function showCarouselModal(c=null){
+  const isEdit=!!c;
+  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal"><h3>${isEdit?'编辑':'添加'}轮播图</h3><div class="form-group"><label>标题</label><input type="text" id="caroTitle" value="${c?.title||''}"></div><div class="form-group"><label>说明文字</label><input type="text" id="caroCaption" value="${c?.caption||''}"></div><div class="form-group"><label>背景渐变 (CSS)</label><input type="text" id="caroBg" value="${c?.bg||'linear-gradient(135deg,#0a3d6b,#1a6090)'}"></div><div class="form-group"><label>图标 (Emoji)</label><input type="text" id="caroIcon" value="${c?.icon||'📷'}"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveCaroBtn">保存</button></div></div>`;
+  document.body.appendChild(modal);
+  document.getElementById('saveCaroBtn').onclick=async()=>{
+    const data={title:document.getElementById('caroTitle').value,caption:document.getElementById('caroCaption').value,bg:document.getElementById('caroBg').value,icon:document.getElementById('caroIcon').value};
+    if(isEdit) data.id=c.id;
+    await dbPut('carousel',data);modal.remove();renderPage();showToast(isEdit?'已更新':'已添加','success');
+  };
+  modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+}
+function editCarousel(id){dbGet('carousel',id).then(c=>{if(c) showCarouselModal(c)})}
+
+// Admin - Documents
+async function adminDocuments(){
+  const docs=await dbGetAll('documents');
+  return`<h3>📄 文档管理</h3><p style="color:var(--g600);margin-bottom:16px">管理客服中心可下载文档（当前 ${docs.length} 份）</p><button class="btn btn-primary btn-sm" onclick="showDocModal()">+ 上传文档</button><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>文档名称</th><th>描述</th><th>类型</th><th>大小</th><th>分类</th><th>操作</th></tr></thead><tbody>${docs.map(d=>`<tr><td>${d.id}</td><td>${d.name}</td><td>${d.desc||''}</td><td>${d.ext}</td><td>${d.size}</td><td>${d.category||'guide'}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editDoc(${d.id})">编辑</button> <button class="btn btn-sm btn-primary btn-sm" onclick="downloadDoc(${d.id})">下载</button> <button class="btn btn-sm btn-danger" onclick="deleteDoc(${d.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+}
+async function deleteDoc(id){if(confirm('确认删除此文档？')){await dbDelete('documents',id);renderPage();showToast('已删除','success')}}
+function showDocModal(d=null){
+  const isEdit=!!d;
+  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal"><h3>${isEdit?'编辑':'上传'}文档</h3><div class="form-group"><label>文档名称</label><input type="text" id="docName" value="${d?.name||''}"></div><div class="form-group"><label>描述</label><input type="text" id="docDesc" value="${d?.desc||''}"></div><div class="form-group"><label>文件类型</label><select id="docExt"><option value="PDF" ${d?.ext==='PDF'?'selected':''}>PDF</option><option value="DOCX" ${d?.ext==='DOCX'?'selected':''}>DOCX</option><option value="XLSX" ${d?.ext==='XLSX'?'selected':''}>XLSX</option><option value="PPTX" ${d?.ext==='PPTX'?'selected':''}>PPTX</option><option value="ZIP" ${d?.ext==='ZIP'?'selected':''}>ZIP</option></select></div><div class="form-group"><label>分类</label><select id="docCat"><option value="guide" ${d?.category==='guide'?'selected':''}>业务指南</option><option value="contract" ${d?.category==='contract'?'selected':''}>合同模板</option><option value="safety" ${d?.category==='safety'?'selected':''}>安全规范</option></select></div><div class="form-group"><label>${isEdit?'替换文件（可选）':'上传文件'}</label><input type="file" id="docFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveDocBtn">保存</button></div></div>`;
+  document.body.appendChild(modal);
+  document.getElementById('saveDocBtn').onclick=async()=>{
+    const fileInput=document.getElementById('docFile');const file=fileInput.files[0];let data={name:document.getElementById('docName').value,desc:document.getElementById('docDesc').value,ext:document.getElementById('docExt').value,category:document.getElementById('docCat').value};
+    if(!data.name){showToast('请输入文档名称','error');return}
+    if(!isEdit&&!file){showToast('请选择文件','error');return}
+    if(file){data.size=file.size>1048576?(file.size/1048576).toFixed(1)+' MB':(file.size/1024).toFixed(0)+' KB';
+      const reader=new FileReader();reader.onload=async()=>{data.data=reader.result;await saveDoc(data,isEdit,d?.id);modal.remove();renderPage();showToast(isEdit?'已更新':'已上传','success')};reader.readAsDataURL(file);
+    }else{await saveDoc(data,isEdit,d?.id);modal.remove();renderPage();showToast(isEdit?'已更新':'已保存','success')}
+  };
+  modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+}
+async function saveDoc(data,isEdit,id){if(isEdit&&id){data.id=id;await dbPut('documents',data)}else{await dbPut('documents',data)}}
+function editDoc(id){dbGet('documents',id).then(d=>{if(d) showDocModal(d)})}
+
+// Admin - Images
+async function adminImages(){
+  const images=await dbGetAll('images');
+  return`<h3>🖼️ 图片管理</h3><p style="color:var(--g600);margin-bottom:16px">上传和管理网站图片资源（当前 ${images.length} 张）</p><div class="file-upload-zone" id="imgDropZone" onclick="document.getElementById('imgFileInput').click()">📁 点击或拖拽图片到此区域上传<input type="file" id="imgFileInput" accept="image/*" multiple onchange="uploadImages(this.files)" style="display:none"></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px">${images.map(img=>`<div style="position:relative;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)"><img src="${img.data}" alt="${img.name}" style="width:100%;height:120px;object-fit:cover"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);padding:4px 8px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:.7rem;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${img.name}</span><button class="btn btn-sm btn-danger" style="font-size:.65rem;padding:3px 8px" onclick="deleteImage(${img.id})">×</button></div></div>`).join('')}</div>`;
+}
+async function uploadImages(files){
+  for(const file of files){
+    const reader=new FileReader();
+    reader.onload=async()=>{await dbPut('images',{name:file.name,size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});renderPage()};
+    reader.readAsDataURL(file);
+  }
+  showToast(`已上传 ${files.length} 张图片`,'success');
+}
+async function deleteImage(id){if(confirm('确认删除此图片？')){await dbDelete('images',id);renderPage();showToast('已删除','success')}}
+
+// Admin - Videos
+async function adminVideos(){
+  const videos=await dbGetAll('videos');
+  return`<h3>🎬 视频管理</h3><p style="color:var(--g600);margin-bottom:16px">上传和管理视频资源（当前 ${videos.length} 个）</p><div class="file-upload-zone" onclick="document.getElementById('vidFileInput').click()">🎥 点击上传视频文件（MP4/WebM/OGG）<input type="file" id="vidFileInput" accept="video/*" onchange="uploadVideo(this.files[0])" style="display:none"></div><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>名称</th><th>大小</th><th>类型</th><th>上传时间</th><th>预览</th><th>操作</th></tr></thead><tbody>${videos.map(v=>`<tr><td>${v.id}</td><td>${v.name}</td><td>${v.size?(v.size/1048576).toFixed(1)+' MB':'未知'}</td><td>${v.type||'未知'}</td><td>${v.createdAt?new Date(v.createdAt).toLocaleDateString():'未知'}</td><td>${v.data?`<video src="${v.data}" width="120" height="68" controls style="border-radius:4px"></video>`:'无预览'}</td><td><button class="btn btn-sm btn-primary" onclick="downloadVideo(${v.id})">下载</button> <button class="btn btn-sm btn-danger" onclick="deleteVideo(${v.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+}
+async function uploadVideo(file){
+  if(!file){return}
+  const reader=new FileReader();
+  reader.onload=async()=>{await dbPut('videos',{name:file.name,size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});renderPage();showToast('视频已上传','success')};
+  reader.readAsDataURL(file);
+}
+async function downloadVideo(id){
+  const v=await dbGet('videos',id);
+  if(v&&v.data){const a=document.createElement('a');a.href=v.data;a.download=v.name;a.click();showToast('下载已开始','success')}
+  else{showToast('该视频暂无数据','info')}
+}
+async function deleteVideo(id){if(confirm('确认删除此视频？')){await dbDelete('videos',id);renderPage();showToast('已删除','success')}}
+
+// Admin - News
+function adminNews(){
+  const news=getNewsData();
+  const allNews=[];for(const cat of['company','announce','industry']){if(news[cat]) news[cat].forEach(n=>{n._cat=cat;allNews.push(n)})}
+  return`<h3>📰 新闻管理</h3><p style="color:var(--g600);margin-bottom:16px">管理网站新闻内容（共 ${allNews.length} 篇）</p><button class="btn btn-primary btn-sm" onclick="showNewsModal()">+ 添加新闻</button><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>分类</th><th>标题</th><th>日期</th><th>摘要</th><th>操作</th></tr></thead><tbody>${allNews.sort((a,b)=>b.id-a.id).map(n=>`<tr><td>${n.id}</td><td>${n._cat==='company'?'公司新闻':n._cat==='announce'?'通知公告':'行业新闻'}</td><td>${n.title}</td><td>${n.date}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${n.summary}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editNewsModal('${n._cat}',${n.id})">编辑</button> <button class="btn btn-sm btn-danger" onclick="deleteNews('${n._cat}',${n.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+}
+function showNewsModal(n=null){
+  const isEdit=!!n;
+  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal"><h3>${isEdit?'编辑':'添加'}新闻</h3><div class="form-group"><label>分类</label><select id="newsCat"><option value="company" ${n?._cat==='company'?'selected':''}>公司新闻</option><option value="announce" ${n?._cat==='announce'?'selected':''}>通知公告</option><option value="industry" ${n?._cat==='industry'?'selected':''}>行业新闻</option></select></div><div class="form-group"><label>标题</label><input type="text" id="newsTitle" value="${n?.title||''}"></div><div class="form-group"><label>日期</label><input type="date" id="newsDate" value="${n?.date||new Date().toISOString().split('T')[0]}"></div><div class="form-group"><label>摘要</label><textarea id="newsSummary" rows="3">${n?.summary||''}</textarea></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveNewsBtn">保存</button></div></div>`;
+  document.body.appendChild(modal);
+  document.getElementById('saveNewsBtn').onclick=()=>{
+    const data={title:document.getElementById('newsTitle').value,date:document.getElementById('newsDate').value,summary:document.getElementById('newsSummary').value};
+    if(!data.title){showToast('请输入标题','error');return}
+    const cat=document.getElementById('newsCat').value;
+    const allNews=getNewsData();
+    if(isEdit){const idx=allNews[cat].findIndex(x=>x.id===n.id);if(idx>=0){data.id=n.id;allNews[cat][idx]=data}}
+    else{data.id=Math.max(0,...Object.values(allNews).flat().map(x=>x.id))+1;if(!allNews[cat]) allNews[cat]=[];allNews[cat].push(data)}
+    saveNewsData(allNews);modal.remove();renderPage();showToast(isEdit?'已更新':'已添加','success');
+  };
+  modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+}
+function editNewsModal(cat,id){
+  const news=getNewsData();const n=(news[cat]||[]).find(x=>x.id===id);
+  if(n){n._cat=cat;showNewsModal(n)}
+}
+function deleteNews(cat,id){if(confirm('确认删除此新闻？')){const news=getNewsData();news[cat]=(news[cat]||[]).filter(x=>x.id!==id);saveNewsData(news);renderPage();showToast('已删除','success')}}
+
+// Admin - Settings
+function adminSettings(){
+  return`<h3>⚙️ 系统设置</h3><div class="form-group"><label>管理员密码</label><input type="text" id="adminPwdSetting" value="${ADMIN_PWD}"><small style="color:var(--g600)">当前为演示模式，修改后生效（仅限本次会话）</small></div><button class="btn btn-primary" onclick="alert('演示模式：设置已保存（本次会话有效）')">保存设置</button><hr style="margin:20px 0;border-color:var(--g100)"><h4 style="color:var(--p);margin-bottom:8px">数据统计</h4><div class="card-grid cols-3" id="adminStats" style="text-align:center"><div class="card"><div style="font-size:2rem">📊</div><p>正在加载...</p></div></div>`;
+}
+
+// ============================================
+// UTILS
+// ============================================
+function showToast(msg,type='info'){
+  const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100px)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300)},2500);
+}
+
+// ============================================
+// PARTICLE SYSTEM
+// ============================================
+function initParticles(){
+  const container=document.getElementById('particles');if(!container||container.children.length)return;
+  for(let i=0;i<60;i++){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.width=(Math.random()*3+1)+'px';p.style.height=p.style.width;p.style.animationDuration=(Math.random()*15+8)+'s';p.style.animationDelay=(Math.random()*15)+'s';container.appendChild(p)}
+}
+
+// ============================================
+// DRAG & DROP
+// ============================================
+function setupDragDrop(){
+  const zone=document.getElementById('imgDropZone');if(!zone)return;
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag')});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));
+  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag');if(e.dataTransfer.files.length){uploadImages(e.dataTransfer.files)}});
+}
+
+// Override bindUIEvents to include new init
+const origBindUI=bindUIEvents;
+bindUIEvents=function(){
+  origBindUI();
+  initParticles();
+  setupDragDrop();
+  // Load admin stats if on admin page
+  const statsDiv=document.getElementById('adminStats');
+  if(statsDiv){(async()=>{
+    const[imgs,docs,vids]=await Promise.all([dbGetAll('images'),dbGetAll('documents'),dbGetAll('videos')]);
+    statsDiv.innerHTML=`<div class="card"><div style="font-size:2rem;color:var(--a)">${imgs.length}</div><p>图片资源</p></div><div class="card"><div style="font-size:2rem;color:var(--a)">${docs.length}</div><p>文档资源</p></div><div class="card"><div style="font-size:2rem;color:var(--a)">${vids.length}</div><p>视频资源</p></div>`;
+  })()}
+};
+
+// STARTUP
+init().then(()=>console.log('🚢 CMS系统就绪 | 后台入口: #admin | 密码: admin888'));
 </script>
 
 
