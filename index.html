@@ -755,37 +755,86 @@ async function duplicateCarousel(id){
 }
 async function deleteCarousel(id){if(confirm('确认删除此轮播图？')){await dbDelete('carousel',id);await renderPage(true);showToast('已删除！切换到前台首页即可看到更新','success')}}
 let _caroImageData=null;
-function showCarouselModal(c=null){
-  const isEdit=!!c;
-  _caroImageData=c?.imageData||null;
-  const previewHtml=_caroImageData?`<img src="${_caroImageData}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px">`: (c?`<div style="width:100%;height:80px;background:${c.bg};border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:2rem">${c.icon||'📷'}</div>`:'');
-  const modal=document.createElement('div');modal.className='modal-overlay';
-  modal.innerHTML=`<div class="modal" style="max-width:560px"><h3>${isEdit?'编辑':'添加'}轮播图</h3>
-    <div class="form-group"><label>📁 上传图片（可选，支持 JPG/PNG/GIF/WebP）</label>
-      <div class="file-upload-zone" style="padding:20px" onclick="document.getElementById('caroFileInput').click()">
-        ${previewHtml}
-        <span style="color:var(--g600);font-size:.85rem">${_caroImageData?'点击更换图片':'点击选择本地图片作为轮播背景'}</span>
-        ${_caroImageData?`<button class="btn btn-sm btn-danger" style="margin-top:6px" onclick="event.stopPropagation();_caroImageData=null;document.getElementById('caroPreview').innerHTML='';showToast('已清除图片','info')">清除图片</button>`:''}
-        <input type="file" id="caroFileInput" accept="image/*" style="display:none" onchange="(function(){const f=this.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{_caroImageData=r.result;document.getElementById('caroPreview').innerHTML='<img src=\\'+r.result+'\\' style=\\'width:100%;max-height:120px;object-fit:cover;border-radius:8px\\'>';showToast('图片已选择','success')};r.readAsDataURL(f)})()">
-      </div>
-      <div id="caroPreview"></div>
-    </div>
-    <div class="form-group"><label>标题</label><input type="text" id="caroTitle" value="${c?.title||''}"></div>
-    <div class="form-group"><label>说明文字（显示在图片底部）</label><input type="text" id="caroCaption" value="${c?.caption||''}"></div>
-    <div class="form-group"><label>背景色（无图片时使用）</label><input type="text" id="caroBg" value="${c?.bg||'linear-gradient(135deg,#0a3d6b,#1a6090)'}"></div>
-    <div class="form-group"><label>图标 Emoji（无图片时使用）</label><input type="text" id="caroIcon" value="${c?.icon||'📷'}"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveCaroBtn">保存</button></div></div>`;
-  document.body.appendChild(modal);
-  document.getElementById('saveCaroBtn').onclick=async()=>{
-    const data={title:document.getElementById('caroTitle').value,caption:document.getElementById('caroCaption').value,bg:document.getElementById('caroBg').value,icon:document.getElementById('caroIcon').value};
-    if(_caroImageData) data.imageData=_caroImageData;
-    if(!data.title){showToast('请输入标题','error');return}
-    if(isEdit) data.id=c.id;
-    await dbPut('carousel',data);modal.remove();await renderPage(true);showToast(isEdit?'轮播图已更新！前台已同步':'轮播图已添加！前台已同步','success');
-  };
-  modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+function pickLibImage(data,name){
+  _caroImageData=data;
+  const pv=document.getElementById('caroPreview');if(pv)pv.innerHTML='<img src="'+data+'" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px">';
+  const hint=document.getElementById('caroPickHint');if(hint)hint.textContent='已从图片库选择: '+name;
+  showToast('已选择图片: '+name,'success');
 }
-function editCarousel(id){dbGet('carousel',id).then(c=>{if(c){_caroImageData=c.imageData||null;showCarouselModal(c)}})}
+function clearCaroImage(){
+  _caroImageData=null;
+  const pv=document.getElementById('caroPreview');if(pv)pv.innerHTML='';
+  const hint=document.getElementById('caroPickHint');if(hint)hint.textContent='已清除，请重新选择';
+  showToast('已清除图片','info');
+}
+function loadCaroFile(input){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=function(){
+    _caroImageData=r.result;
+    const pv=document.getElementById('caroPreview');if(pv)pv.innerHTML='<img src="'+r.result+'" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px">';
+    const hint=document.getElementById('caroPickHint');if(hint)hint.textContent='已从本地选择图片';
+    showToast('图片已选择','success');
+  };
+  r.readAsDataURL(f);
+}
+function dropCaroFile(e){
+  e.preventDefault();e.stopPropagation();
+  const zone=document.getElementById('caroUploadZone');if(zone){zone.style.borderColor='';zone.style.background=''}
+  const f=e.dataTransfer.files[0];if(f)loadCaroFile({files:[f]});
+}
+async function showCarouselModal(c){
+  var isEdit=!!c;
+  _caroImageData=(c&&c.imageData)?c.imageData:null;
+  var previewHtml=_caroImageData?'<img src="'+_caroImageData+'" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px">':(c?'<div style="width:100%;height:80px;background:'+c.bg+';border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:2rem">'+(c.icon||'📷')+'</div>':'');
+  // Build library image grid
+  var libImages=await dbGetAll('images');
+  var libGrid='';
+  if(libImages.length){
+    libGrid='<div style="margin-top:8px"><small style="color:var(--g600)">或从图片库选择：</small><div id="caroLibGrid" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;max-height:120px;overflow-y:auto">';
+    for(var i=0;i<libImages.length;i++){
+      var img=libImages[i];
+      libGrid+='<img src="'+img.data+'" data-caro-img="'+i+'" style="width:60px;height:45px;object-fit:cover;border-radius:4px;cursor:pointer;border:2px solid transparent" title="'+img.name.replace(/"/g,'&quot;')+'" onmouseenter="this.style.borderColor=\'var(--a)\'" onmouseleave="this.style.borderColor=\'transparent\'">';
+    }
+    libGrid+='</div></div>';
+  }
+  var modal=document.createElement('div');modal.className='modal-overlay';
+  modal.innerHTML='<div class="modal" style="max-width:580px;max-height:90vh;overflow-y:auto"><h3>'+(isEdit?'编辑':'添加')+'轮播图</h3>'+
+    '<div class="form-group"><label>📁 上传本地图片 或 从下方图片库点击选择</label>'+
+    '<div class="file-upload-zone" style="padding:16px;cursor:pointer" id="caroUploadZone" onclick="document.getElementById(\'caroFileInput\').click()">'+
+    '<div id="caroPreview">'+previewHtml+'</div>'+
+    '<span style="color:var(--g600);font-size:.85rem" id="caroPickHint">'+(_caroImageData?'点击更换图片':'点击上传 或 从下方图片库选择')+'</span>'+
+    (_caroImageData?'<button class="btn btn-sm btn-danger" style="margin-top:6px" onclick="event.stopPropagation();clearCaroImage()">🗑 清除图片</button>':'')+
+    '<input type="file" id="caroFileInput" accept="image/*" style="display:none" onchange="loadCaroFile(this)"></div>'+libGrid+'</div>'+
+    '<div class="card-grid cols-2"><div class="form-group"><label>标题 *</label><input type="text" id="caroTitle" value="'+(c?c.title:'')+'" placeholder="轮播图标题"></div>'+
+    '<div class="form-group"><label>说明文字</label><input type="text" id="caroCaption" value="'+(c?c.caption||'':'')+'" placeholder="显示在图片底部"></div></div>'+
+    '<div class="card-grid cols-2"><div class="form-group"><label>背景色（无图片时备用）</label><input type="text" id="caroBg" value="'+(c?c.bg:'linear-gradient(135deg,#0a3d6b,#1a6090)')+'"></div>'+
+    '<div class="form-group"><label>图标 Emoji</label><input type="text" id="caroIcon" value="'+(c?c.icon||'📷':'📷')+'"></div></div>'+
+    '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px"><button class="btn btn-outline" onclick="var m=this.closest(\'.modal-overlay\');if(m)m.remove();_caroImageData=null">取消</button><button class="btn btn-primary" id="saveCaroBtn">💾 保存</button></div></div>';
+  document.body.appendChild(modal);
+  // Bind library image clicks
+  setTimeout(function(){
+    var grid=document.getElementById('caroLibGrid');if(!grid)return;
+    var imgs=grid.querySelectorAll('img');for(var i=0;i<imgs.length;i++){(function(idx){imgs[idx].onclick=function(e){e.stopPropagation();var img=libImages[idx];pickLibImage(img.data,img.name)}})(i)}
+    // Drag & drop
+    var zone=document.getElementById('caroUploadZone');if(zone){
+      zone.addEventListener('dragover',function(e){e.preventDefault();e.stopPropagation();zone.style.borderColor='var(--a)';zone.style.background='rgba(200,135,46,.06)'});
+      zone.addEventListener('dragleave',function(){zone.style.borderColor='';zone.style.background=''});
+      zone.addEventListener('drop',function(e){e.preventDefault();e.stopPropagation();zone.style.borderColor='';zone.style.background='';var f=e.dataTransfer.files[0];if(f)loadCaroFile({files:[f]})});
+    }
+  },100);
+  document.getElementById('saveCaroBtn').onclick=async function(){
+    var title=document.getElementById('caroTitle').value.trim();
+    if(!title){showToast('请输入标题','error');return}
+    var data={title:title,caption:document.getElementById('caroCaption').value.trim(),bg:document.getElementById('caroBg').value,icon:document.getElementById('caroIcon').value};
+    if(_caroImageData)data.imageData=_caroImageData;
+    if(isEdit)data.id=c.id;
+    await dbPut('carousel',data);modal.remove();_caroImageData=null;await renderPage(true);
+    showToast(isEdit?'✅ 轮播图已更新！前台首页已同步':'✅ 轮播图已添加！前台首页已同步','success');
+  };
+  modal.addEventListener('click',function(e){if(e.target===modal){modal.remove();_caroImageData=null}});
+}
+function editCarousel(id){dbGet('carousel',id).then(function(c){if(c){_caroImageData=c.imageData||null;showCarouselModal(c)}})}
 
 // Admin - Documents
 async function adminDocuments(){
