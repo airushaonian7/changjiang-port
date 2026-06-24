@@ -1,1741 +1,825 @@
 <!DOCTYPE html>
 <html lang="zh-CN"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>张家港******有限公司 - 长江之畔的物流枢纽（仅供前端演示）</title>
-    <style>
-        /* ============================================
-            CSS RESET & BASE
-            ============================================ */
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #0a2540;
-            --primary-light: #1a4972;
-            --accent: #d4933c;
-            --accent-light: #f0c27a;
-            --blue: #1e6fb8;
-            --blue-light: #4da3e0;
-            --white: #ffffff;
-            --gray-50: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-            --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
-            --shadow-lg: 0 20px 60px rgba(0,0,0,0.15);
-            --shadow-xl: 0 30px 80px rgba(0,0,0,0.2);
-            --radius-sm: 8px;
-            --radius: 12px;
-            --radius-lg: 20px;
-            --radius-xl: 28px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 130px;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-            color: var(--gray-800);
-            background: var(--white);
-            line-height: 1.7;
-            overflow-x: hidden;
-        }
-
-        /* 自定义滚动条 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--gray-100); }
-        ::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        /* ============================================
-            NAVIGATION
-            ============================================ */
-        .nav {
-            position: fixed;
-            top: 44px;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 16px 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .nav.scrolled {
-            background: rgba(10, 37, 64, 0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 10px 0;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.25);
-        }
-
-        .nav-inner {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .nav-logo-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--accent), #e8a850);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: white;
-            font-weight: 900;
-            transition: transform var(--transition);
-        }
-
-        .nav-logo:hover .nav-logo-icon {
-            transform: rotate(-10deg) scale(1.08);
-        }
-
-        .nav-logo-text {
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 32px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: rgba(255,255,255,0.85);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            position: relative;
-            padding: 4px 0;
-            transition: color var(--transition);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent);
-            transition: width var(--transition);
-        }
-
-        .nav-links a:hover {
-            color: white;
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
-            color: white;
-        }
-
-        .mobile-menu-btn span {
-            display: block;
-            width: 26px;
-            height: 2.5px;
-            background: white;
-            margin: 6px 0;
-            border-radius: 2px;
-            transition: var(--transition);
-        }
-
-        .mobile-menu-btn.active span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 6px);
-        }
-        .mobile-menu-btn.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .mobile-menu-btn.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(5px, -6px);
-        }
-
-        /* ============================================
-            HERO SECTION
-            ============================================ */
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: linear-gradient(160deg, #051220 0%, #0a2540 30%, #0d3560 60%, #0a2540 100%);
-        }
-
-        /* 动态粒子背景 */
-        .hero-particles {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            animation: floatUp linear infinite;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-10vh) scale(1.5);
-                opacity: 0;
-            }
-        }
-
-        /* 光晕 */
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(212,147,60,0.12) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: pulseGlow 4s ease-in-out infinite;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            color: white;
-            max-width: 900px;
-            padding: 0 24px;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            padding: 8px 24px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 50px;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            margin-bottom: 28px;
-            animation: fadeInDown 0.8s ease forwards;
-            backdrop-filter: blur(10px);
-        }
-
-        .hero-title {
-            font-size: clamp(2.4rem, 5vw, 4rem);
-            font-weight: 900;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        .hero-title .highlight {
-            background: linear-gradient(135deg, var(--accent-light), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.05rem, 2vw, 1.3rem);
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 36px;
-            line-height: 1.8;
-            animation: fadeInUp 0.8s 0.2s ease forwards;
-            opacity: 0;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 0.8s 0.4s ease forwards;
-            opacity: 0;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            transition: all var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent), #e8a850);
-            color: white;
-            box-shadow: 0 4px 20px rgba(212,147,60,0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 35px rgba(212,147,60,0.55);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.6);
-            transform: translateY(-3px);
-        }
-
-        /* 滚动指示器 */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 36px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            color: rgba(255,255,255,0.5);
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        .scroll-indicator .line {
-            width: 1px;
-            height: 40px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(12px); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ============================================
-            SECTION COMMONS
-            ============================================ */
-        .section {
-            padding: 100px 0;
-            position: relative;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-label {
-            display: inline-block;
-            font-size: 0.85rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--accent);
-            margin-bottom: 12px;
-        }
-
-        .section-title {
-            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-            font-weight: 900;
-            color: var(--primary);
-            line-height: 1.3;
-            margin-bottom: 16px;
-        }
-
-        .section-desc {
-            font-size: 1.05rem;
-            color: var(--gray-600);
-            max-width: 650px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-
-        /* 滚动显示动画 */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .reveal-left {
-            opacity: 0;
-            transform: translateX(-60px);
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .reveal-left.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .reveal-right {
-            opacity: 0;
-            transform: translateX(60px);
-            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .reveal-right.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .reveal-scale {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .reveal-scale.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* ============================================
-            ABOUT SECTION
-            ============================================ */
-        .about {
-            background: var(--white);
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            align-items: center;
-        }
-
-        .about-visual {
-            position: relative;
-        }
-
-        .about-image-wrapper {
-            position: relative;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .about-image-placeholder {
-            width: 100%;
-            aspect-ratio: 4/3;
-            background: linear-gradient(160deg, #1a4972, #0a2540);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .about-image-placeholder .port-icon {
-            font-size: 100px;
-            opacity: 0.3;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .about-wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 80px;
-            background: linear-gradient(to top, rgba(10,37,64,0.8), transparent);
-        }
-
-        .about-badge {
-            position: absolute;
-            top: -20px;
-            right: -20px;
-            background: var(--accent);
-            color: white;
-            padding: 16px 24px;
-            border-radius: var(--radius);
-            font-weight: 800;
-            font-size: 1.1rem;
-            box-shadow: var(--shadow-lg);
-            animation: float 5s ease-in-out infinite;
-        }
-
-        .about-text h3 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 20px;
-            line-height: 1.3;
-        }
-
-        .about-text p {
-            color: var(--gray-600);
-            margin-bottom: 14px;
-            line-height: 1.9;
-        }
-
-        .about-stats-mini {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 28px;
-        }
-
-        .about-stat-mini {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--gray-50);
-            border-radius: var(--radius);
-            border-left: 4px solid var(--accent);
-        }
-
-        .about-stat-mini .icon {
-            font-size: 28px;
-        }
-
-        .about-stat-mini .val {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .about-stat-mini .lbl {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-        }
-
-        /* ============================================
-            BUSINESS SECTION
-            ============================================ */
-        .business {
-            background: var(--gray-50);
-            position: relative;
-        }
-
-        .business::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, var(--primary), var(--blue), var(--accent), var(--blue-light));
-        }
-
-        .business-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .business-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 36px 28px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .business-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--blue-light));
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
-        .business-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .business-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .business-card .card-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            margin-bottom: 20px;
-            transition: transform 0.4s ease;
-        }
-
-        .business-card:hover .card-icon {
-            transform: scale(1.1) rotate(-5deg);
-        }
-
-        .card-icon.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
-        .card-icon.gold { background: linear-gradient(135deg, #fef3c7, #fde68a); }
-        .card-icon.green { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
-        .card-icon.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
-        .card-icon.red { background: linear-gradient(135deg, #fee2e2, #fecaca); }
-        .card-icon.teal { background: linear-gradient(135deg, #ccfbf1, #99f6e4); }
-
-        .business-card h4 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--gray-900);
-        }
-
-        .business-card p {
-            color: var(--gray-600);
-            font-size: 0.93rem;
-            line-height: 1.7;
-        }
-
-        /* ============================================
-            STATS COUNTER
-            ============================================ */
-        .stats {
-            background: linear-gradient(160deg, var(--primary) 0%, #0d3560 100%);
-            color: white;
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stats::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 32px;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .stat-item {
-            padding: 20px;
-        }
-
-        .stat-number {
-            font-size: clamp(2.2rem, 3.5vw, 3.2rem);
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--accent-light), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: inline-block;
-        }
-
-        .stat-plus {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--accent);
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            color: rgba(255,255,255,0.7);
-            margin-top: 8px;
-        }
-
-        /* ============================================
-            ADVANTAGES
-            ============================================ */
-        .advantages-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-
-        .advantage-card {
-            text-align: center;
-            padding: 40px 24px;
-            border-radius: var(--radius-lg);
-            background: white;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.4s ease;
-            border: 1px solid var(--gray-200);
-        }
-
-        .advantage-card:hover {
-            box-shadow: var(--shadow-xl);
-            border-color: transparent;
-            transform: translateY(-6px);
-        }
-
-        .advantage-icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
-            transition: transform 0.4s ease;
-        }
-
-        .advantage-card:hover .advantage-icon {
-            transform: rotateY(180deg);
-        }
-
-        .advantage-card h4 {
-            font-weight: 700;
-            font-size: 1.15rem;
-            margin-bottom: 10px;
-            color: var(--gray-900);
-        }
-
-        .advantage-card p {
-            color: var(--gray-600);
-            font-size: 0.93rem;
-            line-height: 1.7;
-        }
-
-        /* ============================================
-            TIMELINE / NEWS
-            ============================================ */
-        .milestones {
-            background: var(--gray-50);
-        }
-
-        .timeline {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-            padding-left: 40px;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(to bottom, var(--accent), var(--blue), var(--accent));
-            border-radius: 2px;
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 40px;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: -46px;
-            top: 6px;
-            width: 15px;
-            height: 15px;
-            background: var(--accent);
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 0 0 4px var(--accent);
-            transition: all 0.3s ease;
-        }
-
-        .timeline-item:hover::before {
-            transform: scale(1.4);
-            box-shadow: 0 0 0 8px rgba(212,147,60,0.3);
-        }
-
-        .timeline-year {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 1px;
-        }
-
-        .timeline-content {
-            background: white;
-            padding: 20px 24px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition);
-        }
-
-        .timeline-content:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateX(6px);
-        }
-
-        .timeline-content h4 {
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .timeline-content p {
-            color: var(--gray-600);
-            font-size: 0.93rem;
-        }
-
-        /* ============================================
-            NEWS CARDS
-            ============================================ */
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .news-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.4s ease;
-        }
-
-        .news-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .news-image {
-            height: 200px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .news-image .img-placeholder {
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 50px;
-        }
-
-        .news-card:hover .img-placeholder {
-            transform: scale(1.08);
-        }
-
-        .img-placeholder.grad-1 { background: linear-gradient(135deg, #1a4972, #0a2540); }
-        .img-placeholder.grad-2 { background: linear-gradient(135deg, #0d3560, #1e6fb8); }
-        .img-placeholder.grad-3 { background: linear-gradient(135deg, #1e6fb8, #4da3e0); }
-
-        .news-body {
-            padding: 20px 24px;
-        }
-
-        .news-date {
-            font-size: 0.8rem;
-            color: var(--accent);
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .news-body h4 {
-            font-weight: 700;
-            margin: 8px 0;
-            color: var(--gray-900);
-        }
-
-        .news-body p {
-            color: var(--gray-600);
-            font-size: 0.9rem;
-            line-height: 1.7;
-        }
-
-        /* ============================================
-            CONTACT
-            ============================================ */
-        .contact {
-            background: linear-gradient(160deg, var(--primary), #061a30);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .contact .section-title { color: white; }
-        .contact .section-desc { color: rgba(255,255,255,0.65); }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .contact-info-item {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 28px;
-            padding: 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: var(--radius);
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: all var(--transition);
-        }
-
-        .contact-info-item:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateX(6px);
-        }
-
-        .contact-icon {
-            width: 48px;
-            height: 48px;
-            min-width: 48px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .contact-info-text h4 {
-            font-weight: 600;
-            font-size: 1rem;
-            margin-bottom: 4px;
-        }
-
-        .contact-info-text p {
-            color: rgba(255,255,255,0.65);
-            font-size: 0.9rem;
-        }
-
-        .contact-form {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            backdrop-filter: blur(10px);
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.9rem;
-            margin-bottom: 6px;
-            color: rgba(255,255,255,0.8);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.06);
-            color: white;
-            font-size: 0.95rem;
-            transition: all var(--transition);
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: rgba(255,255,255,0.1);
-            box-shadow: 0 0 0 3px rgba(212,147,60,0.15);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        /* ============================================
-            FOOTER
-            ============================================ */
-        .footer {
-            background: #051220;
-            color: rgba(255,255,255,0.55);
-            padding: 32px 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .footer strong {
-            color: rgba(255,255,255,0.8);
-        }
-
-        /* ============================================
-            BACK TO TOP
-            ============================================ */
-        .back-to-top {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-lg);
-            opacity: 0;
-            transform: translateY(20px);
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 999;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        /* ============================================
-            RESPONSIVE
-            ============================================ */
-        @media (max-width: 1024px) {
-            .about-grid,
-            .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-            .business-grid { grid-template-columns: repeat(2, 1fr); }
-            .advantages-grid { grid-template-columns: repeat(2, 1fr); }
-            .news-grid { grid-template-columns: repeat(2, 1fr); }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .nav-links.open {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: rgba(10,37,64,0.98);
-                backdrop-filter: blur(20px);
-                padding: 24px;
-                gap: 16px;
-            }
-            .mobile-menu-btn { display: block; }
-            .business-grid,
-            .advantages-grid,
-            .news-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-            .section { padding: 60px 0; }
-            .about-badge { position: static; margin-top: 16px; text-align: center; }
-            .hero-cta { flex-direction: column; align-items: center; }
-            .btn { width: 100%; justify-content: center; max-width: 300px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张家港******有限公司 - 化工物流综合服务（仅供前端演示）</title>
+<style>
+/* ====== RESET & VARIABLES ====== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#0b3d6b;--primary-light:#135a9e;--primary-dark:#072a4a;
+  --accent:#c8872e;--accent-light:#e0a850;
+  --blue:#1a6fb5;--blue-light:#4da8e8;--blue-bg:#e8f2fa;
+  --white:#fff;--gray-50:#f6f8fa;--gray-100:#eef1f5;--gray-200:#dde1e6;--gray-300:#c4c9d0;--gray-600:#5f6b7a;--gray-700:#3d4754;--gray-800:#212830;--gray-900:#0f1419;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);--shadow:0 2px 12px rgba(0,0,0,.1);--shadow-lg:0 8px 30px rgba(0,0,0,.12);
+  --radius-sm:6px;--radius:10px;--radius-lg:16px;
+  --transition:.25s ease;
+}
+html{scroll-behavior:smooth}
+body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",-apple-system,sans-serif;color:var(--gray-800);background:var(--white);line-height:1.7;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+img{max-width:100%}
+.container{max-width:1260px;margin:0 auto;padding:0 20px}
+
+/* ====== DISCLAIMER BAR ====== */
+.disclaimer-bar{position:fixed;top:0;left:0;right:0;z-index:10001;background:linear-gradient(135deg,#c62828,#b71c1c);color:#fff;text-align:center;padding:8px 16px;font-size:.82rem;font-weight:600;letter-spacing:.3px;box-shadow:0 2px 10px rgba(198,40,40,.35)}
+.disclaimer-bar a{color:#ffcdd2;text-decoration:underline}
+
+/* ====== TOP BAR ====== */
+.top-bar{background:var(--gray-900);color:rgba(255,255,255,.7);font-size:.8rem;padding:6px 0;display:flex;justify-content:space-between;align-items:center}
+.top-bar .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.top-bar a{color:rgba(255,255,255,.85);transition:color var(--transition)}
+.top-bar a:hover{color:#fff}
+.top-bar .oa-link{background:var(--accent);color:#fff;padding:3px 12px;border-radius:3px;font-weight:600;font-size:.78rem}
+
+/* ====== HEADER ====== */
+.header{position:sticky;top:42px;z-index:1000;background:var(--white);box-shadow:var(--shadow-sm);transition:all .3s}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:0;height:66px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--primary),var(--blue));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:900}
+.logo-text h1{font-size:1.15rem;font-weight:700;color:var(--primary);line-height:1.2}
+.logo-text small{font-size:.7rem;color:var(--gray-600);font-weight:400}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 14px;border-radius:6px;font-size:.9rem;font-weight:500;color:var(--gray-700);transition:all var(--transition);white-space:nowrap}
+.nav-links a:hover,.nav-links a.active{background:var(--blue-bg);color:var(--primary)}
+.nav-links a.active{font-weight:700}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:10px;font-size:1.5rem;color:var(--gray-700)}
+
+/* ====== BREADCRUMB ====== */
+.breadcrumb{background:var(--gray-50);padding:10px 0;font-size:.82rem;color:var(--gray-600);border-bottom:1px solid var(--gray-100)}
+.breadcrumb span{color:var(--primary);font-weight:500}
+
+/* ====== PAGE HEADER ====== */
+.page-hero{background:linear-gradient(160deg,var(--primary-dark),var(--primary),var(--primary-light));color:#fff;padding:60px 0;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM36 4V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+.page-hero h2{font-size:2.2rem;font-weight:900;position:relative}
+.page-hero .sub{font-size:1rem;opacity:.75;margin-top:8px;position:relative}
+
+/* ====== MAIN LAYOUT ====== */
+.main-layout{display:grid;grid-template-columns:240px 1fr;gap:32px;padding:32px 0;min-height:60vh}
+.sidebar{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:16px 0;position:sticky;top:130px;align-self:start;border:1px solid var(--gray-100)}
+.sidebar h3{padding:0 20px 12px;font-size:.95rem;color:var(--primary);border-bottom:2px solid var(--accent);margin-bottom:8px}
+.sidebar a{display:block;padding:9px 20px;font-size:.88rem;color:var(--gray-700);transition:all var(--transition);border-left:3px solid transparent}
+.sidebar a:hover,.sidebar a.active{background:var(--blue-bg);color:var(--primary);border-left-color:var(--accent);font-weight:600}
+.content-area{min-height:400px}
+
+/* ====== HOME HERO ====== */
+.home-hero{position:relative;min-height:75vh;display:flex;align-items:center;background:linear-gradient(160deg,#041020,#0b2d50,#0d3d6e,#0b2d50);overflow:hidden}
+.home-hero .container{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.hero-text h1{font-size:clamp(2rem,4vw,3rem);font-weight:900;color:#fff;line-height:1.2;margin-bottom:16px}
+.hero-text h1 .hl{background:linear-gradient(135deg,#f0c27a,#c8872e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-text p{color:rgba(255,255,255,.7);font-size:1.05rem;margin-bottom:28px;line-height:1.8}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{padding:12px 28px;border-radius:6px;font-size:.95rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all var(--transition);border:none;cursor:pointer;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#e0a850);color:#fff;box-shadow:0 4px 16px rgba(200,135,46,.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(200,135,46,.55)}
+.btn-outline{background:transparent;border:2px solid rgba(255,255,255,.3);color:#fff}
+.btn-outline:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.5)}
+.btn-sm{padding:6px 16px;font-size:.82rem}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:20px;text-align:center;color:#fff;backdrop-filter:blur(10px)}
+.hero-stat .n{font-size:2rem;font-weight:900;color:var(--accent-light)}
+.hero-stat .l{font-size:.82rem;opacity:.7;margin-top:4px}
+.hero-particles{position:absolute;inset:0;pointer-events:none}
+.particle{position:absolute;background:rgba(255,255,255,.2);border-radius:50%;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1.5);opacity:0}}
+
+/* ====== SECTION TITLES ====== */
+.section{padding:64px 0}
+.section-header{text-align:center;margin-bottom:40px}
+.section-header .label{display:inline-block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--accent);margin-bottom:8px}
+.section-header h2{font-size:2rem;font-weight:900;color:var(--primary);margin-bottom:12px}
+.section-header p{color:var(--gray-600);max-width:600px;margin:0 auto;font-size:.95rem}
+.section-header.light h2,.section-header.light p{color:#fff}
+
+/* ====== CARDS ====== */
+.card-grid{display:grid;gap:20px}
+.cols-2{grid-template-columns:repeat(2,1fr)}
+.cols-3{grid-template-columns:repeat(3,1fr)}
+.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:24px;transition:all var(--transition);border:1px solid var(--gray-100)}
+.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.card .icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px}
+.icon.blue{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+.icon.gold{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.icon.green{background:linear-gradient(135deg,#d1fae5,#a7f3d0)}
+.icon.purple{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.card h4{font-weight:700;margin-bottom:8px;font-size:1.05rem;color:var(--gray-900)}
+.card p{color:var(--gray-600);font-size:.9rem;line-height:1.7}
+
+/* ====== NEWS LIST ====== */
+.news-list-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--gray-100);transition:all var(--transition);cursor:pointer}
+.news-list-item:hover{background:var(--gray-50);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:6px}
+.news-list-item .date{background:var(--blue-bg);color:var(--primary);padding:8px 12px;border-radius:var(--radius-sm);text-align:center;min-width:60px;font-weight:700;font-size:.85rem;line-height:1.3;align-self:flex-start}
+.news-list-item .info h4{font-size:1rem;font-weight:600;color:var(--gray-800);margin-bottom:4px}
+.news-list-item .info p{font-size:.82rem;color:var(--gray-600)}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:24px}
+.pagination a,.pagination span{padding:8px 14px;border-radius:6px;font-size:.85rem;border:1px solid var(--gray-200);color:var(--gray-700);transition:all var(--transition)}
+.pagination a:hover,.pagination span.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* ====== SERVICE ====== */
+.download-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--gray-50);border-radius:var(--radius);margin-bottom:10px;transition:all var(--transition)}
+.download-item:hover{background:var(--blue-bg)}
+.download-item .icon{font-size:1.5rem;width:40px;text-align:center}
+.download-item .info{flex:1}
+.download-item .info h4{font-size:.95rem;font-weight:600}
+.download-item .info p{font-size:.78rem;color:var(--gray-600)}
+.faq-item{margin-bottom:6px;border:1px solid var(--gray-200);border-radius:var(--radius);overflow:hidden}
+.faq-q{padding:14px 18px;background:var(--gray-50);font-weight:600;font-size:.95rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all var(--transition)}
+.faq-q:hover{background:var(--blue-bg)}
+.faq-a{padding:0 18px;max-height:0;overflow:hidden;transition:all .35s ease;font-size:.9rem;color:var(--gray-600);line-height:1.8}
+.faq-item.open .faq-a{padding:14px 18px;max-height:300px}
+.faq-item.open .faq-q{color:var(--primary);background:var(--blue-bg)}
+
+/* ====== TIMELINE ====== */
+.timeline{position:relative;padding-left:36px}
+.timeline::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:3px;background:linear-gradient(to bottom,var(--accent),var(--blue),var(--accent));border-radius:2px}
+.tl-item{position:relative;margin-bottom:28px}
+.tl-item::before{content:'';position:absolute;left:-36px;top:4px;width:14px;height:14px;background:var(--accent);border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px var(--accent)}
+.tl-item .year{font-weight:700;color:var(--accent);margin-bottom:4px}
+.tl-item .body{background:var(--white);padding:14px 18px;border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray-100)}
+
+/* ====== TABLE ====== */
+.data-table{width:100%;border-collapse:collapse;font-size:.9rem}
+.data-table th{background:var(--primary);color:#fff;padding:12px 16px;text-align:left;font-weight:600}
+.data-table td{padding:10px 16px;border-bottom:1px solid var(--gray-200)}
+.data-table tr:hover td{background:var(--gray-50)}
+
+/* ====== CONTACT ====== */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.contact-card{display:flex;gap:14px;padding:18px;background:var(--gray-50);border-radius:var(--radius);margin-bottom:14px;transition:all var(--transition)}
+.contact-card:hover{background:var(--blue-bg);transform:translateX(4px)}
+.contact-card .icon-w{width:44px;height:44px;min-width:44px;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
+.contact-card h4{font-weight:600;font-size:.92rem;margin-bottom:2px}
+.contact-card p{color:var(--gray-600);font-size:.85rem}
+.map-placeholder{width:100%;height:320px;background:linear-gradient(135deg,#e8f2fa,#d0e4f5);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--primary);border:1px dashed var(--gray-300)}
+
+/* ====== CULTURE ====== */
+.culture-banner{background:linear-gradient(135deg,var(--primary),#041830);color:#fff;padding:48px;border-radius:var(--radius-lg);text-align:center;margin-bottom:32px}
+.culture-banner h3{font-size:1.8rem;font-weight:900;margin-bottom:12px}
+.culture-banner p{opacity:.75;font-size:1rem;max-width:700px;margin:0 auto}
+.culture-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.culture-card{background:var(--white);padding:28px;border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1px solid var(--gray-100);transition:all var(--transition);text-align:center}
+.culture-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.culture-card .ci{font-size:3rem;margin-bottom:12px}
+.culture-card h4{font-weight:700;margin-bottom:8px;color:var(--primary)}
+
+/* ====== FOOTER ====== */
+.footer{background:var(--gray-900);color:rgba(255,255,255,.6);padding:40px 0 20px;font-size:.85rem}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:24px}
+.footer h4{color:#fff;font-weight:700;margin-bottom:12px;font-size:.95rem}
+.footer a{color:rgba(255,255,255,.55);transition:color var(--transition);display:block;padding:3px 0}
+.footer a:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;text-align:center;font-size:.78rem}
+
+/* ====== BACK TO TOP ====== */
+.back-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:all .3s;z-index:999}
+.back-top.show{opacity:1;pointer-events:auto}
+.back-top:hover{transform:translateY(-3px)}
+
+/* ====== MOBILE NAV ====== */
+@media(max-width:1024px){
+  .cols-4{grid-template-columns:repeat(2,1fr)}
+  .hero-stats{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .disclaimer-bar{font-size:.75rem;padding:6px 12px}
+  .header{top:38px}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--white);box-shadow:var(--shadow-lg);padding:12px;gap:0;border-top:1px solid var(--gray-100)}
+  .nav-links.open{display:flex}
+  .nav-links a{border-radius:0;padding:12px 16px;border-bottom:1px solid var(--gray-50)}
+  .hamburger{display:block}
+  .home-hero .container{grid-template-columns:1fr;text-align:center}
+  .hero-btns{justify-content:center}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .main-layout{grid-template-columns:1fr}
+  .sidebar{position:static;display:flex;overflow-x:auto;gap:4px;padding:8px;border-radius:var(--radius-sm)}
+  .sidebar h3{display:none}
+  .sidebar a{white-space:nowrap;padding:6px 12px;font-size:.8rem;border-left:none;border-bottom:2px solid transparent}
+  .sidebar a.active{border-left:none;border-bottom-color:var(--accent)}
+  .cols-2,.cols-3,.cols-4{grid-template-columns:1fr}
+  .contact-grid,.footer-grid{grid-template-columns:1fr}
+  .culture-grid{grid-template-columns:1fr}
+}
+</style>
 </head>
 <body>
 
-    <!-- ============================================
-    DISCLAIMER BANNER
-    ============================================ -->
-    <div style="position:fixed;top:0;left:0;right:0;z-index:10000;background:linear-gradient(135deg,#dc2626,#991b1b);color:white;text-align:center;padding:10px 16px;font-size:0.88rem;font-weight:600;letter-spacing:0.5px;box-shadow:0 2px 12px rgba(220,38,38,0.3);">
-        ⚠️ 本网站仅供前端开发技术演示，无任何经营主体，不承接任何业务，联系方式均为虚构
+<!-- DISCLAIMER -->
+<div class="disclaimer-bar">
+  ⚠️ 本网站仅供前端开发技术演示，无任何经营主体，不承接任何业务。所有公司名称、联系方式、数据均为虚构。
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="container">
+    <span>欢迎访问 ****** 有限公司官方网站（演示版）</span>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="#home">首页</a>
+      <a href="#contact">联系我们</a>
+      <a href="#" class="oa-link">🚪 办公通道（演示）</a>
     </div>
+  </div>
+</div>
 
-    <!-- ============================================
-    NAVIGATION
-    ============================================ -->
-    <nav class="nav" id="nav">
-        <div class="nav-inner">
-            <a href="#" class="nav-logo">
-                <div class="nav-logo-icon">港</div>
-                <span class="nav-logo-text">******</span>
-            </a>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于我们</a></li>
-                <li><a href="#business">业务范围</a></li>
-                <li><a href="#advantages">核心优势</a></li>
-                <li><a href="#news">新闻资讯</a></li>
-                <li><a href="#contact">联系我们</a></li>
-            </ul>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
+<!-- HEADER -->
+<header class="header" id="header">
+  <div class="container header-inner">
+    <a href="#home" class="logo" onclick="navigate('home')">
+      <div class="logo-icon">港</div>
+      <div class="logo-text"><h1>******有限公司</h1><small>化工物流综合服务商（演示）</small></div>
+    </a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="菜单">☰</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#home" data-nav="home" class="" onclick="navigate('home')">首页</a>
+      <a href="#about" data-nav="about" onclick="navigate('about')" class="">关于我们</a>
+      <a href="#news" data-nav="news" onclick="navigate('news')" class="">新闻动态</a>
+      <a href="#service" data-nav="service" onclick="navigate('service')" class="active">客服中心</a>
+      <a href="#culture" data-nav="culture" onclick="navigate('culture')">企业文化</a>
+      <a href="#contact" data-nav="contact" onclick="navigate('contact')">联系我们</a>
     </nav>
+  </div>
+</header>
 
-    <!-- ============================================
-    HERO
-    ============================================ -->
-    <section class="hero" id="home">
-        <div class="hero-particles" id="heroParticles"><div class="particle" style="left: 91.0105%; width: 3.94196px; height: 3.94196px; animation-duration: 14.1922s; animation-delay: 8.02049s; opacity: 0.117605;"></div><div class="particle" style="left: 16.7793%; width: 1.2689px; height: 1.2689px; animation-duration: 19.7712s; animation-delay: 10.6413s; opacity: 0.456483;"></div><div class="particle" style="left: 37.8163%; width: 3.48833px; height: 3.48833px; animation-duration: 18.2216s; animation-delay: 8.13733s; opacity: 0.394004;"></div><div class="particle" style="left: 3.50796%; width: 3.0464px; height: 3.0464px; animation-duration: 17.3866s; animation-delay: 2.79738s; opacity: 0.114181;"></div><div class="particle" style="left: 75.8575%; width: 2.13267px; height: 2.13267px; animation-duration: 13.3834s; animation-delay: 4.73305s; opacity: 0.366169;"></div><div class="particle" style="left: 61.6229%; width: 1.03233px; height: 1.03233px; animation-duration: 13.6986s; animation-delay: 9.87781s; opacity: 0.506219;"></div><div class="particle" style="left: 40.5478%; width: 2.09662px; height: 2.09662px; animation-duration: 16.0453s; animation-delay: 3.21739s; opacity: 0.25329;"></div><div class="particle" style="left: 46.7712%; width: 2.92168px; height: 2.92168px; animation-duration: 14.2054s; animation-delay: 11.3125s; opacity: 0.144738;"></div><div class="particle" style="left: 51.517%; width: 3.3635px; height: 3.3635px; animation-duration: 8.04848s; animation-delay: 10.5523s; opacity: 0.432845;"></div><div class="particle" style="left: 40.7789%; width: 1.17524px; height: 1.17524px; animation-duration: 13.7619s; animation-delay: 2.12125s; opacity: 0.426424;"></div><div class="particle" style="left: 23.5828%; width: 2.2521px; height: 2.2521px; animation-duration: 15.1505s; animation-delay: 9.01513s; opacity: 0.155934;"></div><div class="particle" style="left: 63.3758%; width: 3.80683px; height: 3.80683px; animation-duration: 14.9662s; animation-delay: 3.33259s; opacity: 0.393909;"></div><div class="particle" style="left: 64.9892%; width: 1.70159px; height: 1.70159px; animation-duration: 17.9749s; animation-delay: 2.59101s; opacity: 0.454294;"></div><div class="particle" style="left: 50.3714%; width: 2.11608px; height: 2.11608px; animation-duration: 19.0748s; animation-delay: 9.99s; opacity: 0.502523;"></div><div class="particle" style="left: 60.0833%; width: 3.70351px; height: 3.70351px; animation-duration: 10.3982s; animation-delay: 4.01404s; opacity: 0.488014;"></div><div class="particle" style="left: 2.04036%; width: 2.20784px; height: 2.20784px; animation-duration: 19.6119s; animation-delay: 8.94638s; opacity: 0.174342;"></div><div class="particle" style="left: 36.2107%; width: 3.94718px; height: 3.94718px; animation-duration: 14.47s; animation-delay: 6.61685s; opacity: 0.489595;"></div><div class="particle" style="left: 85.9911%; width: 2.32795px; height: 2.32795px; animation-duration: 17.0955s; animation-delay: 3.6047s; opacity: 0.567749;"></div><div class="particle" style="left: 93.2124%; width: 1.57596px; height: 1.57596px; animation-duration: 11.1332s; animation-delay: 8.73381s; opacity: 0.347667;"></div><div class="particle" style="left: 18.9069%; width: 3.16283px; height: 3.16283px; animation-duration: 18.2037s; animation-delay: 11.5059s; opacity: 0.138947;"></div><div class="particle" style="left: 26.4118%; width: 1.10482px; height: 1.10482px; animation-duration: 11.4449s; animation-delay: 2.57887s; opacity: 0.318158;"></div><div class="particle" style="left: 59.1768%; width: 3.33205px; height: 3.33205px; animation-duration: 12.7371s; animation-delay: 1.7302s; opacity: 0.299755;"></div><div class="particle" style="left: 56.0052%; width: 2.72402px; height: 2.72402px; animation-duration: 12.0154s; animation-delay: 8.86718s; opacity: 0.346065;"></div><div class="particle" style="left: 68.3604%; width: 2.19239px; height: 2.19239px; animation-duration: 15.7817s; animation-delay: 6.46242s; opacity: 0.312353;"></div><div class="particle" style="left: 44.8779%; width: 1.10463px; height: 1.10463px; animation-duration: 10.8251s; animation-delay: 11.8183s; opacity: 0.51769;"></div><div class="particle" style="left: 51.2342%; width: 3.64681px; height: 3.64681px; animation-duration: 15.4128s; animation-delay: 4.77018s; opacity: 0.196422;"></div><div class="particle" style="left: 42.8704%; width: 1.84662px; height: 1.84662px; animation-duration: 10.88s; animation-delay: 2.0728s; opacity: 0.242965;"></div><div class="particle" style="left: 26.0847%; width: 3.52968px; height: 3.52968px; animation-duration: 14.5186s; animation-delay: 4.24159s; opacity: 0.336164;"></div><div class="particle" style="left: 40.4674%; width: 3.7496px; height: 3.7496px; animation-duration: 19.3245s; animation-delay: 5.19979s; opacity: 0.248216;"></div><div class="particle" style="left: 14.5456%; width: 1.47531px; height: 1.47531px; animation-duration: 17.1246s; animation-delay: 1.46575s; opacity: 0.295846;"></div><div class="particle" style="left: 29.3558%; width: 2.06386px; height: 2.06386px; animation-duration: 15.9924s; animation-delay: 9.54452s; opacity: 0.520652;"></div><div class="particle" style="left: 85.2366%; width: 1.17956px; height: 1.17956px; animation-duration: 19.6959s; animation-delay: 4.7104s; opacity: 0.4674;"></div><div class="particle" style="left: 28.9509%; width: 3.88499px; height: 3.88499px; animation-duration: 17.0912s; animation-delay: 5.01552s; opacity: 0.15431;"></div><div class="particle" style="left: 41.4094%; width: 3.06161px; height: 3.06161px; animation-duration: 12.6892s; animation-delay: 1.61788s; opacity: 0.290075;"></div><div class="particle" style="left: 93.7216%; width: 3.03414px; height: 3.03414px; animation-duration: 14.4745s; animation-delay: 0.995953s; opacity: 0.203544;"></div><div class="particle" style="left: 95.4615%; width: 1.36934px; height: 1.36934px; animation-duration: 19.2616s; animation-delay: 9.6068s; opacity: 0.538469;"></div><div class="particle" style="left: 74.0655%; width: 2.413px; height: 2.413px; animation-duration: 11.0937s; animation-delay: 1.30696s; opacity: 0.335275;"></div><div class="particle" style="left: 90.6047%; width: 3.21976px; height: 3.21976px; animation-duration: 10.1199s; animation-delay: 7.74785s; opacity: 0.510324;"></div><div class="particle" style="left: 38.3633%; width: 1.08658px; height: 1.08658px; animation-duration: 19.5498s; animation-delay: 0.267889s; opacity: 0.575014;"></div><div class="particle" style="left: 42.5435%; width: 3.84419px; height: 3.84419px; animation-duration: 17.1392s; animation-delay: 3.6891s; opacity: 0.522192;"></div><div class="particle" style="left: 93.5042%; width: 2.45312px; height: 2.45312px; animation-duration: 11.9725s; animation-delay: 1.41641s; opacity: 0.538105;"></div><div class="particle" style="left: 43.562%; width: 3.26097px; height: 3.26097px; animation-duration: 14.5429s; animation-delay: 9.03698s; opacity: 0.192036;"></div><div class="particle" style="left: 19.3659%; width: 1.74438px; height: 1.74438px; animation-duration: 14.6549s; animation-delay: 10.1169s; opacity: 0.333275;"></div><div class="particle" style="left: 65.0178%; width: 3.08977px; height: 3.08977px; animation-duration: 8.95813s; animation-delay: 10.5042s; opacity: 0.34013;"></div><div class="particle" style="left: 42.9856%; width: 3.78608px; height: 3.78608px; animation-duration: 14.6657s; animation-delay: 8.29683s; opacity: 0.454194;"></div><div class="particle" style="left: 63.8541%; width: 1.73585px; height: 1.73585px; animation-duration: 14.1358s; animation-delay: 4.3904s; opacity: 0.3786;"></div><div class="particle" style="left: 93.2792%; width: 1.81849px; height: 1.81849px; animation-duration: 11.7535s; animation-delay: 8.1368s; opacity: 0.519644;"></div><div class="particle" style="left: 22.0044%; width: 1.26514px; height: 1.26514px; animation-duration: 12.4514s; animation-delay: 4.48609s; opacity: 0.499895;"></div><div class="particle" style="left: 73.7386%; width: 1.72689px; height: 1.72689px; animation-duration: 15.5436s; animation-delay: 4.32476s; opacity: 0.336856;"></div><div class="particle" style="left: 42.3884%; width: 1.48186px; height: 1.48186px; animation-duration: 11.4561s; animation-delay: 4.25575s; opacity: 0.485605;"></div><div class="particle" style="left: 29.3495%; width: 3.7232px; height: 3.7232px; animation-duration: 8.02159s; animation-delay: 0.886788s; opacity: 0.161355;"></div><div class="particle" style="left: 44.4963%; width: 1.12835px; height: 1.12835px; animation-duration: 12.4382s; animation-delay: 6.35014s; opacity: 0.149783;"></div><div class="particle" style="left: 6.13964%; width: 1.0356px; height: 1.0356px; animation-duration: 15.5392s; animation-delay: 1.47722s; opacity: 0.320799;"></div><div class="particle" style="left: 43.8769%; width: 1.00512px; height: 1.00512px; animation-duration: 17.5725s; animation-delay: 3.57578s; opacity: 0.409101;"></div><div class="particle" style="left: 78.0346%; width: 1.22809px; height: 1.22809px; animation-duration: 11.8214s; animation-delay: 11.8148s; opacity: 0.482054;"></div><div class="particle" style="left: 64.4016%; width: 1.54799px; height: 1.54799px; animation-duration: 13.3482s; animation-delay: 9.06625s; opacity: 0.556073;"></div><div class="particle" style="left: 1.15722%; width: 1.78013px; height: 1.78013px; animation-duration: 13.8768s; animation-delay: 8.31106s; opacity: 0.236562;"></div><div class="particle" style="left: 90.1378%; width: 1.74277px; height: 1.74277px; animation-duration: 18.9376s; animation-delay: 9.76819s; opacity: 0.3733;"></div><div class="particle" style="left: 45.5417%; width: 1.64293px; height: 1.64293px; animation-duration: 14.2683s; animation-delay: 2.02203s; opacity: 0.349094;"></div><div class="particle" style="left: 71.6559%; width: 2.06213px; height: 2.06213px; animation-duration: 11.8202s; animation-delay: 11.0169s; opacity: 0.454973;"></div></div>
-        <div class="hero-content">
-            <div class="hero-badge">🏗️ 张家港 · 长江门户</div>
-            <h1 class="hero-title">
-                张家港<span class="highlight">******</span><br>有限公司
-            </h1>
-            <p class="hero-subtitle" style="animation-delay: 0.2s;">
-                坐落于长江下游黄金水道，依托张家港保税区政策优势<br>
-                集港口装卸、仓储物流、国际货运代理于一体的现代化综合港口服务企业
-            </p>
-            <div class="hero-cta" style="animation-delay: 0.4s;">
-                <a href="#about" class="btn btn-primary">了解更多 →</a>
-                <a href="#contact" class="btn btn-outline">联系我们</a>
-            </div>
+<!-- MAIN APP -->
+<main id="app">
+    <div class="page-hero"><h2>客服中心</h2><div class="sub">Service Center</div></div>
+    <div class="breadcrumb"><div class="container">首页 &gt; 客服中心 &gt; <span>常见问题</span></div></div>
+    <div class="container"><div class="main-layout">
+    <div class="sidebar">
+      <h3>客服中心</h3>
+      <a href="#service/guide" class="" onclick="navigate('service/guide')">业务指南</a>
+      <a href="#service/download" class="" onclick="navigate('service/download')">文档下载</a>
+      <a href="#service/faq" class="active" onclick="navigate('service/faq')">常见问题</a>
+    </div><div class="content-area">
+    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">常见问题</h3>
+    
+      <div class="faq-item" id="faq0">
+        <div class="faq-q" onclick="document.getElementById('faq0').classList.toggle('open')">
+          <span>如何办理货物入库手续？</span><span style="font-size:1.2rem">+</span>
         </div>
-        <div class="scroll-indicator">
-            <span>滚 动 探 索</span>
-            <div class="line"></div>
+        <div class="faq-a"><p>客户需先与公司市场部签订仓储服务合同，而后凭合同、货物清单、相关单证到业务大厅办理入库手续。入库前需完成报关报检手续，货物到达后由公司安排卸货入库。（演示内容）</p></div>
+      </div>
+      <div class="faq-item" id="faq1">
+        <div class="faq-q" onclick="document.getElementById('faq1').classList.toggle('open')">
+          <span>码头作业时间如何安排？</span><span style="font-size:1.2rem">+</span>
         </div>
+        <div class="faq-a"><p>码头实行24小时作业制，节假日正常运营。船舶到港需提前48小时向调度中心预报，以便合理安排泊位和作业计划。（演示内容）</p></div>
+      </div>
+      <div class="faq-item" id="faq2">
+        <div class="faq-q" onclick="document.getElementById('faq2').classList.toggle('open')">
+          <span>如何查询货物库存情况？</span><span style="font-size:1.2rem">+</span>
+        </div>
+        <div class="faq-a"><p>客户可通过公司智慧物流平台在线查询货物库存数量、入库时间、存储位置等信息。新客户请联系市场部开通平台账号。（演示内容）</p></div>
+      </div>
+      <div class="faq-item" id="faq3">
+        <div class="faq-q" onclick="document.getElementById('faq3').classList.toggle('open')">
+          <span>液体化工品的仓储费用如何计算？</span><span style="font-size:1.2rem">+</span>
+        </div>
+        <div class="faq-a"><p>仓储费用根据货物种类、存储数量、存储时间等因素综合计算。一般按照吨/天或立方米/天计费。具体收费标准请咨询市场部获取最新报价。（演示内容）</p></div>
+      </div>
+      <div class="faq-item" id="faq4">
+        <div class="faq-q" onclick="document.getElementById('faq4').classList.toggle('open')">
+          <span>是否可以提供保税仓储服务？</span><span style="font-size:1.2rem">+</span>
+        </div>
+        <div class="faq-a"><p>是的，公司地处保税区，可提供保税仓储服务。客户可享受进口货物入保税库暂缓缴纳关税和增值税的优惠政策。（演示内容）</p></div>
+      </div></div></div></div></main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>关于我们</h4>
+        <p style="color:rgba(255,255,255,.45)">本网站为前端技术演示项目，模拟化工物流企业官网。所有内容均为虚构，不涉及任何真实企业、商标、资质。如有雷同纯属巧合。</p>
+      </div>
+      <div>
+        <h4>快速导航</h4>
+        <a href="#about" onclick="navigate('about')">关于我们</a>
+        <a href="#news" onclick="navigate('news')">新闻动态</a>
+        <a href="#service" onclick="navigate('service')">客服中心</a>
+        <a href="#culture" onclick="navigate('culture')">企业文化</a>
+      </div>
+      <div>
+        <h4>客服中心</h4>
+        <a href="#service/guide" onclick="navigate('service/guide')">业务指南</a>
+        <a href="#service/download" onclick="navigate('service/download')">文档下载</a>
+        <a href="#service/faq" onclick="navigate('service/faq')">常见问题</a>
+      </div>
+      <div>
+        <h4>友情链接（演示）</h4>
+        <a href="#">****** 集团股份有限公司</a>
+        <a href="#">****** 外商投资服务有限公司</a>
+        <a href="#">****** 保税贸易有限公司</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 ******有限公司 版权所有（仅供前端演示） | 苏ICP备XXXXXXXX号-1（虚构） | 苏公网安备 XXXXXXXXXXXX号（虚构）</p>
+      <p style="margin-top:4px">本网站不涉及任何真实企业、商标、营业执照、公章。所有图片、数据、联系方式均为占位演示。</p>
+    </div>
+  </div>
+</footer>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+
+<script>
+// ==================== ROUTER ====================
+const app = document.getElementById('app');
+const navLinks = document.getElementById('navLinks');
+const backTop = document.getElementById('backTop');
+
+// Scroll handler
+window.addEventListener('scroll',()=>{
+  backTop.classList.toggle('show',window.scrollY>500);
+});
+
+backTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// Mobile menu
+function toggleMenu(){
+  navLinks.classList.toggle('open');
+}
+
+// Close menu on link click
+document.addEventListener('click',(e)=>{
+  if(e.target.closest('.nav-links a')){
+    navLinks.classList.remove('open');
+  }
+});
+
+// Navigate
+function navigate(path){
+  const hash = path.startsWith('#') ? path : '#' + path;
+  window.location.hash = hash;
+  renderPage();
+  window.scrollTo({top:0,behavior:'smooth'});
+  navLinks.classList.remove('open');
+}
+
+// Mark active nav
+function setActiveNav(section){
+  document.querySelectorAll('[data-nav]').forEach(a=>{
+    a.classList.toggle('active', a.dataset.nav === section);
+  });
+}
+
+// Parse hash
+function parseHash(){
+  const h = window.location.hash.replace('#','') || 'home';
+  const parts = h.split('/');
+  return { section:parts[0], sub:parts[1]||null, param:parts[2]||null };
+}
+
+// ==================== RENDER ENGINE ====================
+function renderPage(){
+  const {section,sub,param} = parseHash();
+  setActiveNav(section);
+
+  switch(section){
+    case 'home': app.innerHTML = renderHome(); break;
+    case 'about': app.innerHTML = renderAbout(sub); break;
+    case 'news': app.innerHTML = renderNews(sub,param); break;
+    case 'service': app.innerHTML = renderService(sub); break;
+    case 'culture': app.innerHTML = renderCulture(); break;
+    case 'contact': app.innerHTML = renderContact(); break;
+    default: app.innerHTML = renderHome();
+  }
+
+  // Re-bind any interactive elements
+  setTimeout(bindInteractions, 50);
+}
+
+// ==================== HOME PAGE ====================
+function renderHome(){
+  return `
+    <section class="home-hero">
+      <div class="hero-particles" id="particles"></div>
+      <div class="container">
+        <div class="hero-text">
+          <h1><span class="hl">******</span>有限公司</h1>
+          <p>中国AAAA级液体化工物流企业<br>专业从事散装液体化工产品的码头接卸、保税仓储和分拨转运服务</p>
+          <div class="hero-btns">
+            <a href="#about" class="btn btn-primary" onclick="navigate('about')">了解我们 →</a>
+            <a href="#service" class="btn btn-outline" onclick="navigate('service')">业务指南</a>
+            <a href="#contact" class="btn btn-outline" onclick="navigate('contact')">联系我们</a>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="n">500<span style="font-size:.5em">+</span>米</div><div class="l">长江岸线</div></div>
+          <div class="hero-stat"><div class="n">110<span style="font-size:.5em">万</span>m³</div><div class="l">储罐容积</div></div>
+          <div class="hero-stat"><div class="n">450<span style="font-size:.5em">万</span>吨</div><div class="l">年吞吐量</div></div>
+          <div class="hero-stat"><div class="n">20<span style="font-size:.5em">+</span>年</div><div class="l">行业经验</div></div>
+        </div>
+      </div>
     </section>
 
-    <!-- ============================================
-    ABOUT
-    ============================================ -->
-    <section class="section about" id="about">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-label">About Us</div>
-                <h2 class="section-title">关于******</h2>
-                <p class="section-desc">深耕港口物流多年，致力于为客户提供高效、安全、便捷的一站式港口综合服务</p>
-            </div>
-            <div class="about-grid">
-                <div class="about-visual reveal-left">
-                    <div class="about-image-wrapper">
-                        <div class="about-image-placeholder">
-                            <span class="port-icon">🚢</span>
-                        </div>
-                        <div class="about-wave"></div>
-                    </div>
-                    <div class="about-badge">🏆 行业标杆企业</div>
-                </div>
-                <div class="about-text reveal-right">
-                    <h3>长江之畔的<br>现代化物流枢纽</h3>
-                    <p>
-                        张家港******有限公司成立于长江经济带核心区域——江苏省张家港市，
-                        地处长江下游南岸，紧邻张家港保税区，拥有得天独厚的区位优势和深水岸线资源。
-                    </p>
-                    <p>
-                        公司依托长江黄金水道，专业从事港口货物装卸、仓储堆存、国际货运代理、
-                        船舶代理等综合物流服务，是长江流域重要的液体化工品和散杂货中转基地。
-                    </p>
-                    <p>
-                        凭借先进的码头设施、专业的管理团队和完善的服务体系，公司与国内外众多
-                        知名企业建立了长期稳定的合作关系，年货物吞吐量持续增长。
-                    </p>
-                    <div class="about-stats-mini">
-                        <div class="about-stat-mini">
-                            <span class="icon">📐</span>
-                            <div>
-                                <div class="val">2,000+<span style="font-size:0.7em;">米</span></div>
-                                <div class="lbl">深水岸线</div>
-                            </div>
-                        </div>
-                        <div class="about-stat-mini">
-                            <span class="icon">⚓</span>
-                            <div>
-                                <div class="val">50,000+<span style="font-size:0.7em;">吨级</span></div>
-                                <div class="lbl">靠泊能力</div>
-                            </div>
-                        </div>
-                        <div class="about-stat-mini">
-                            <span class="icon">🏭</span>
-                            <div>
-                                <div class="val">500,000+<span style="font-size:0.7em;">㎡</span></div>
-                                <div class="lbl">仓储面积</div>
-                            </div>
-                        </div>
-                        <div class="about-stat-mini">
-                            <span class="icon">🤝</span>
-                            <div>
-                                <div class="val">300+<span style="font-size:0.7em;">家</span></div>
-                                <div class="lbl">合作客户</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- ABOUT PREVIEW -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header"><div class="label">About Us</div><h2>关于******</h2><p>致力于成为长江流域领先的液体化工物流综合服务商</p></div>
+        <div class="card-grid cols-3">
+          <div class="card"><div class="icon blue">⚓</div><h4>码头装卸</h4><p>拥有30,000吨级和50,000吨级两个液体散化专用码头，码头年吞吐能力可达450万吨。</p></div>
+          <div class="card"><div class="icon gold">🏗️</div><h4>仓储服务</h4><p>码头后方配套储容约110万立方米，其中自营储容约93万立方米，满足各类液体化工品存储需求。</p></div>
+          <div class="card"><div class="icon green">🚛</div><h4>物流配送</h4><p>利用码头和储罐资源为化工园区内企业提供管道物流配送服务，实现高效、安全的点对点输送。</p></div>
         </div>
+        <div style="text-align:center;margin-top:24px">
+          <a href="#about" class="btn btn-primary" onclick="navigate('about')">了解更多 →</a>
+        </div>
+      </div>
     </section>
 
-    <!-- ============================================
-    STATS COUNTER
-    ============================================ -->
-    <section class="stats">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-item reveal">
-                    <span class="stat-number"><span class="counter" data-target="25">0</span></span>
-                    <span class="stat-plus">+</span>
-                    <div class="stat-label">年行业经验</div>
-                </div>
-                <div class="stat-item reveal">
-                    <span class="stat-number"><span class="counter" data-target="1500">0</span></span>
-                    <span class="stat-plus">万吨</span>
-                    <div class="stat-label">年货物吞吐量</div>
-                </div>
-                <div class="stat-item reveal">
-                    <span class="stat-number"><span class="counter" data-target="500">0</span></span>
-                    <span class="stat-plus">+</span>
-                    <div class="stat-label">在职员工</div>
-                </div>
-                <div class="stat-item reveal">
-                    <span class="stat-number"><span class="counter" data-target="98">0</span></span>
-                    <span class="stat-plus">%</span>
-                    <div class="stat-label">客户满意度</div>
-                </div>
-            </div>
+    <!-- NEWS PREVIEW -->
+    <section class="section" style="background:var(--gray-50)">
+      <div class="container">
+        <div class="section-header"><div class="label">News</div><h2>新闻动态</h2><p>关注公司最新资讯与行业动态</p></div>
+        ${renderNewsList('company',1,4)}
+        <div style="text-align:center;margin-top:20px">
+          <a href="#news" class="btn btn-outline" style="color:var(--primary);border-color:var(--primary)" onclick="navigate('news')">查看全部新闻 →</a>
         </div>
+      </div>
     </section>
 
-    <!-- ============================================
-    BUSINESS
-    ============================================ -->
-    <section class="section business" id="business">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-label">Our Services</div>
-                <h2 class="section-title">业务范围</h2>
-                <p class="section-desc">提供全方位、多层次的港口物流综合服务，满足不同客户的多样化需求</p>
-            </div>
-            <div class="business-grid">
-                <div class="business-card reveal">
-                    <div class="card-icon blue">⚓</div>
-                    <h4>港口装卸服务</h4>
-                    <p>配备专业化码头装卸设备，提供散杂货、集装箱、液体化工品等各类货物的高效装卸作业服务，作业效率行业领先。</p>
-                </div>
-                <div class="business-card reveal">
-                    <div class="card-icon gold">🏗️</div>
-                    <h4>仓储堆存管理</h4>
-                    <p>拥有大型现代化仓储设施，包括普通仓库、保税仓库及液体储罐区，提供安全规范的货物存储与库存管理服务。</p>
-                </div>
-                <div class="business-card reveal">
-                    <div class="card-icon green">🚛</div>
-                    <h4>物流运输配送</h4>
-                    <p>整合公路、铁路、水路多式联运资源，为客户提供门到门的一体化物流运输解决方案，降低综合物流成本。</p>
-                </div>
-                <div class="business-card reveal">
-                    <div class="card-icon purple">📋</div>
-                    <h4>国际货运代理</h4>
-                    <p>具备一级国际货运代理资质，提供报关报检、订舱配载、提单签发等全流程国际货运代理服务。</p>
-                </div>
-                <div class="business-card reveal">
-                    <div class="card-icon red">🚢</div>
-                    <h4>船舶代理服务</h4>
-                    <p>为往来船舶提供进出港申报、引航调度、燃料补给、船员服务等全方位船舶代理服务，缩短船舶在港时间。</p>
-                </div>
-                <div class="business-card reveal">
-                    <div class="card-icon teal">🔬</div>
-                    <h4>检验检测服务</h4>
-                    <p>提供货物数量、重量及品质的第三方检验检测服务，确保货物交接的准确性与公正性，保障客户利益。</p>
-                </div>
-            </div>
+    <!-- PARTNERS -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header"><div class="label">Partners</div><h2>合作伙伴</h2><p>携手行业标杆，共创物流价值（均为演示占位）</p></div>
+        <div class="card-grid cols-4" style="text-align:center">
+          <div class="card"><div style="font-size:2rem;margin-bottom:8px">🏭</div><h4 style="font-size:.9rem">****** 国际公司</h4></div>
+          <div class="card"><div style="font-size:2rem;margin-bottom:8px">⛽</div><h4 style="font-size:.9rem">****** 中国有限公司</h4></div>
+          <div class="card"><div style="font-size:2rem;margin-bottom:8px">🏢</div><h4 style="font-size:.9rem">****** 投资集团</h4></div>
+          <div class="card"><div style="font-size:2rem;margin-bottom:8px">🚢</div><h4 style="font-size:.9rem">****** 供应链公司</h4></div>
         </div>
+      </div>
     </section>
+  `;
+}
 
-    <!-- ============================================
-    ADVANTAGES
-    ============================================ -->
-    <section class="section" id="advantages">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-label">Why Choose Us</div>
-                <h2 class="section-title">核心竞争优势</h2>
-                <p class="section-desc">凭借独特的地理位置、先进的设施和专业的团队，为客户创造最大价值</p>
-            </div>
-            <div class="advantages-grid">
-                <div class="advantage-card reveal">
-                    <div class="advantage-icon">📍</div>
-                    <h4>黄金区位优势</h4>
-                    <p>位于长江经济带核心节点，紧邻张家港保税区，辐射长三角经济圈，水陆交通网络发达。</p>
-                </div>
-                <div class="advantage-card reveal">
-                    <div class="advantage-icon">🛠️</div>
-                    <h4>先进设施设备</h4>
-                    <p>码头配套完善，拥有大型门机、输送带系统、自动化控制系统，装卸效率行业领先。</p>
-                </div>
-                <div class="advantage-card reveal">
-                    <div class="advantage-icon">🛡️</div>
-                    <h4>安全环保优先</h4>
-                    <p>严格执行国际安全标准，配备完善的消防、防污和应急响应系统，践行绿色港口理念。</p>
-                </div>
-                <div class="advantage-card reveal">
-                    <div class="advantage-icon">👥</div>
-                    <h4>专业人才团队</h4>
-                    <p>拥有一支经验丰富的港口管理、技术操作和客户服务团队，提供专业可靠的港口服务。</p>
-                </div>
-                <div class="advantage-card reveal">
-                    <div class="advantage-icon">💻</div>
-                    <h4>智慧港口系统</h4>
-                    <p>引入智能化管理平台，实现作业调度、仓储管理、客户服务的数字化，提升运营效率。</p>
-                </div>
-                <div class="advantage-card reveal">
-                    <div class="advantage-icon">🤝</div>
-                    <h4>一站式解决方案</h4>
-                    <p>从装卸到配送，从报关到结算，提供端到端的全程物流服务，让客户省心省力。</p>
-                </div>
-            </div>
+// ==================== ABOUT PAGES ====================
+function renderAbout(sub){
+  const sidebar = `
+    <div class="sidebar">
+      <h3>关于我们</h3>
+      <a href="#about/profile" class="${!sub||sub==='profile'?'active':''}" onclick="navigate('about/profile')">公司概况</a>
+      <a href="#about/history" class="${sub==='history'?'active':''}" onclick="navigate('about/history')">发展历程</a>
+      <a href="#about/advantages" class="${sub==='advantages'?'active':''}" onclick="navigate('about/advantages')">优势介绍</a>
+      <a href="#about/cert" class="${sub==='cert'?'active':''}" onclick="navigate('about/cert')">体系认证</a>
+      <a href="#about/honors" class="${sub==='honors'?'active':''}" onclick="navigate('about/honors')">公司荣誉</a>
+    </div>`;
+
+  let content;
+  switch(sub){
+    case 'history': content = renderHistory(); break;
+    case 'advantages': content = renderAdvantages(); break;
+    case 'cert': content = renderCert(); break;
+    case 'honors': content = renderHonors(); break;
+    default: content = renderProfile();
+  }
+
+  return `
+    <div class="page-hero"><h2>关于我们</h2><div class="sub">About Us</div></div>
+    <div class="breadcrumb"><div class="container">首页 &gt; 关于我们 &gt; <span>${getAboutTitle(sub)}</span></div></div>
+    <div class="container"><div class="main-layout">${sidebar}<div class="content-area">${content}</div></div></div>`;
+}
+
+function getAboutTitle(sub){
+  const m={profile:'公司概况',history:'发展历程',advantages:'优势介绍',cert:'体系认证',honors:'公司荣誉'};
+  return m[sub]||'公司概况';
+}
+
+function renderProfile(){
+  return `
+    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">公司概况</h3>
+    <p style="margin-bottom:14px">******有限公司系******集团股份有限公司控股子公司。公司于2001年成立，注册资金11.8亿元人民币。下辖******扬州石化仓储有限公司和******华泰化工仓储有限公司两个子公司。</p>
+    <p style="margin-bottom:14px">现拥有500+米长江岸线，建有30,000吨级、50,000吨级两个液体散化专用码头，另有500吨级内河十字港疏运码头2座。码头年吞吐量可达450万吨。码头后方配套储容约110万立方米，其中自营储容约93万立方米。</p>
+    <p style="margin-bottom:14px">公司主要从事乙二醇、二甘醇、邻二甲苯、二辛酯、甲醇等散装液体化工产品的专业物流服务，包括码头接卸、保税仓储和分拨转运服务。主要合作伙伴有MEGLOBAL、******国际、******中国有限公司等。同时利用码头和储罐资源为******保税物流园区和******化学工业园区内仓储、生产企业提供管道物流配送服务。</p>
+    <div class="card-grid cols-2" style="margin-top:20px">
+      <div class="card"><h4 style="color:var(--primary)">注册资本</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">11.8亿<span style="font-size:.6em"> 元</span></p></div>
+      <div class="card"><h4 style="color:var(--primary)">成立时间</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">2001年<span style="font-size:.6em"> 4月</span></p></div>
+      <div class="card"><h4 style="color:var(--primary)">员工人数</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">500+<span style="font-size:.6em"> 人</span></p></div>
+      <div class="card"><h4 style="color:var(--primary)">子公司</h4><p style="font-size:1.4rem;font-weight:800;color:var(--accent)">2<span style="font-size:.6em"> 家</span></p></div>
+    </div>`;
+}
+
+function renderHistory(){
+  return `
+    <h3 style="font-size:1.4rem;margin-bottom:20px;color:var(--primary)">发展历程</h3>
+    <div class="timeline">
+      <div class="tl-item"><div class="year">2001年</div><div class="body"><h4>公司成立</h4><p>******有限公司正式注册成立，进军液体化工物流领域。</p></div></div>
+      <div class="tl-item"><div class="year">2006年</div><div class="body"><h4>一期码头投产</h4><p>首个万吨级液体化工泊位建成投用，开启码头接卸业务。</p></div></div>
+      <div class="tl-item"><div class="year">2010年</div><div class="body"><h4>储罐扩容</h4><p>储罐总容积突破50万立方米，成为区域重要液体化工仓储基地。</p></div></div>
+      <div class="tl-item"><div class="year">2015年</div><div class="body"><h4>子公司成立</h4><p>设立扬州子公司，业务版图跨江拓展。</p></div></div>
+      <div class="tl-item"><div class="year">2018年</div><div class="body"><h4>AAAA级认证</h4><p>荣获中国AAAA级液体化工物流企业称号。</p></div></div>
+      <div class="tl-item"><div class="year">2021年</div><div class="body"><h4>智慧物流升级</h4><p>全面启动数字化转型，智能调度与仓储管理系统上线。</p></div></div>
+      <div class="tl-item"><div class="year">2024年</div><div class="body"><h4>绿色港口认证</h4><p>获评省级绿色港口，践行安全、环保、高效的可持续发展道路。</p></div></div>
+    </div>`;
+}
+
+function renderAdvantages(){
+  return `
+    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">优势介绍</h3>
+    <div class="card-grid cols-2">
+      <div class="card"><div class="icon blue">📍</div><h4>黄金区位</h4><p>位于长江经济带核心节点，紧邻******保税区，水陆交通网络发达，辐射长三角经济圈。</p></div>
+      <div class="card"><div class="icon gold">⚓</div><h4>深水岸线</h4><p>拥有500+米长江深水岸线，可同时停靠多艘万吨级船舶，码头装卸效率行业领先。</p></div>
+      <div class="card"><div class="icon green">🛡️</div><h4>安全保障</h4><p>严格执行国际安全管理标准，配备完善的消防、防污和应急响应系统，确保液体化工品存储安全。</p></div>
+      <div class="card"><div class="icon purple">💻</div><h4>智慧运营</h4><p>引入智能管理平台，实现作业调度、仓储管理、客户服务全面数字化，提升运营效率。</p></div>
+    </div>`;
+}
+
+function renderCert(){
+  return `
+    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">体系认证</h3>
+    <table class="data-table">
+      <thead><tr><th>认证名称</th><th>颁发机构</th><th>有效期</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>ISO 9001:2015 质量管理体系</td><td>******认证中心</td><td>2024-2027</td><td>✅ 有效</td></tr>
+        <tr><td>ISO 14001:2015 环境管理体系</td><td>******认证中心</td><td>2024-2027</td><td>✅ 有效</td></tr>
+        <tr><td>ISO 45001:2018 职业健康安全</td><td>******认证中心</td><td>2024-2027</td><td>✅ 有效</td></tr>
+        <tr><td>安全生产标准化二级</td><td>******应急管理局</td><td>2024-2027</td><td>✅ 有效</td></tr>
+        <tr><td>海关AEO高级认证</td><td>******海关</td><td>2024-2027</td><td>✅ 有效</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:16px;color:var(--gray-600);font-size:.85rem">* 以上认证信息均为演示用途，不涉及真实认证机构。</p>`;
+}
+
+function renderHonors(){
+  return `
+    <h3 style="font-size:1.4rem;margin-bottom:16px;color:var(--primary)">公司荣誉</h3>
+    <div class="card-grid cols-2">
+      <div class="card"><div style="font-size:2rem;margin-bottom:8px">🏆</div><h4>中国AAAA级液体化工物流企业</h4><p>2020年获得，行业最高等级资质认证之一</p></div>
+      <div class="card"><div style="font-size:2rem;margin-bottom:8px">⭐</div><h4>省级绿色港口</h4><p>2024年获评，彰显安全环保领先水平</p></div>
+      <div class="card"><div style="font-size:2rem;margin-bottom:8px">🔒</div><h4>安全生产先进单位</h4><p>连续多年获评市级安全生产先进单位</p></div>
+      <div class="card"><div style="font-size:2rem;margin-bottom:8px">🤝</div><h4>优秀合作伙伴奖</h4><p>获多家世界500强企业颁发的优秀物流服务商奖项</p></div>
+    </div>
+    <p style="margin-top:16px;color:var(--gray-600);font-size:.85rem">* 以上荣誉均为演示内容，不涉及真实获奖记录。</p>`;
+}
+
+// ==================== NEWS ====================
+function renderNews(sub,param){
+  let title, listHtml;
+  const sidebar = `
+    <div class="sidebar">
+      <h3>新闻动态</h3>
+      <a href="#news/company" class="${!sub||sub==='company'?'active':''}" onclick="navigate('news/company')">公司新闻</a>
+      <a href="#news/announce" class="${sub==='announce'?'active':''}" onclick="navigate('news/announce')">通知公告</a>
+      <a href="#news/industry" class="${sub==='industry'?'active':''}" onclick="navigate('news/industry')">行业新闻</a>
+    </div>`;
+
+  if(param){
+    // News detail
+    const article = getNewsDetail(param);
+    return `
+      <div class="page-hero"><h2>新闻详情</h2><div class="sub">News Detail</div></div>
+      <div class="breadcrumb"><div class="container">首页 &gt; 新闻动态 &gt; <span>新闻详情</span></div></div>
+      <div class="container"><div class="main-layout">${sidebar}<div class="content-area">${article}</div></div></div>`;
+  }
+
+  switch(sub){
+    case 'announce': title='通知公告'; listHtml=renderNewsList('announce',1,10); break;
+    case 'industry': title='行业新闻'; listHtml=renderNewsList('industry',1,10); break;
+    default: title='公司新闻'; listHtml=renderNewsList('company',1,10);
+  }
+
+  return `
+    <div class="page-hero"><h2>${title}</h2><div class="sub">News</div></div>
+    <div class="breadcrumb"><div class="container">首页 &gt; 新闻动态 &gt; <span>${title}</span></div></div>
+    <div class="container"><div class="main-layout">${sidebar}<div class="content-area"><h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">全部${title}</h3>${listHtml}</div></div></div>`;
+}
+
+// Mock news data
+const MOCK_NEWS = {
+  company: [
+    {id:1,date:'2025-06-20',title:'正式投用！******9区油脂库迎来首船棕榈油',summary:'近日，******有限公司9区油脂库正式投入使用，迎来首船进口棕榈油靠泊卸货，标志着公司油脂化工品仓储业务迈上新台阶。'},
+    {id:2,date:'2025-05-15',title:'聚力奏响进行曲 思变笃行跃新峰——2025年度工作推进会召开',summary:'5月15日，公司召开2025年度工作推进会，总结上半年工作成效，部署下半年重点任务，号召全体员工思变笃行、再创佳绩。'},
+    {id:3,date:'2025-04-10',title:'三十载弄潮扬子 续写合作共赢新篇章',summary:'公司与某国际化工巨头合作三十周年庆典隆重举行，双方签署新一轮战略合作协议，携手开启合作共赢新篇章。'},
+    {id:4,date:'2025-03-22',title:'获评省级三星级绿色港口荣誉称号',summary:'经过严格评审，公司凭借在环保管理和绿色运营方面的突出表现，成功获评省级三星级绿色港口荣誉称号。'},
+    {id:5,date:'2025-02-08',title:'着力数字变革 引领价值创造——智慧物流平台升级',summary:'公司投资升级智慧物流管理平台，实现货物全流程可视化追踪，客户可通过手机端实时查询货物状态。'},
+    {id:6,date:'2025-01-01',title:'颂党恩·跟党走·唱响新时代——新年文艺汇演圆满举行',summary:'公司举办2025新年文艺汇演，全体员工欢聚一堂，以歌声颂扬时代，以舞蹈展望未来。'},
+  ],
+  announce: [
+    {id:7,date:'2025-06-01',title:'关于2025年端午节放假及作业安排的通知',summary:'根据国家法定节假日安排，端午节期间码头作业正常进行，各岗位实行轮班制，确保客户货物及时周转。'},
+    {id:8,date:'2025-04-20',title:'******码头安全设施年度检验公告',summary:'为保证码头安全运营，公司将于5月对码头安全设施进行年度检验，检验期间部分泊位暂停作业，请客户提前知悉。'},
+    {id:9,date:'2025-03-01',title:'关于启用新版电子提货单系统的公告',summary:'为进一步提升服务效率，公司将于3月15日起全面启用新版电子提货单系统，原纸质提货单将逐步停用。'},
+  ],
+  industry: [
+    {id:10,date:'2025-06-10',title:'2025年全球液体化工品物流市场展望',summary:'全球液体化工品贸易稳步增长，中国作为全球最大化工品消费市场，液体化工物流需求持续扩大，行业前景广阔。'},
+    {id:11,date:'2025-04-25',title:'长江经济带化工物流发展新机遇',summary:'随着长江经济带发展战略深入推进，沿线化工园区集聚效应凸显，液体化工物流需求迎来新一轮增长机遇。'},
+    {id:12,date:'2025-02-15',title:'数字化转型助力液体化工仓储安全升级',summary:'物联网、大数据等新技术在液体化工仓储领域的应用不断深化，智慧仓储正成为行业提质增效的重要抓手。'},
+  ]
+};
+
+function renderNewsList(cat,page,limit){
+  const items = MOCK_NEWS[cat] || [];
+  const totalPages = Math.ceil(items.length/limit);
+  const start = (page-1)*limit;
+  const pageItems = items.slice(start, start+limit);
+
+  let html = pageItems.map(n=>`
+    <div class="news-list-item" onclick="navigate('news/detail/${cat}_${n.id}')" style="cursor:pointer">
+      <div class="date">${n.date.substring(5)}</div>
+      <div class="info"><h4>${n.title}</h4><p>${n.summary}</p></div>
+    </div>`).join('');
+
+  if(totalPages>1){
+    html += '<div class="pagination">';
+    for(let i=1;i<=totalPages;i++){
+      html += `<a href="#" class="${i===page?'active':''}" onclick="event.preventDefault();refreshNewsList('${cat}',${i})">${i}</a>`;
+    }
+    html += '</div>';
+  }
+  return html;
+}
+
+function refreshNewsList(cat,page){
+  const contentArea = document.querySelector('.content-area');
+  if(contentArea){
+    contentArea.innerHTML = `<h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">全部${cat==='company'?'公司新闻':cat==='announce'?'通知公告':'行业新闻'}</h3>${renderNewsList(cat,page,10)}`;
+  }
+}
+
+function getNewsDetail(param){
+  const [cat,id] = param.split('_');
+  const items = MOCK_NEWS[cat] || [];
+  const n = items.find(x=>x.id===parseInt(id));
+  if(!n) return '<p>新闻不存在</p>';
+  return `
+    <h3 style="font-size:1.4rem;margin-bottom:8px;color:var(--primary)">${n.title}</h3>
+    <p style="color:var(--gray-600);font-size:.85rem;margin-bottom:20px">发布时间：${n.date} | 来源：本站 | 浏览：${Math.floor(Math.random()*500)+100}次</p>
+    <div style="border-top:1px solid var(--gray-200);padding-top:20px;line-height:2">
+      <p>${n.summary}</p>
+      <p style="margin-top:16px">（此处为演示内容。实际网站中，此页面将展示完整的新闻正文内容，可能包含多段文字、图片、数据图表等多媒体元素。本演示网站仅展示页面结构和布局。）</p>
+      <p style="margin-top:16px;color:var(--gray-600);font-size:.85rem">——（正文完）——</p>
+    </div>
+    <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--gray-100)">
+      <a href="#news" onclick="navigate('news')" style="color:var(--primary)">← 返回新闻列表</a>
+    </div>`;
+}
+
+// ==================== SERVICE ====================
+function renderService(sub){
+  const sidebar = `
+    <div class="sidebar">
+      <h3>客服中心</h3>
+      <a href="#service/guide" class="${!sub||sub==='guide'?'active':''}" onclick="navigate('service/guide')">业务指南</a>
+      <a href="#service/download" class="${sub==='download'?'active':''}" onclick="navigate('service/download')">文档下载</a>
+      <a href="#service/faq" class="${sub==='faq'?'active':''}" onclick="navigate('service/faq')">常见问题</a>
+    </div>`;
+
+  let content;
+  switch(sub){
+    case 'download': content = renderDownload(); break;
+    case 'faq': content = renderFaq(); break;
+    default: content = renderGuide();
+  }
+
+  return `
+    <div class="page-hero"><h2>客服中心</h2><div class="sub">Service Center</div></div>
+    <div class="breadcrumb"><div class="container">首页 &gt; 客服中心 &gt; <span>${sub==='download'?'文档下载':sub==='faq'?'常见问题':'业务指南'}</span></div></div>
+    <div class="container"><div class="main-layout">${sidebar}<div class="content-area">${content}</div></div></div>`;
+}
+
+function renderGuide(){
+  return `
+    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">业务指南</h3>
+    <p style="margin-bottom:16px">以下为液体化工品码头作业标准流程（演示内容），帮助客户了解货物进出库操作步骤：</p>
+    <table class="data-table">
+      <thead><tr><th>序号</th><th>业务环节</th><th>所需材料</th><th>预计时间</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>业务洽谈与合同签订</td><td>营业执照、经办人身份证</td><td>1-3个工作日</td></tr>
+        <tr><td>2</td><td>船舶到港预报</td><td>船舶信息表、货物信息表</td><td>到港前48小时</td></tr>
+        <tr><td>3</td><td>报关报检</td><td>合同、发票、装箱单、提单</td><td>1-2个工作日</td></tr>
+        <tr><td>4</td><td>码头接卸作业</td><td>装卸作业委托单</td><td>按货物量计算</td></tr>
+        <tr><td>5</td><td>仓储入库</td><td>入库单、货物验收单</td><td>卸货当日</td></tr>
+        <tr><td>6</td><td>出库提货</td><td>提货单、出库委托单</td><td>1个工作日</td></tr>
+        <tr><td>7</td><td>费用结算</td><td>结算凭证、发票信息</td><td>次月结算</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:12px;color:var(--gray-600);font-size:.85rem">* 以上流程为演示内容，具体操作以实际合同约定为准。咨询电话：0512-XXXX-XXXX（演示）</p>`;
+}
+
+function renderDownload(){
+  const files = [
+    {name:'客户开户申请表',desc:'新客户注册开户所需填写的申请表格',ext:'DOCX',size:'256 KB'},
+    {name:'码头作业委托单',desc:'委托码头进行装卸作业的标准格式单据',ext:'PDF',size:'128 KB'},
+    {name:'入库通知书模板',desc:'货物入库通知的标准格式文档',ext:'DOCX',size:'198 KB'},
+    {name:'提货委托书模板',desc:'授权委托他人提取货物的标准文件',ext:'PDF',size:'145 KB'},
+    {name:'业务合同范本（通用版）',desc:'液体化工品仓储物流服务合同范本',ext:'PDF',size:'512 KB'},
+    {name:'安全操作规程手册',desc:'码头及储罐区安全操作规范文档',ext:'PDF',size:'2.1 MB'},
+  ];
+  return `
+    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">文档下载</h3>
+    <p style="margin-bottom:16px;color:var(--gray-600)">以下文档为演示占位，下载链接无效：</p>
+    ${files.map(f=>`
+      <div class="download-item">
+        <div class="icon">📄</div>
+        <div class="info"><h4>${f.name}</h4><p>${f.desc}</p></div>
+        <span style="font-size:.8rem;color:var(--gray-600)">${f.ext} / ${f.size}</span>
+        <button class="btn btn-sm btn-outline" style="color:var(--primary);border-color:var(--primary)" onclick="alert('演示网站：文档下载功能仅为展示')">下载</button>
+      </div>`).join('')}
+    <p style="margin-top:12px;color:var(--gray-600);font-size:.85rem">* 以上文档均为演示内容，所有下载链接无效。</p>`;
+}
+
+function renderFaq(){
+  const faqs = [
+    {q:'如何办理货物入库手续？',a:'客户需先与公司市场部签订仓储服务合同，而后凭合同、货物清单、相关单证到业务大厅办理入库手续。入库前需完成报关报检手续，货物到达后由公司安排卸货入库。（演示内容）'},
+    {q:'码头作业时间如何安排？',a:'码头实行24小时作业制，节假日正常运营。船舶到港需提前48小时向调度中心预报，以便合理安排泊位和作业计划。（演示内容）'},
+    {q:'如何查询货物库存情况？',a:'客户可通过公司智慧物流平台在线查询货物库存数量、入库时间、存储位置等信息。新客户请联系市场部开通平台账号。（演示内容）'},
+    {q:'液体化工品的仓储费用如何计算？',a:'仓储费用根据货物种类、存储数量、存储时间等因素综合计算。一般按照吨/天或立方米/天计费。具体收费标准请咨询市场部获取最新报价。（演示内容）'},
+    {q:'是否可以提供保税仓储服务？',a:'是的，公司地处保税区，可提供保税仓储服务。客户可享受进口货物入保税库暂缓缴纳关税和增值税的优惠政策。（演示内容）'},
+  ];
+  return `
+    <h3 style="font-size:1.3rem;margin-bottom:16px;color:var(--primary)">常见问题</h3>
+    ${faqs.map((f,i)=>`
+      <div class="faq-item" id="faq${i}">
+        <div class="faq-q" onclick="document.getElementById('faq${i}').classList.toggle('open')">
+          <span>${f.q}</span><span style="font-size:1.2rem">+</span>
         </div>
-    </section>
+        <div class="faq-a"><p>${f.a}</p></div>
+      </div>`).join('')}`;
+}
 
-    <!-- ============================================
-    MILESTONES
-    ============================================ -->
-    <section class="section milestones" id="milestones">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-label">Milestones</div>
-                <h2 class="section-title">发展历程</h2>
-                <p class="section-desc">一路走来，每一步都坚实有力，见证公司的成长与突破</p>
-            </div>
-            <div class="timeline">
-                <div class="timeline-item reveal-left">
-                    <div class="timeline-year">2001年</div>
-                    <div class="timeline-content">
-                        <h4>公司成立</h4>
-                        <p>张家港******有限公司正式注册成立，开启港口物流服务新篇章。</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-right">
-                    <div class="timeline-year">2006年</div>
-                    <div class="timeline-content">
-                        <h4>一期码头建成投产</h4>
-                        <p>首个万吨级泊位建成投入运营，年设计吞吐能力达到200万吨。</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-left">
-                    <div class="timeline-year">2012年</div>
-                    <div class="timeline-content">
-                        <h4>保税仓储基地落成</h4>
-                        <p>在张家港保税区内建成大型保税仓储基地，仓储总面积突破30万平方米。</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-right">
-                    <div class="timeline-year">2017年</div>
-                    <div class="timeline-content">
-                        <h4>智慧港口系统上线</h4>
-                        <p>全面启动数字化转型，智能调度和仓储管理系统正式投入运行。</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-left">
-                    <div class="timeline-year">2021年</div>
-                    <div class="timeline-content">
-                        <h4>年吞吐量突破千万吨</h4>
-                        <p>年货物吞吐量首次突破1500万吨大关，迈入大型港口企业行列。</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-right">
-                    <div class="timeline-year">2025年</div>
-                    <div class="timeline-content">
-                        <h4>绿色港口认证</h4>
-                        <p>获得省级绿色港口认证，持续推动节能减排和环境保护，践行可持续发展。</p>
-                    </div>
-                </div>
-            </div>
+// ==================== CULTURE ====================
+function renderCulture(){
+  return `
+    <div class="page-hero"><h2>企业文化</h2><div class="sub">Company Culture</div></div>
+    <div class="breadcrumb"><div class="container">首页 &gt; <span>企业文化</span></div></div>
+    <div class="container" style="padding:32px 20px">
+      <div class="culture-banner">
+        <h3>诚信 · 专业 · 创新 · 共赢</h3>
+        <p>以客户为中心，以安全为基石，致力于成为长江流域最值得信赖的液体化工物流综合服务商（演示）</p>
+      </div>
+      <div class="culture-grid">
+        <div class="culture-card"><div class="ci">🎯</div><h4>企业使命</h4><p>为客户提供安全、高效、便捷的液体化工物流解决方案，助力化工产业供应链升级。</p></div>
+        <div class="culture-card"><div class="ci">🔭</div><h4>企业愿景</h4><p>成为长江流域最具竞争力的液体化工物流综合服务商，打造行业标杆品牌。</p></div>
+        <div class="culture-card"><div class="ci">💎</div><h4>核心价值观</h4><p>诚信经营、专业服务、创新驱动、合作共赢，以责任赢得信任，以品质铸就品牌。</p></div>
+        <div class="culture-card"><div class="ci">👥</div><h4>员工风采</h4><p>公司定期组织员工培训、技能竞赛、文体活动，关注员工成长，营造积极向上的工作氛围。</p></div>
+      </div>
+      <h4 style="margin-top:28px;color:var(--primary);font-size:1.1rem">员工活动剪影（演示）</h4>
+      <div class="card-grid cols-3" style="margin-top:12px">
+        <div class="card" style="text-align:center;padding:40px"><div style="font-size:3rem">🏃</div><p style="margin-top:8px">2025年春季运动会</p></div>
+        <div class="card" style="text-align:center;padding:40px"><div style="font-size:3rem">🎓</div><p style="margin-top:8px">年度安全技能培训</p></div>
+        <div class="card" style="text-align:center;padding:40px"><div style="font-size:3rem">🎉</div><p style="margin-top:8px">2025年新春联欢会</p></div>
+      </div>
+    </div>`;
+}
+
+// ==================== CONTACT ====================
+function renderContact(){
+  return `
+    <div class="page-hero"><h2>联系我们</h2><div class="sub">Contact Us</div></div>
+    <div class="breadcrumb"><div class="container">首页 &gt; <span>联系我们</span></div></div>
+    <div class="container" style="padding:32px 20px">
+      <h3 style="font-size:1.3rem;margin-bottom:20px;color:var(--primary)">联系方式（均为演示信息）</h3>
+      <div class="contact-grid">
+        <div>
+          <div class="contact-card"><div class="icon-w">📍</div><div><h4>公司地址（演示）</h4><p>江苏省张家港市******区******路88号</p></div></div>
+          <div class="contact-card"><div class="icon-w">📞</div><div><h4>联系电话（演示）</h4><p>0512-XXXX-XXXX（总机）<br>0512-XXXX-XXXX（市场部）<br>0512-XXXX-XXXX（调度中心）</p></div></div>
+          <div class="contact-card"><div class="icon-w">📧</div><div><h4>电子邮箱（演示）</h4><p>info@example.com<br>market@example.com</p></div></div>
+          <div class="contact-card"><div class="icon-w">📠</div><div><h4>传真（演示）</h4><p>0512-XXXX-XXXX</p></div></div>
+          <div class="contact-card"><div class="icon-w">🕐</div><div><h4>工作时间（演示）</h4><p>周一至周五 08:00-17:00<br>码头作业 24小时/365天</p></div></div>
         </div>
-    </section>
-
-    <!-- ============================================
-    NEWS
-    ============================================ -->
-    <section class="section" id="news">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-label">News &amp; Updates</div>
-                <h2 class="section-title">新闻动态</h2>
-                <p class="section-desc">关注******最新动态，了解港口行业发展前沿</p>
-            </div>
-            <div class="news-grid">
-                <div class="news-card reveal">
-                    <div class="news-image">
-                        <div class="img-placeholder grad-1">📰</div>
-                    </div>
-                    <div class="news-body">
-                        <div class="news-date">2025年12月</div>
-                        <h4>公司荣获"江苏省五星级绿色港口"称号</h4>
-                        <p>经过严格的评审考核，公司凭借出色的环保管理和绿色运营实践，成功获评省级五星级绿色港口荣誉称号。</p>
-                    </div>
-                </div>
-                <div class="news-card reveal" style="transition-delay: 0.1s;">
-                    <div class="news-image">
-                        <div class="img-placeholder grad-2">🚢</div>
-                    </div>
-                    <div class="news-body">
-                        <div class="news-date">2025年10月</div>
-                        <h4>新开通东南亚国际航线</h4>
-                        <p>公司与国际知名航运企业合作，新开通至东南亚主要港口集装箱班轮航线，进一步拓展国际物流网络。</p>
-                    </div>
-                </div>
-                <div class="news-card reveal" style="transition-delay: 0.2s;">
-                    <div class="news-image">
-                        <div class="img-placeholder grad-3">💡</div>
-                    </div>
-                    <div class="news-body">
-                        <div class="news-date">2025年8月</div>
-                        <h4>智能闸口系统全面升级</h4>
-                        <p>投资500万元对港区智能闸口系统进行全面升级，车辆通行效率提升40%，实现无纸化快速通关。</p>
-                    </div>
-                </div>
-            </div>
+        <div>
+          <h4 style="margin-bottom:12px;color:var(--primary)">公司位置（演示）</h4>
+          <div class="map-placeholder">🗺️<br><span style="font-size:.9rem;margin-top:8px">地图位置示意（非真实坐标）</span></div>
+          <div style="margin-top:16px;padding:16px;background:var(--gray-50);border-radius:var(--radius)">
+            <h4 style="color:var(--primary);margin-bottom:8px">在线留言</h4>
+            <form onsubmit="event.preventDefault();alert('演示网站：留言功能仅为展示')">
+              <input type="text" placeholder="您的姓名" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--gray-200);border-radius:6px;font-family:inherit">
+              <input type="email" placeholder="电子邮箱" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--gray-200);border-radius:6px;font-family:inherit">
+              <textarea placeholder="留言内容" rows="3" style="width:100%;padding:10px;margin-bottom:8px;border:1px solid var(--gray-200);border-radius:6px;font-family:inherit"></textarea>
+              <button type="submit" class="btn btn-primary" style="width:100%">✉️ 发送留言（演示）</button>
+            </form>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>`;
+}
 
-    <!-- ============================================
-    CONTACT
-    ============================================ -->
-    <section class="section contact" id="contact">
-        <div class="container">
-            <div class="section-header reveal">
-                <div class="section-label">Contact Us</div>
-                <h2 class="section-title">联系我们</h2>
-                <p class="section-desc">期待与您的合作，欢迎随时联系我们</p>
-            </div>
-            <div class="contact-grid">
-                <div class="reveal-left">
-                    <div class="contact-info-item">
-                        <div class="contact-icon">📍</div>
-                        <div class="contact-info-text">
-                            <h4>公司地址</h4>
-                            <p>江苏省张家港市保税区长江中路88号</p>
-                        </div>
-                    </div>
-                    <div class="contact-info-item">
-                        <div class="contact-icon">📞</div>
-                        <div class="contact-info-text">
-                            <h4>联系电话</h4>
-                            <p>0512-5868 XXXX（总机）<br>0512-5868 XXXX（业务部）</p>
-                        </div>
-                    </div>
-                    <div class="contact-info-item">
-                        <div class="contact-icon">📧</div>
-                        <div class="contact-info-text">
-                            <h4>电子邮箱</h4>
-                            <p>demo@example.com<br>（仅供展示，非真实联系方式）</p>
-                        </div>
-                    </div>
-                    <div class="contact-info-item">
-                        <div class="contact-icon">🕐</div>
-                        <div class="contact-info-text">
-                            <h4>工作时间</h4>
-                            <p>周一至周五 08:00 - 17:30<br>24小时港口作业服务</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="reveal-right">
-                    <form class="contact-form" onsubmit="handleSubmit(event)">
-                        <div class="form-group">
-                            <label>您的姓名</label>
-                            <input type="text" placeholder="请输入您的姓名" required="" style="">
-                        </div>
-                        <div class="form-group">
-                            <label>联系电话</label>
-                            <input type="tel" placeholder="请输入您的联系电话" required="" style="">
-                        </div>
-                        <div class="form-group">
-                            <label>电子邮箱</label>
-                            <input type="email" placeholder="请输入您的电子邮箱" required="" style="">
-                        </div>
-                        <div class="form-group">
-                            <label>留言内容</label>
-                            <textarea placeholder="请输入您要咨询的内容..." required="" style=""></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
-                            ✉️ 发送留言
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+// ==================== INIT ====================
+function bindInteractions(){
+  // Particle animation for home hero
+  const container = document.getElementById('particles');
+  if(container && !container.children.length){
+    for(let i=0;i<50;i++){
+      const p=document.createElement('div');
+      p.className='particle';
+      p.style.left=Math.random()*100+'%';
+      p.style.width=(Math.random()*3+1)+'px';
+      p.style.height=p.style.width;
+      p.style.animationDuration=(Math.random()*12+8)+'s';
+      p.style.animationDelay=(Math.random()*12)+'s';
+      container.appendChild(p);
+    }
+  }
+}
 
-    <!-- ============================================
-    FOOTER
-    ============================================ -->
-    <footer class="footer">
-        <div class="container">
-            <p>© 2025 <strong>张家港******有限公司</strong> Zhangjiagang ****** Co., Ltd.（本网站仅供前端演示，无经营主体，不承接业务）</p>
-            <p style="margin-top: 4px;">地址：江苏省张家港市保税区长江中路88号 | ICP备案号：苏ICP备XXXXXXXX号</p>
-        </div>
-    </footer>
+// Initial render
+window.addEventListener('hashchange',renderPage);
+renderPage();
 
-    <!-- ============================================
-    BACK TO TOP
-    ============================================ -->
-    <button class="back-to-top" id="backToTop" aria-label="回到顶部" title="回到顶部">↑</button>
-
-    <!-- ============================================
-    SCRIPTS
-    ============================================ -->
-    <script>
-        // ============ 粒子背景 ============
-        (function initParticles() {
-            const container = document.getElementById('heroParticles');
-            const count = 60;
-            for (let i = 0; i < count; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = (Math.random() * 3 + 1) + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
-                particle.style.animationDelay = (Math.random() * 12) + 's';
-                particle.style.opacity = Math.random() * 0.5 + 0.1;
-                container.appendChild(particle);
-            }
-        })();
-
-        // ============ 导航栏滚动效果 ============
-        const nav = document.getElementById('nav');
-        const backToTop = document.getElementById('backToTop');
-
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-
-            // 导航栏背景
-            if (scrollY > 60) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-
-            // 回到顶部按钮
-            if (scrollY > 600) {
-                backToTop.classList.add('visible');
-            } else {
-                backToTop.classList.remove('visible');
-            }
-        });
-
-        backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        // ============ 移动端菜单 ============
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const navLinks = document.getElementById('navLinks');
-
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenuBtn.classList.toggle('active');
-            navLinks.classList.toggle('open');
-        });
-
-        // 点击菜单链接后关闭
-        navLinks.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenuBtn.classList.remove('active');
-                navLinks.classList.remove('open');
-            });
-        });
-
-        // ============ 滚动显示动画 (Intersection Observer) ============
-        (function initReveal() {
-            const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        // 支持自定义延迟
-                        const delay = entry.target.style.transitionDelay || '0s';
-                        setTimeout(() => {
-                            entry.target.classList.add('visible');
-                        }, parseFloat(delay) * 1000);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.15,
-                rootMargin: '0px 0px -40px 0px'
-            });
-
-            revealElements.forEach(el => observer.observe(el));
-        })();
-
-        // ============ 数字递增动画 ============
-        (function initCounters() {
-            const counters = document.querySelectorAll('.counter');
-
-            const animateCounter = (el) => {
-                const target = parseInt(el.getAttribute('data-target'), 10);
-                const duration = 2200; // 动画持续时间 ms
-                const startTime = performance.now();
-                const startVal = 0;
-
-                const step = (currentTime) => {
-                    const elapsed = currentTime - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-
-                    // easeOutExpo 缓动
-                    const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-                    const current = Math.floor(startVal + (target - startVal) * eased);
-
-                    el.textContent = current;
-
-                    if (progress < 1) {
-                        requestAnimationFrame(step);
-                    } else {
-                        el.textContent = target;
-                    }
-                };
-
-                requestAnimationFrame(step);
-            };
-
-            const counterObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        animateCounter(entry.target);
-                        counterObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.6 });
-
-            counters.forEach(c => counterObserver.observe(c));
-        })();
-
-        // ============ 视差滚动效果 ============
-        (function initParallax() {
-            const heroContent = document.querySelector('.hero-content');
-            const particlesContainer = document.getElementById('heroParticles');
-
-            window.addEventListener('scroll', () => {
-                const scrollY = window.scrollY;
-                if (scrollY < window.innerHeight) {
-                    const rate = scrollY * 0.4;
-                    heroContent.style.transform = `translateY(${rate}px)`;
-                    heroContent.style.opacity = 1 - scrollY / (window.innerHeight * 1.2);
-
-                    if (particlesContainer) {
-                        particlesContainer.style.transform = `translateY(${scrollY * 0.15}px)`;
-                    }
-                }
-            });
-        })();
-
-        // ============ 表单提交 ============
-        function handleSubmit(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.textContent;
-            btn.textContent = '✅ 留言已发送！';
-            btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = '';
-                e.target.reset();
-            }, 2500);
-        }
-
-        // ============ 键盘导航支持 ============
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                mobileMenuBtn.classList.remove('active');
-                navLinks.classList.remove('open');
-            }
-        });
-
-        console.log('🚢 张家港******有限公司 - 官方网站（仅供前端演示）');
-        console.log('🌊 长江之畔的现代化物流枢纽');
-    </script>
+console.log('🚢 ******有限公司 - 官方网站演示版');
+console.log('⚠️ 本网站仅供前端开发技术演示，不涉及任何真实企业信息');
+</script>
 
 
 </body></html>
