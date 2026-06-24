@@ -1,5 +1,1734 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Test</title></head>
-<body><h1>Hello World</h1></body>
-</html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张家港长江国际港务有限公司 - 长江之畔的物流枢纽</title>
+    <style>
+        /* ============================================
+            CSS RESET & BASE
+            ============================================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0a2540;
+            --primary-light: #1a4972;
+            --accent: #d4933c;
+            --accent-light: #f0c27a;
+            --blue: #1e6fb8;
+            --blue-light: #4da3e0;
+            --white: #ffffff;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.15);
+            --shadow-xl: 0 30px 80px rgba(0,0,0,0.2);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+            color: var(--gray-800);
+            background: var(--white);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--gray-100); }
+        ::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================================
+            NAVIGATION
+            ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav.scrolled {
+            background: rgba(10, 37, 64, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 10px 0;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.25);
+        }
+
+        .nav-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent), #e8a850);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            font-weight: 900;
+            transition: transform var(--transition);
+        }
+
+        .nav-logo:hover .nav-logo-icon {
+            transform: rotate(-10deg) scale(1.08);
+        }
+
+        .nav-logo-text {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            padding: 4px 0;
+            transition: color var(--transition);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            color: white;
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 26px;
+            height: 2.5px;
+            background: white;
+            margin: 6px 0;
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* ============================================
+            HERO SECTION
+            ============================================ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: linear-gradient(160deg, #051220 0%, #0a2540 30%, #0d3560 60%, #0a2540 100%);
+        }
+
+        /* 动态粒子背景 */
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* 光晕 */
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(212,147,60,0.12) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+            max-width: 900px;
+            padding: 0 24px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            margin-bottom: 28px;
+            animation: fadeInDown 0.8s ease forwards;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .hero-title .highlight {
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.05rem, 2vw, 1.3rem);
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 36px;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s 0.2s ease forwards;
+            opacity: 0;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #e8a850);
+            color: white;
+            box-shadow: 0 4px 20px rgba(212,147,60,0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(212,147,60,0.55);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.6);
+            transform: translateY(-3px);
+        }
+
+        /* 滚动指示器 */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .scroll-indicator .line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(12px); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+            SECTION COMMONS
+            ============================================ */
+        .section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            font-size: 1.05rem;
+            color: var(--gray-600);
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* 滚动显示动画 */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-scale.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ============================================
+            ABOUT SECTION
+            ============================================ */
+        .about {
+            background: var(--white);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .about-visual {
+            position: relative;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .about-image-placeholder {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: linear-gradient(160deg, #1a4972, #0a2540);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-image-placeholder .port-icon {
+            font-size: 100px;
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .about-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(10,37,64,0.8), transparent);
+        }
+
+        .about-badge {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            background: var(--accent);
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow-lg);
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .about-text p {
+            color: var(--gray-600);
+            margin-bottom: 14px;
+            line-height: 1.9;
+        }
+
+        .about-stats-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        .about-stat-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent);
+        }
+
+        .about-stat-mini .icon {
+            font-size: 28px;
+        }
+
+        .about-stat-mini .val {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .about-stat-mini .lbl {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+
+        /* ============================================
+            BUSINESS SECTION
+            ============================================ */
+        .business {
+            background: var(--gray-50);
+            position: relative;
+        }
+
+        .business::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--blue), var(--accent), var(--blue-light));
+        }
+
+        .business-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .business-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 36px 28px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .business-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--blue-light));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .business-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .business-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .business-card .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            transition: transform 0.4s ease;
+        }
+
+        .business-card:hover .card-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .card-icon.blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .card-icon.gold { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+        .card-icon.green { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+        .card-icon.purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+        .card-icon.red { background: linear-gradient(135deg, #fee2e2, #fecaca); }
+        .card-icon.teal { background: linear-gradient(135deg, #ccfbf1, #99f6e4); }
+
+        .business-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--gray-900);
+        }
+
+        .business-card p {
+            color: var(--gray-600);
+            font-size: 0.93rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================
+            STATS COUNTER
+            ============================================ */
+        .stats {
+            background: linear-gradient(160deg, var(--primary) 0%, #0d3560 100%);
+            color: white;
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .stat-plus {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.7);
+            margin-top: 8px;
+        }
+
+        /* ============================================
+            ADVANTAGES
+            ============================================ */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .advantage-card {
+            text-align: center;
+            padding: 40px 24px;
+            border-radius: var(--radius-lg);
+            background: white;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s ease;
+            border: 1px solid var(--gray-200);
+        }
+
+        .advantage-card:hover {
+            box-shadow: var(--shadow-xl);
+            border-color: transparent;
+            transform: translateY(-6px);
+        }
+
+        .advantage-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+            transition: transform 0.4s ease;
+        }
+
+        .advantage-card:hover .advantage-icon {
+            transform: rotateY(180deg);
+        }
+
+        .advantage-card h4 {
+            font-weight: 700;
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            color: var(--gray-900);
+        }
+
+        .advantage-card p {
+            color: var(--gray-600);
+            font-size: 0.93rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================
+            TIMELINE / NEWS
+            ============================================ */
+        .milestones {
+            background: var(--gray-50);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), var(--blue), var(--accent));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -46px;
+            top: 6px;
+            width: 15px;
+            height: 15px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 4px var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover::before {
+            transform: scale(1.4);
+            box-shadow: 0 0 0 8px rgba(212,147,60,0.3);
+        }
+
+        .timeline-year {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 20px 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+
+        .timeline-content:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(6px);
+        }
+
+        .timeline-content h4 {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .timeline-content p {
+            color: var(--gray-600);
+            font-size: 0.93rem;
+        }
+
+        /* ============================================
+            NEWS CARDS
+            ============================================ */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.4s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .news-image {
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-image .img-placeholder {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+        }
+
+        .news-card:hover .img-placeholder {
+            transform: scale(1.08);
+        }
+
+        .img-placeholder.grad-1 { background: linear-gradient(135deg, #1a4972, #0a2540); }
+        .img-placeholder.grad-2 { background: linear-gradient(135deg, #0d3560, #1e6fb8); }
+        .img-placeholder.grad-3 { background: linear-gradient(135deg, #1e6fb8, #4da3e0); }
+
+        .news-body {
+            padding: 20px 24px;
+        }
+
+        .news-date {
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .news-body h4 {
+            font-weight: 700;
+            margin: 8px 0;
+            color: var(--gray-900);
+        }
+
+        .news-body p {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* ============================================
+            CONTACT
+            ============================================ */
+        .contact {
+            background: linear-gradient(160deg, var(--primary), #061a30);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact .section-title { color: white; }
+        .contact .section-desc { color: rgba(255,255,255,0.65); }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-info-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius);
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all var(--transition);
+        }
+
+        .contact-info-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(6px);
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .contact-info-text h4 {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .contact-info-text p {
+            color: rgba(255,255,255,0.65);
+            font-size: 0.9rem;
+        }
+
+        .contact-form {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06);
+            color: white;
+            font-size: 0.95rem;
+            transition: all var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 3px rgba(212,147,60,0.15);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ============================================
+            FOOTER
+            ============================================ */
+        .footer {
+            background: #051220;
+            color: rgba(255,255,255,0.55);
+            padding: 32px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer strong {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* ============================================
+            BACK TO TOP
+            ============================================ */
+        .back-to-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* ============================================
+            RESPONSIVE
+            ============================================ */
+        @media (max-width: 1024px) {
+            .about-grid,
+            .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+            .business-grid { grid-template-columns: repeat(2, 1fr); }
+            .advantages-grid { grid-template-columns: repeat(2, 1fr); }
+            .news-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-links.open {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(10,37,64,0.98);
+                backdrop-filter: blur(20px);
+                padding: 24px;
+                gap: 16px;
+            }
+            .mobile-menu-btn { display: block; }
+            .business-grid,
+            .advantages-grid,
+            .news-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .section { padding: 60px 0; }
+            .about-badge { position: static; margin-top: 16px; text-align: center; }
+            .hero-cta { flex-direction: column; align-items: center; }
+            .btn { width: 100%; justify-content: center; max-width: 300px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+    NAVIGATION
+    ============================================ -->
+    <nav class="nav" id="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-icon">港</div>
+                <span class="nav-logo-text">长江国际港务</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于我们</a></li>
+                <li><a href="#business">业务范围</a></li>
+                <li><a href="#advantages">核心优势</a></li>
+                <li><a href="#news">新闻资讯</a></li>
+                <li><a href="#contact">联系我们</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ============================================
+    HERO
+    ============================================ -->
+    <section class="hero" id="home">
+        <div class="hero-particles" id="heroParticles"><div class="particle" style="left: 5.32905%; width: 3.13059px; height: 3.13059px; animation-duration: 15.7612s; animation-delay: 7.50787s; opacity: 0.136161;"></div><div class="particle" style="left: 35.1582%; width: 1.02273px; height: 1.02273px; animation-duration: 13.8921s; animation-delay: 7.71125s; opacity: 0.18247;"></div><div class="particle" style="left: 96.7588%; width: 2.83461px; height: 2.83461px; animation-duration: 19.0621s; animation-delay: 11.8479s; opacity: 0.243201;"></div><div class="particle" style="left: 54.3831%; width: 2.73003px; height: 2.73003px; animation-duration: 12.2723s; animation-delay: 1.64432s; opacity: 0.154011;"></div><div class="particle" style="left: 8.59403%; width: 3.58415px; height: 3.58415px; animation-duration: 19.9164s; animation-delay: 1.71579s; opacity: 0.389629;"></div><div class="particle" style="left: 44.7644%; width: 3.89147px; height: 3.89147px; animation-duration: 13.1965s; animation-delay: 7.39957s; opacity: 0.320499;"></div><div class="particle" style="left: 42.1913%; width: 2.10349px; height: 2.10349px; animation-duration: 8.52333s; animation-delay: 0.585257s; opacity: 0.349622;"></div><div class="particle" style="left: 80.2242%; width: 3.28131px; height: 3.28131px; animation-duration: 18.6987s; animation-delay: 1.67869s; opacity: 0.349744;"></div><div class="particle" style="left: 15.4714%; width: 1.94852px; height: 1.94852px; animation-duration: 15.5767s; animation-delay: 4.57945s; opacity: 0.315388;"></div><div class="particle" style="left: 79.4055%; width: 3.4842px; height: 3.4842px; animation-duration: 14.2031s; animation-delay: 10.5928s; opacity: 0.318948;"></div><div class="particle" style="left: 23.6304%; width: 1.19913px; height: 1.19913px; animation-duration: 13.1685s; animation-delay: 4.45743s; opacity: 0.261378;"></div><div class="particle" style="left: 58.0297%; width: 2.28498px; height: 2.28498px; animation-duration: 18.9849s; animation-delay: 1.45352s; opacity: 0.342068;"></div><div class="particle" style="left: 51.3096%; width: 2.31564px; height: 2.31564px; animation-duration: 16.7685s; animation-delay: 7.18663s; opacity: 0.340246;"></div><div class="particle" style="left: 81.3388%; width: 1.96899px; height: 1.96899px; animation-duration: 12.9888s; animation-delay: 8.60276s; opacity: 0.37904;"></div><div class="particle" style="left: 39.3415%; width: 2.82735px; height: 2.82735px; animation-duration: 18.5859s; animation-delay: 11.1517s; opacity: 0.394338;"></div><div class="particle" style="left: 76.7303%; width: 1.03439px; height: 1.03439px; animation-duration: 17.5904s; animation-delay: 8.8082s; opacity: 0.397331;"></div><div class="particle" style="left: 31.3321%; width: 1.89242px; height: 1.89242px; animation-duration: 10.0046s; animation-delay: 6.06922s; opacity: 0.170384;"></div><div class="particle" style="left: 5.77693%; width: 1.14449px; height: 1.14449px; animation-duration: 17.316s; animation-delay: 1.08014s; opacity: 0.416308;"></div><div class="particle" style="left: 7.52264%; width: 2.24019px; height: 2.24019px; animation-duration: 13.6419s; animation-delay: 7.13359s; opacity: 0.203478;"></div><div class="particle" style="left: 59.1565%; width: 3.28089px; height: 3.28089px; animation-duration: 13.3654s; animation-delay: 11.8671s; opacity: 0.195681;"></div><div class="particle" style="left: 11.3736%; width: 2.18269px; height: 2.18269px; animation-duration: 14.4467s; animation-delay: 1.17702s; opacity: 0.485376;"></div><div class="particle" style="left: 0.909128%; width: 2.19917px; height: 2.19917px; animation-duration: 10.0749s; animation-delay: 0.327099s; opacity: 0.528448;"></div><div class="particle" style="left: 86.0982%; width: 1.1804px; height: 1.1804px; animation-duration: 13.0871s; animation-delay: 7.27667s; opacity: 0.33885;"></div><div class="particle" style="left: 53.6262%; width: 2.51129px; height: 2.51129px; animation-duration: 14.281s; animation-delay: 8.42242s; opacity: 0.344594;"></div><div class="particle" style="left: 16.9755%; width: 3.0544px; height: 3.0544px; animation-duration: 11.589s; animation-delay: 9.85841s; opacity: 0.293859;"></div><div class="particle" style="left: 43.3493%; width: 2.69744px; height: 2.69744px; animation-duration: 9.48813s; animation-delay: 2.32224s; opacity: 0.334718;"></div><div class="particle" style="left: 83.9825%; width: 2.53315px; height: 2.53315px; animation-duration: 12.7523s; animation-delay: 11.4817s; opacity: 0.596345;"></div><div class="particle" style="left: 33.5421%; width: 2.10179px; height: 2.10179px; animation-duration: 18.8576s; animation-delay: 2.50933s; opacity: 0.351198;"></div><div class="particle" style="left: 82.8425%; width: 3.96187px; height: 3.96187px; animation-duration: 14.4787s; animation-delay: 8.7886s; opacity: 0.38125;"></div><div class="particle" style="left: 32.5241%; width: 3.24286px; height: 3.24286px; animation-duration: 16.6355s; animation-delay: 2.04647s; opacity: 0.502111;"></div><div class="particle" style="left: 70.5695%; width: 1.21152px; height: 1.21152px; animation-duration: 10.1347s; animation-delay: 6.9809s; opacity: 0.330427;"></div><div class="particle" style="left: 95.7382%; width: 1.20063px; height: 1.20063px; animation-duration: 13.5488s; animation-delay: 11.8157s; opacity: 0.456854;"></div><div class="particle" style="left: 20.6556%; width: 1.11486px; height: 1.11486px; animation-duration: 9.01611s; animation-delay: 4.08312s; opacity: 0.596096;"></div><div class="particle" style="left: 3.5223%; width: 3.3405px; height: 3.3405px; animation-duration: 15.3657s; animation-delay: 6.65704s; opacity: 0.113745;"></div><div class="particle" style="left: 94.5236%; width: 1.79119px; height: 1.79119px; animation-duration: 18.6766s; animation-delay: 5.55888s; opacity: 0.189504;"></div><div class="particle" style="left: 90.7544%; width: 3.23515px; height: 3.23515px; animation-duration: 9.53532s; animation-delay: 6.37306s; opacity: 0.504164;"></div><div class="particle" style="left: 53.6938%; width: 2.79247px; height: 2.79247px; animation-duration: 16.1168s; animation-delay: 3.68894s; opacity: 0.298423;"></div><div class="particle" style="left: 74.0727%; width: 1.79104px; height: 1.79104px; animation-duration: 18.7831s; animation-delay: 4.74754s; opacity: 0.229333;"></div><div class="particle" style="left: 94.6155%; width: 2.45831px; height: 2.45831px; animation-duration: 11.2676s; animation-delay: 11.9449s; opacity: 0.289427;"></div><div class="particle" style="left: 92.3754%; width: 2.4232px; height: 2.4232px; animation-duration: 10.5111s; animation-delay: 6.66885s; opacity: 0.177692;"></div><div class="particle" style="left: 70.0898%; width: 3.38059px; height: 3.38059px; animation-duration: 19.4433s; animation-delay: 6.59377s; opacity: 0.221751;"></div><div class="particle" style="left: 53.1478%; width: 3.96248px; height: 3.96248px; animation-duration: 12.3506s; animation-delay: 8.54836s; opacity: 0.557639;"></div><div class="particle" style="left: 2.4219%; width: 2.45339px; height: 2.45339px; animation-duration: 11.507s; animation-delay: 3.14799s; opacity: 0.453083;"></div><div class="particle" style="left: 45.1545%; width: 3.08768px; height: 3.08768px; animation-duration: 11.9852s; animation-delay: 2.5441s; opacity: 0.289772;"></div><div class="particle" style="left: 24.3788%; width: 1.34249px; height: 1.34249px; animation-duration: 9.32398s; animation-delay: 0.714684s; opacity: 0.107263;"></div><div class="particle" style="left: 47.8455%; width: 2.10096px; height: 2.10096px; animation-duration: 12.2609s; animation-delay: 9.01349s; opacity: 0.36293;"></div><div class="particle" style="left: 70.3557%; width: 3.97098px; height: 3.97098px; animation-duration: 15.8056s; animation-delay: 2.53509s; opacity: 0.441828;"></div><div class="particle" style="left: 36.7339%; width: 2.07236px; height: 2.07236px; animation-duration: 11.3396s; animation-delay: 5.77406s; opacity: 0.420658;"></div><div class="particle" style="left: 31.6233%; width: 1.89971px; height: 1.89971px; animation-duration: 9.44807s; animation-delay: 11.6135s; opacity: 0.29718;"></div><div class="particle" style="left: 90.4014%; width: 3.28648px; height: 3.28648px; animation-duration: 9.78379s; animation-delay: 6.78728s; opacity: 0.148661;"></div><div class="particle" style="left: 49.7242%; width: 1.69311px; height: 1.69311px; animation-duration: 9.44371s; animation-delay: 3.36812s; opacity: 0.476949;"></div><div class="particle" style="left: 47.9334%; width: 1.64477px; height: 1.64477px; animation-duration: 16.0023s; animation-delay: 4.08311s; opacity: 0.491938;"></div><div class="particle" style="left: 62.6842%; width: 2.76369px; height: 2.76369px; animation-duration: 11.5646s; animation-delay: 5.22308s; opacity: 0.118852;"></div><div class="particle" style="left: 83.4487%; width: 1.03764px; height: 1.03764px; animation-duration: 13.3027s; animation-delay: 9.73638s; opacity: 0.173398;"></div><div class="particle" style="left: 16.9028%; width: 3.21632px; height: 3.21632px; animation-duration: 16.2934s; animation-delay: 1.90285s; opacity: 0.456508;"></div><div class="particle" style="left: 13.2851%; width: 3.60295px; height: 3.60295px; animation-duration: 12.7961s; animation-delay: 2.91935s; opacity: 0.442347;"></div><div class="particle" style="left: 14.2168%; width: 2.38983px; height: 2.38983px; animation-duration: 15.1662s; animation-delay: 3.9421s; opacity: 0.178792;"></div><div class="particle" style="left: 30.094%; width: 1.73564px; height: 1.73564px; animation-duration: 19.1204s; animation-delay: 9.7788s; opacity: 0.56502;"></div><div class="particle" style="left: 30.3232%; width: 1.0538px; height: 1.0538px; animation-duration: 10.913s; animation-delay: 10.1029s; opacity: 0.554278;"></div><div class="particle" style="left: 14.3766%; width: 3.28403px; height: 3.28403px; animation-duration: 18.519s; animation-delay: 6.90107s; opacity: 0.462543;"></div></div>
+        <div class="hero-content">
+            <div class="hero-badge">🏗️ 张家港 · 长江门户</div>
+            <h1 class="hero-title">
+                张家港<span class="highlight">长江国际港务</span><br>有限公司
+            </h1>
+            <p class="hero-subtitle" style="animation-delay: 0.2s;">
+                坐落于长江下游黄金水道，依托张家港保税区政策优势<br>
+                集港口装卸、仓储物流、国际货运代理于一体的现代化综合港口服务企业
+            </p>
+            <div class="hero-cta" style="animation-delay: 0.4s;">
+                <a href="#about" class="btn btn-primary">了解更多 →</a>
+                <a href="#contact" class="btn btn-outline">联系我们</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>滚 动 探 索</span>
+            <div class="line"></div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    ABOUT
+    ============================================ -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">About Us</div>
+                <h2 class="section-title">关于长江国际港务</h2>
+                <p class="section-desc">深耕港口物流多年，致力于为客户提供高效、安全、便捷的一站式港口综合服务</p>
+            </div>
+            <div class="about-grid">
+                <div class="about-visual reveal-left">
+                    <div class="about-image-wrapper">
+                        <div class="about-image-placeholder">
+                            <span class="port-icon">🚢</span>
+                        </div>
+                        <div class="about-wave"></div>
+                    </div>
+                    <div class="about-badge">🏆 行业标杆企业</div>
+                </div>
+                <div class="about-text reveal-right">
+                    <h3>长江之畔的<br>现代化物流枢纽</h3>
+                    <p>
+                        张家港长江国际港务有限公司成立于长江经济带核心区域——江苏省张家港市，
+                        地处长江下游南岸，紧邻张家港保税区，拥有得天独厚的区位优势和深水岸线资源。
+                    </p>
+                    <p>
+                        公司依托长江黄金水道，专业从事港口货物装卸、仓储堆存、国际货运代理、
+                        船舶代理等综合物流服务，是长江流域重要的液体化工品和散杂货中转基地。
+                    </p>
+                    <p>
+                        凭借先进的码头设施、专业的管理团队和完善的服务体系，公司与国内外众多
+                        知名企业建立了长期稳定的合作关系，年货物吞吐量持续增长。
+                    </p>
+                    <div class="about-stats-mini">
+                        <div class="about-stat-mini">
+                            <span class="icon">📐</span>
+                            <div>
+                                <div class="val">2,000+<span style="font-size:0.7em;">米</span></div>
+                                <div class="lbl">深水岸线</div>
+                            </div>
+                        </div>
+                        <div class="about-stat-mini">
+                            <span class="icon">⚓</span>
+                            <div>
+                                <div class="val">50,000+<span style="font-size:0.7em;">吨级</span></div>
+                                <div class="lbl">靠泊能力</div>
+                            </div>
+                        </div>
+                        <div class="about-stat-mini">
+                            <span class="icon">🏭</span>
+                            <div>
+                                <div class="val">500,000+<span style="font-size:0.7em;">㎡</span></div>
+                                <div class="lbl">仓储面积</div>
+                            </div>
+                        </div>
+                        <div class="about-stat-mini">
+                            <span class="icon">🤝</span>
+                            <div>
+                                <div class="val">300+<span style="font-size:0.7em;">家</span></div>
+                                <div class="lbl">合作客户</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    STATS COUNTER
+    ============================================ -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item reveal">
+                    <span class="stat-number"><span class="counter" data-target="25">0</span></span>
+                    <span class="stat-plus">+</span>
+                    <div class="stat-label">年行业经验</div>
+                </div>
+                <div class="stat-item reveal">
+                    <span class="stat-number"><span class="counter" data-target="1500">0</span></span>
+                    <span class="stat-plus">万吨</span>
+                    <div class="stat-label">年货物吞吐量</div>
+                </div>
+                <div class="stat-item reveal">
+                    <span class="stat-number"><span class="counter" data-target="500">0</span></span>
+                    <span class="stat-plus">+</span>
+                    <div class="stat-label">在职员工</div>
+                </div>
+                <div class="stat-item reveal">
+                    <span class="stat-number"><span class="counter" data-target="98">0</span></span>
+                    <span class="stat-plus">%</span>
+                    <div class="stat-label">客户满意度</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    BUSINESS
+    ============================================ -->
+    <section class="section business" id="business">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Our Services</div>
+                <h2 class="section-title">业务范围</h2>
+                <p class="section-desc">提供全方位、多层次的港口物流综合服务，满足不同客户的多样化需求</p>
+            </div>
+            <div class="business-grid">
+                <div class="business-card reveal">
+                    <div class="card-icon blue">⚓</div>
+                    <h4>港口装卸服务</h4>
+                    <p>配备专业化码头装卸设备，提供散杂货、集装箱、液体化工品等各类货物的高效装卸作业服务，作业效率行业领先。</p>
+                </div>
+                <div class="business-card reveal">
+                    <div class="card-icon gold">🏗️</div>
+                    <h4>仓储堆存管理</h4>
+                    <p>拥有大型现代化仓储设施，包括普通仓库、保税仓库及液体储罐区，提供安全规范的货物存储与库存管理服务。</p>
+                </div>
+                <div class="business-card reveal">
+                    <div class="card-icon green">🚛</div>
+                    <h4>物流运输配送</h4>
+                    <p>整合公路、铁路、水路多式联运资源，为客户提供门到门的一体化物流运输解决方案，降低综合物流成本。</p>
+                </div>
+                <div class="business-card reveal">
+                    <div class="card-icon purple">📋</div>
+                    <h4>国际货运代理</h4>
+                    <p>具备一级国际货运代理资质，提供报关报检、订舱配载、提单签发等全流程国际货运代理服务。</p>
+                </div>
+                <div class="business-card reveal">
+                    <div class="card-icon red">🚢</div>
+                    <h4>船舶代理服务</h4>
+                    <p>为往来船舶提供进出港申报、引航调度、燃料补给、船员服务等全方位船舶代理服务，缩短船舶在港时间。</p>
+                </div>
+                <div class="business-card reveal">
+                    <div class="card-icon teal">🔬</div>
+                    <h4>检验检测服务</h4>
+                    <p>提供货物数量、重量及品质的第三方检验检测服务，确保货物交接的准确性与公正性，保障客户利益。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    ADVANTAGES
+    ============================================ -->
+    <section class="section" id="advantages">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Why Choose Us</div>
+                <h2 class="section-title">核心竞争优势</h2>
+                <p class="section-desc">凭借独特的地理位置、先进的设施和专业的团队，为客户创造最大价值</p>
+            </div>
+            <div class="advantages-grid">
+                <div class="advantage-card reveal">
+                    <div class="advantage-icon">📍</div>
+                    <h4>黄金区位优势</h4>
+                    <p>位于长江经济带核心节点，紧邻张家港保税区，辐射长三角经济圈，水陆交通网络发达。</p>
+                </div>
+                <div class="advantage-card reveal">
+                    <div class="advantage-icon">🛠️</div>
+                    <h4>先进设施设备</h4>
+                    <p>码头配套完善，拥有大型门机、输送带系统、自动化控制系统，装卸效率行业领先。</p>
+                </div>
+                <div class="advantage-card reveal">
+                    <div class="advantage-icon">🛡️</div>
+                    <h4>安全环保优先</h4>
+                    <p>严格执行国际安全标准，配备完善的消防、防污和应急响应系统，践行绿色港口理念。</p>
+                </div>
+                <div class="advantage-card reveal">
+                    <div class="advantage-icon">👥</div>
+                    <h4>专业人才团队</h4>
+                    <p>拥有一支经验丰富的港口管理、技术操作和客户服务团队，提供专业可靠的港口服务。</p>
+                </div>
+                <div class="advantage-card reveal">
+                    <div class="advantage-icon">💻</div>
+                    <h4>智慧港口系统</h4>
+                    <p>引入智能化管理平台，实现作业调度、仓储管理、客户服务的数字化，提升运营效率。</p>
+                </div>
+                <div class="advantage-card reveal">
+                    <div class="advantage-icon">🤝</div>
+                    <h4>一站式解决方案</h4>
+                    <p>从装卸到配送，从报关到结算，提供端到端的全程物流服务，让客户省心省力。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    MILESTONES
+    ============================================ -->
+    <section class="section milestones" id="milestones">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Milestones</div>
+                <h2 class="section-title">发展历程</h2>
+                <p class="section-desc">一路走来，每一步都坚实有力，见证公司的成长与突破</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item reveal-left">
+                    <div class="timeline-year">2001年</div>
+                    <div class="timeline-content">
+                        <h4>公司成立</h4>
+                        <p>张家港长江国际港务有限公司正式注册成立，开启港口物流服务新篇章。</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal-right">
+                    <div class="timeline-year">2006年</div>
+                    <div class="timeline-content">
+                        <h4>一期码头建成投产</h4>
+                        <p>首个万吨级泊位建成投入运营，年设计吞吐能力达到200万吨。</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal-left">
+                    <div class="timeline-year">2012年</div>
+                    <div class="timeline-content">
+                        <h4>保税仓储基地落成</h4>
+                        <p>在张家港保税区内建成大型保税仓储基地，仓储总面积突破30万平方米。</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal-right">
+                    <div class="timeline-year">2017年</div>
+                    <div class="timeline-content">
+                        <h4>智慧港口系统上线</h4>
+                        <p>全面启动数字化转型，智能调度和仓储管理系统正式投入运行。</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal-left">
+                    <div class="timeline-year">2021年</div>
+                    <div class="timeline-content">
+                        <h4>年吞吐量突破千万吨</h4>
+                        <p>年货物吞吐量首次突破1500万吨大关，迈入大型港口企业行列。</p>
+                    </div>
+                </div>
+                <div class="timeline-item reveal-right">
+                    <div class="timeline-year">2025年</div>
+                    <div class="timeline-content">
+                        <h4>绿色港口认证</h4>
+                        <p>获得省级绿色港口认证，持续推动节能减排和环境保护，践行可持续发展。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    NEWS
+    ============================================ -->
+    <section class="section" id="news">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">News &amp; Updates</div>
+                <h2 class="section-title">新闻动态</h2>
+                <p class="section-desc">关注长江国际港务最新动态，了解港口行业发展前沿</p>
+            </div>
+            <div class="news-grid">
+                <div class="news-card reveal">
+                    <div class="news-image">
+                        <div class="img-placeholder grad-1">📰</div>
+                    </div>
+                    <div class="news-body">
+                        <div class="news-date">2025年12月</div>
+                        <h4>公司荣获"江苏省五星级绿色港口"称号</h4>
+                        <p>经过严格的评审考核，公司凭借出色的环保管理和绿色运营实践，成功获评省级五星级绿色港口荣誉称号。</p>
+                    </div>
+                </div>
+                <div class="news-card reveal" style="transition-delay: 0.1s;">
+                    <div class="news-image">
+                        <div class="img-placeholder grad-2">🚢</div>
+                    </div>
+                    <div class="news-body">
+                        <div class="news-date">2025年10月</div>
+                        <h4>新开通东南亚国际航线</h4>
+                        <p>公司与国际知名航运企业合作，新开通至东南亚主要港口集装箱班轮航线，进一步拓展国际物流网络。</p>
+                    </div>
+                </div>
+                <div class="news-card reveal" style="transition-delay: 0.2s;">
+                    <div class="news-image">
+                        <div class="img-placeholder grad-3">💡</div>
+                    </div>
+                    <div class="news-body">
+                        <div class="news-date">2025年8月</div>
+                        <h4>智能闸口系统全面升级</h4>
+                        <p>投资500万元对港区智能闸口系统进行全面升级，车辆通行效率提升40%，实现无纸化快速通关。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    CONTACT
+    ============================================ -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Contact Us</div>
+                <h2 class="section-title">联系我们</h2>
+                <p class="section-desc">期待与您的合作，欢迎随时联系我们</p>
+            </div>
+            <div class="contact-grid">
+                <div class="reveal-left">
+                    <div class="contact-info-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-info-text">
+                            <h4>公司地址</h4>
+                            <p>江苏省张家港市保税区长江中路88号</p>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-info-text">
+                            <h4>联系电话</h4>
+                            <p>0512-5868 XXXX（总机）<br>0512-5868 XXXX（业务部）</p>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-info-text">
+                            <h4>电子邮箱</h4>
+                            <p>info@cj-gjport.com<br>business@cj-gjport.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-icon">🕐</div>
+                        <div class="contact-info-text">
+                            <h4>工作时间</h4>
+                            <p>周一至周五 08:00 - 17:30<br>24小时港口作业服务</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="reveal-right">
+                    <form class="contact-form" onsubmit="handleSubmit(event)">
+                        <div class="form-group">
+                            <label>您的姓名</label>
+                            <input type="text" placeholder="请输入您的姓名" required="">
+                        </div>
+                        <div class="form-group">
+                            <label>联系电话</label>
+                            <input type="tel" placeholder="请输入您的联系电话" required="">
+                        </div>
+                        <div class="form-group">
+                            <label>电子邮箱</label>
+                            <input type="email" placeholder="请输入您的电子邮箱" required="">
+                        </div>
+                        <div class="form-group">
+                            <label>留言内容</label>
+                            <textarea placeholder="请输入您要咨询的内容..." required=""></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+                            ✉️ 发送留言
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+    FOOTER
+    ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 <strong>张家港长江国际港务有限公司</strong> Zhangjiagang Changjiang International Port Co., Ltd.</p>
+            <p style="margin-top: 4px;">地址：江苏省张家港市保税区长江中路88号 | ICP备案号：苏ICP备XXXXXXXX号</p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+    BACK TO TOP
+    ============================================ -->
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部" title="回到顶部">↑</button>
+
+    <!-- ============================================
+    SCRIPTS
+    ============================================ -->
+    <script>
+        // ============ 粒子背景 ============
+        (function initParticles() {
+            const container = document.getElementById('heroParticles');
+            const count = 60;
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = (Math.random() * 3 + 1) + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = (Math.random() * 12 + 8) + 's';
+                particle.style.animationDelay = (Math.random() * 12) + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                container.appendChild(particle);
+            }
+        })();
+
+        // ============ 导航栏滚动效果 ============
+        const nav = document.getElementById('nav');
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+
+            // 导航栏背景
+            if (scrollY > 60) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+
+            // 回到顶部按钮
+            if (scrollY > 600) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ============ 移动端菜单 ============
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+
+        // 点击菜单链接后关闭
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // ============ 滚动显示动画 (Intersection Observer) ============
+        (function initReveal() {
+            const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // 支持自定义延迟
+                        const delay = entry.target.style.transitionDelay || '0s';
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, parseFloat(delay) * 1000);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -40px 0px'
+            });
+
+            revealElements.forEach(el => observer.observe(el));
+        })();
+
+        // ============ 数字递增动画 ============
+        (function initCounters() {
+            const counters = document.querySelectorAll('.counter');
+
+            const animateCounter = (el) => {
+                const target = parseInt(el.getAttribute('data-target'), 10);
+                const duration = 2200; // 动画持续时间 ms
+                const startTime = performance.now();
+                const startVal = 0;
+
+                const step = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+
+                    // easeOutExpo 缓动
+                    const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+                    const current = Math.floor(startVal + (target - startVal) * eased);
+
+                    el.textContent = current;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        el.textContent = target;
+                    }
+                };
+
+                requestAnimationFrame(step);
+            };
+
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounter(entry.target);
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            counters.forEach(c => counterObserver.observe(c));
+        })();
+
+        // ============ 视差滚动效果 ============
+        (function initParallax() {
+            const heroContent = document.querySelector('.hero-content');
+            const particlesContainer = document.getElementById('heroParticles');
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                if (scrollY < window.innerHeight) {
+                    const rate = scrollY * 0.4;
+                    heroContent.style.transform = `translateY(${rate}px)`;
+                    heroContent.style.opacity = 1 - scrollY / (window.innerHeight * 1.2);
+
+                    if (particlesContainer) {
+                        particlesContainer.style.transform = `translateY(${scrollY * 0.15}px)`;
+                    }
+                }
+            });
+        })();
+
+        // ============ 表单提交 ============
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 留言已发送！';
+            btn.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '';
+                e.target.reset();
+            }, 2500);
+        }
+
+        // ============ 键盘导航支持 ============
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                mobileMenuBtn.classList.remove('active');
+                navLinks.classList.remove('open');
+            }
+        });
+
+        console.log('🚢 张家港长江国际港务有限公司 - 官方网站');
+        console.log('🌊 长江之畔的现代化物流枢纽');
+    </script>
+
+
+</body></html>
