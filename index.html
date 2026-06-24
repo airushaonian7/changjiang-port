@@ -522,8 +522,8 @@ ${slides.length?`
     <div class="section-header"><div class="label">Gallery</div><h2>企业风采</h2><p>展示码头设施、仓储基地与运营实景（演示图片）</p></div>
     <div class="carousel-wrap" id="homeCarousel">
       <div class="carousel-track" id="carouselTrack">${slides.map((s,i)=>`
-        <div class="carousel-slide" style="background:${s.bg};min-width:100%">
-          <span style="font-size:5rem;opacity:.6">${s.icon||'📷'}</span>
+        <div class="carousel-slide" style="min-width:100%;${s.imageData?`background-image:url(${s.imageData});background-size:cover;background-position:center`:`background:${s.bg}`}">
+          ${s.imageData?'':`<span style="font-size:5rem;opacity:.6">${s.icon||'📷'}</span>`}
           <div class="caption">${s.caption||s.title}</div>
         </div>`).join('')}</div>
       <button class="carousel-btn prev" onclick="moveCarousel(-1)">‹</button>
@@ -725,21 +725,61 @@ function adminLogout(){sessionStorage.removeItem('admin_auth');navigate('home');
 // Admin - Carousel
 async function adminCarousel(){
   const items=await dbGetAll('carousel');
-  return`<h3>🖼️ 首页轮播图管理</h3><p style="color:var(--g600);margin-bottom:16px">管理首页企业风采轮播展示图片（当前 ${items.length} 张）</p><button class="btn btn-primary btn-sm" onclick="showCarouselModal()">+ 添加轮播图</button><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>标题</th><th>说明文字</th><th>背景色</th><th>图标</th><th>操作</th></tr></thead><tbody>${items.map(c=>`<tr><td>${c.id}</td><td>${c.title}</td><td>${c.caption||''}</td><td><div style="width:40px;height:20px;background:${c.bg};border-radius:4px;display:inline-block"></div></td><td style="font-size:1.5rem">${c.icon||'📷'}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editCarousel(${c.id})">编辑</button> <button class="btn btn-sm btn-danger" onclick="deleteCarousel(${c.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+  return`<h3>🖼️ 首页轮播图管理</h3><p style="color:var(--g600);margin-bottom:16px">管理首页企业风采轮播展示图片（当前 ${items.length} 张）— 支持上传 JPG/PNG/GIF/WebP</p><button class="btn btn-primary btn-sm" onclick="showCarouselModal()">+ 添加轮播图</button>
+  <div class="file-upload-zone" style="padding:20px;margin-top:12px" onclick="document.getElementById('caroBatchInput').click()">
+    📁 批量上传轮播图片（可多选）<input type="file" id="caroBatchInput" accept="image/*" multiple style="display:none" onchange="batchCarouselUpload(this.files)">
+  </div>
+  <table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>预览</th><th>标题</th><th>说明文字</th><th>操作</th></tr></thead><tbody>${items.map(c=>`<tr><td>${c.id}</td><td>${c.imageData?`<img src="${c.imageData}" style="width:80px;height:50px;object-fit:cover;border-radius:4px">`:`<div style="width:80px;height:50px;background:${c.bg};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">${c.icon||'📷'}</div>`}</td><td>${c.title}</td><td>${c.caption||''}</td><td><button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editCarousel(${c.id})">编辑</button> <button class="btn btn-sm btn-primary btn-sm" onclick="duplicateCarousel(${c.id})">复制</button> <button class="btn btn-sm btn-danger" onclick="deleteCarousel(${c.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+}
+async function batchCarouselUpload(files){
+  for(const f of files){
+    const r=new FileReader();
+    r.onload=async()=>{
+      await dbPut('carousel',{title:f.name.replace(/\.[^.]+$/,''),caption:'',bg:'linear-gradient(135deg,#0a3d6b,#1a6090)',icon:'📷',imageData:r.result});
+      renderPage();
+    };
+    r.readAsDataURL(f);
+  }
+  showToast(`已批量添加 ${files.length} 张轮播图`,'success');
+}
+async function duplicateCarousel(id){
+  const c=await dbGet('carousel',id);if(!c)return;
+  const copy={...c};delete copy.id;copy.title=c.title+' (副本)';
+  await dbPut('carousel',copy);renderPage();showToast('已复制','success');
 }
 async function deleteCarousel(id){if(confirm('确认删除此轮播图？')){await dbDelete('carousel',id);renderPage();showToast('已删除','success')}}
+let _caroImageData=null;
 function showCarouselModal(c=null){
   const isEdit=!!c;
-  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal"><h3>${isEdit?'编辑':'添加'}轮播图</h3><div class="form-group"><label>标题</label><input type="text" id="caroTitle" value="${c?.title||''}"></div><div class="form-group"><label>说明文字</label><input type="text" id="caroCaption" value="${c?.caption||''}"></div><div class="form-group"><label>背景渐变 (CSS)</label><input type="text" id="caroBg" value="${c?.bg||'linear-gradient(135deg,#0a3d6b,#1a6090)'}"></div><div class="form-group"><label>图标 (Emoji)</label><input type="text" id="caroIcon" value="${c?.icon||'📷'}"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveCaroBtn">保存</button></div></div>`;
+  _caroImageData=c?.imageData||null;
+  const previewHtml=_caroImageData?`<img src="${_caroImageData}" style="width:100%;max-height:140px;object-fit:cover;border-radius:8px;margin-bottom:8px">`: (c?`<div style="width:100%;height:80px;background:${c.bg};border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:2rem">${c.icon||'📷'}</div>`:'');
+  const modal=document.createElement('div');modal.className='modal-overlay';
+  modal.innerHTML=`<div class="modal" style="max-width:560px"><h3>${isEdit?'编辑':'添加'}轮播图</h3>
+    <div class="form-group"><label>📁 上传图片（可选，支持 JPG/PNG/GIF/WebP）</label>
+      <div class="file-upload-zone" style="padding:20px" onclick="document.getElementById('caroFileInput').click()">
+        ${previewHtml}
+        <span style="color:var(--g600);font-size:.85rem">${_caroImageData?'点击更换图片':'点击选择本地图片作为轮播背景'}</span>
+        ${_caroImageData?`<button class="btn btn-sm btn-danger" style="margin-top:6px" onclick="event.stopPropagation();_caroImageData=null;document.getElementById('caroPreview').innerHTML='';showToast('已清除图片','info')">清除图片</button>`:''}
+        <input type="file" id="caroFileInput" accept="image/*" style="display:none" onchange="(function(){const f=this.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{_caroImageData=r.result;document.getElementById('caroPreview').innerHTML='<img src=\\'+r.result+'\\' style=\\'width:100%;max-height:120px;object-fit:cover;border-radius:8px\\'>';showToast('图片已选择','success')};r.readAsDataURL(f)})()">
+      </div>
+      <div id="caroPreview"></div>
+    </div>
+    <div class="form-group"><label>标题</label><input type="text" id="caroTitle" value="${c?.title||''}"></div>
+    <div class="form-group"><label>说明文字（显示在图片底部）</label><input type="text" id="caroCaption" value="${c?.caption||''}"></div>
+    <div class="form-group"><label>背景色（无图片时使用）</label><input type="text" id="caroBg" value="${c?.bg||'linear-gradient(135deg,#0a3d6b,#1a6090)'}"></div>
+    <div class="form-group"><label>图标 Emoji（无图片时使用）</label><input type="text" id="caroIcon" value="${c?.icon||'📷'}"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveCaroBtn">保存</button></div></div>`;
   document.body.appendChild(modal);
   document.getElementById('saveCaroBtn').onclick=async()=>{
     const data={title:document.getElementById('caroTitle').value,caption:document.getElementById('caroCaption').value,bg:document.getElementById('caroBg').value,icon:document.getElementById('caroIcon').value};
+    if(_caroImageData) data.imageData=_caroImageData;
+    if(!data.title){showToast('请输入标题','error');return}
     if(isEdit) data.id=c.id;
     await dbPut('carousel',data);modal.remove();renderPage();showToast(isEdit?'已更新':'已添加','success');
   };
   modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
 }
-function editCarousel(id){dbGet('carousel',id).then(c=>{if(c) showCarouselModal(c)})}
+function editCarousel(id){dbGet('carousel',id).then(c=>{if(c){_caroImageData=c.imageData||null;showCarouselModal(c)}})}
 
 // Admin - Documents
 async function adminDocuments(){
@@ -749,15 +789,34 @@ async function adminDocuments(){
 async function deleteDoc(id){if(confirm('确认删除此文档？')){await dbDelete('documents',id);renderPage();showToast('已删除','success')}}
 function showDocModal(d=null){
   const isEdit=!!d;
-  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal"><h3>${isEdit?'编辑':'上传'}文档</h3><div class="form-group"><label>文档名称</label><input type="text" id="docName" value="${d?.name||''}"></div><div class="form-group"><label>描述</label><input type="text" id="docDesc" value="${d?.desc||''}"></div><div class="form-group"><label>文件类型</label><select id="docExt"><option value="PDF" ${d?.ext==='PDF'?'selected':''}>PDF</option><option value="DOCX" ${d?.ext==='DOCX'?'selected':''}>DOCX</option><option value="XLSX" ${d?.ext==='XLSX'?'selected':''}>XLSX</option><option value="PPTX" ${d?.ext==='PPTX'?'selected':''}>PPTX</option><option value="ZIP" ${d?.ext==='ZIP'?'selected':''}>ZIP</option></select></div><div class="form-group"><label>分类</label><select id="docCat"><option value="guide" ${d?.category==='guide'?'selected':''}>业务指南</option><option value="contract" ${d?.category==='contract'?'selected':''}>合同模板</option><option value="safety" ${d?.category==='safety'?'selected':''}>安全规范</option></select></div><div class="form-group"><label>${isEdit?'替换文件（可选）':'上传文件'}</label><input type="file" id="docFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveDocBtn">保存</button></div></div>`;
+  const exts='PDF|DOCX|XLSX|PPTX|ZIP|RAR|7Z|TXT|CSV|JPG|PNG|GIF|MP4|AVI|MOV|MP3|WAV|APK|EXE|ISO|DWG|PSD|AI|CDR|HTML|CSS|JS|JSON|XML|MD'.split('|');
+  const cats=['guide|业务指南','contract|合同模板','safety|安全规范','finance|财务文档','hr|人事文档','tech|技术文档','other|其他'];
+  const modal=document.createElement('div');modal.className='modal-overlay';modal.innerHTML=`<div class="modal" style="max-width:560px"><h3>${isEdit?'编辑':'上传'}文档</h3>
+    <div class="form-group"><label>文档名称 *</label><input type="text" id="docName" value="${d?.name||''}" placeholder="例：码头作业委托单"></div>
+    <div class="form-group"><label>描述</label><input type="text" id="docDesc" value="${d?.desc||''}" placeholder="简要描述文档用途"></div>
+    <div class="card-grid cols-2">
+      <div class="form-group"><label>文件类型</label><select id="docExt">${exts.map(e=>`<option value="${e}" ${d?.ext===e?'selected':''}>${e}</option>`).join('')}</select></div>
+      <div class="form-group"><label>分类</label><select id="docCat">${cats.map(x=>{const[k,t]=x.split('|');return`<option value="${k}" ${d?.category===k?'selected':''}>${t}</option>`}).join('')}</select></div>
+    </div>
+    <div class="form-group"><label>📁 ${isEdit?'替换文件（可选，留空保持原文件）':'选择文件 *'} — 支持所有格式</label>
+      <div class="file-upload-zone" style="padding:24px" onclick="document.getElementById('docFile').click()">
+        <span style="font-size:2rem">📂</span>
+        <p style="color:var(--g600);font-size:.85rem;margin-top:4px">点击选择本地文件（所有格式均可）</p>
+        <p id="docFileName" style="color:var(--a);font-weight:600;margin-top:4px">${d?`当前文件: ${d.name}.${d.ext} (${d.size})`:'未选择文件'}</p>
+        <input type="file" id="docFile" style="display:none" onchange="document.getElementById('docFileName').textContent=this.files[0]?this.files[0].name+' ('+(this.files[0].size/1024).toFixed(1)+' KB)':'未选择文件'">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveDocBtn">${isEdit?'更新文档':'上传文档'}</button></div></div>`;
   document.body.appendChild(modal);
   document.getElementById('saveDocBtn').onclick=async()=>{
     const fileInput=document.getElementById('docFile');const file=fileInput.files[0];let data={name:document.getElementById('docName').value,desc:document.getElementById('docDesc').value,ext:document.getElementById('docExt').value,category:document.getElementById('docCat').value};
     if(!data.name){showToast('请输入文档名称','error');return}
-    if(!isEdit&&!file){showToast('请选择文件','error');return}
-    if(file){data.size=file.size>1048576?(file.size/1048576).toFixed(1)+' MB':(file.size/1024).toFixed(0)+' KB';
-      const reader=new FileReader();reader.onload=async()=>{data.data=reader.result;await saveDoc(data,isEdit,d?.id);modal.remove();renderPage();showToast(isEdit?'已更新':'已上传','success')};reader.readAsDataURL(file);
-    }else{await saveDoc(data,isEdit,d?.id);modal.remove();renderPage();showToast(isEdit?'已更新':'已保存','success')}
+    if(!isEdit&&!file){showToast('请选择文件上传','error');return}
+    if(file){
+      if(file.size>100*1048576){showToast('文件过大，请选择小于100MB的文件','error');return}
+      data.size=file.size>1048576?(file.size/1048576).toFixed(1)+' MB':(file.size/1024).toFixed(0)+' KB';
+      const reader=new FileReader();reader.onload=async()=>{data.data=reader.result;await saveDoc(data,isEdit,d?.id);modal.remove();renderPage();showToast(isEdit?'文档已更新':'文档已上传','success')};reader.readAsDataURL(file);
+    }else if(isEdit){await saveDoc(data,isEdit,d?.id);modal.remove();renderPage();showToast('文档信息已更新','success')}
   };
   modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
 }
@@ -767,35 +826,123 @@ function editDoc(id){dbGet('documents',id).then(d=>{if(d) showDocModal(d)})}
 // Admin - Images
 async function adminImages(){
   const images=await dbGetAll('images');
-  return`<h3>🖼️ 图片管理</h3><p style="color:var(--g600);margin-bottom:16px">上传和管理网站图片资源（当前 ${images.length} 张）</p><div class="file-upload-zone" id="imgDropZone" onclick="document.getElementById('imgFileInput').click()">📁 点击或拖拽图片到此区域上传<input type="file" id="imgFileInput" accept="image/*" multiple onchange="uploadImages(this.files)" style="display:none"></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px">${images.map(img=>`<div style="position:relative;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)"><img src="${img.data}" alt="${img.name}" style="width:100%;height:120px;object-fit:cover"><div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);padding:4px 8px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:.7rem;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">${img.name}</span><button class="btn btn-sm btn-danger" style="font-size:.65rem;padding:3px 8px" onclick="deleteImage(${img.id})">×</button></div></div>`).join('')}</div>`;
+  return`<h3>🖼️ 图片管理</h3><p style="color:var(--g600);margin-bottom:16px">上传和管理网站图片资源 — 支持 JPG/PNG/GIF/WebP/SVG/BMP/ICO（当前 ${images.length} 张）</p>
+  <div class="file-upload-zone" id="imgDropZone" style="padding:32px" onclick="document.getElementById('imgFileInput').click()">
+    <span style="font-size:2.5rem">📁</span>
+    <p style="font-weight:600;margin-top:8px">点击或拖拽图片到此区域上传</p>
+    <p style="color:var(--g600);font-size:.8rem">支持 JPG / PNG / GIF / WebP / SVG / BMP / ICO — 可多选</p>
+    <input type="file" id="imgFileInput" accept="image/*,.svg,.bmp,.ico,.tiff,.webp" multiple onchange="uploadImages(this.files)" style="display:none">
+  </div>
+  ${images.length?`<div style="margin-top:12px"><button class="btn btn-sm btn-danger" onclick="if(confirm('确认删除全部 ${images.length} 张图片？此操作不可恢复！')){clearAllImages()}">🗑 清空全部</button></div>`:''}
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px">${images.map(img=>`
+    <div class="card-tilt" style="position:relative;border-radius:10px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.08);background:var(--w)">
+      <img src="${img.data}" alt="${img.name}" style="width:100%;height:140px;object-fit:cover;cursor:pointer" onclick="previewImage('${img.name}','${img.data}')" title="点击预览大图">
+      <div style="padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:6px">
+        <span style="font-size:.72rem;color:var(--g700);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1" title="${img.name}">${img.name}</span>
+        <span style="font-size:.7rem;color:var(--g600);white-space:nowrap">${(img.size/1024).toFixed(1)}KB</span>
+        <button class="btn btn-sm btn-danger" style="font-size:.65rem;padding:2px 6px" onclick="event.stopPropagation();deleteImage(${img.id})">×</button>
+      </div>
+    </div>`).join('')}</div>`;
 }
+function previewImage(name,data){
+  const modal=document.createElement('div');modal.className='modal-overlay';
+  modal.innerHTML=`<div class="modal" style="max-width:90vw;padding:12px;text-align:center"><h4 style="margin-bottom:8px">${name}</h4><img src="${data}" style="max-width:100%;max-height:75vh;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.2)"><div style="margin-top:12px;display:flex;gap:8px;justify-content:center"><button class="btn btn-primary btn-sm" onclick="downloadImage('${name}','${data}')">⬇ 下载</button><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">关闭</button></div></div>`;
+  document.body.appendChild(modal);modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+}
+function downloadImage(name,data){const a=document.createElement('a');a.href=data;a.download=name;a.click();showToast('下载已开始','success')}
 async function uploadImages(files){
+  let count=0;
   for(const file of files){
+    if(file.size>50*1048576){showToast(`文件 ${file.name} 过大，跳过`,'error');continue}
     const reader=new FileReader();
-    reader.onload=async()=>{await dbPut('images',{name:file.name,size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});renderPage()};
+    reader.onload=async()=>{await dbPut('images',{name:file.name,size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});count++;if(count===files.length||count%5===0)renderPage()};
     reader.readAsDataURL(file);
   }
-  showToast(`已上传 ${files.length} 张图片`,'success');
+  setTimeout(()=>{renderPage();showToast(`已上传 ${files.length} 张图片`,'success')},500);
+}
+async function clearAllImages(){
+  const images=await dbGetAll('images');
+  for(const img of images) await dbDelete('images',img.id);
+  renderPage();showToast('已清空所有图片','success');
 }
 async function deleteImage(id){if(confirm('确认删除此图片？')){await dbDelete('images',id);renderPage();showToast('已删除','success')}}
 
 // Admin - Videos
 async function adminVideos(){
   const videos=await dbGetAll('videos');
-  return`<h3>🎬 视频管理</h3><p style="color:var(--g600);margin-bottom:16px">上传和管理视频资源（当前 ${videos.length} 个）</p><div class="file-upload-zone" onclick="document.getElementById('vidFileInput').click()">🎥 点击上传视频文件（MP4/WebM/OGG）<input type="file" id="vidFileInput" accept="video/*" onchange="uploadVideo(this.files[0])" style="display:none"></div><table class="admin-table" style="margin-top:12px"><thead><tr><th>ID</th><th>名称</th><th>大小</th><th>类型</th><th>上传时间</th><th>预览</th><th>操作</th></tr></thead><tbody>${videos.map(v=>`<tr><td>${v.id}</td><td>${v.name}</td><td>${v.size?(v.size/1048576).toFixed(1)+' MB':'未知'}</td><td>${v.type||'未知'}</td><td>${v.createdAt?new Date(v.createdAt).toLocaleDateString():'未知'}</td><td>${v.data?`<video src="${v.data}" width="120" height="68" controls style="border-radius:4px"></video>`:'无预览'}</td><td><button class="btn btn-sm btn-primary" onclick="downloadVideo(${v.id})">下载</button> <button class="btn btn-sm btn-danger" onclick="deleteVideo(${v.id})">删除</button></td></tr>`).join('')}</tbody></table>`;
+  return`<h3>🎬 视频管理</h3><p style="color:var(--g600);margin-bottom:16px">上传和管理视频资源 — 支持 MP4/WebM/OGG/MOV/AVI 等格式（当前 ${videos.length} 个）</p>
+  <div class="file-upload-zone" style="padding:28px" id="vidDropZone" onclick="document.getElementById('vidFileInput').click()">
+    <span style="font-size:2.5rem">🎥</span>
+    <p style="font-weight:600;margin-top:8px">点击上传视频文件</p><p style="color:var(--g600);font-size:.8rem">支持 MP4 / WebM / OGG / MOV / AVI / MKV / WMV / FLV</p>
+    <input type="file" id="vidFileInput" accept="video/*,.mov,.avi,.mkv,.wmv,.flv,.m4v" onchange="uploadVideo(this.files[0])" style="display:none">
+  </div>
+  ${videos.length?`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:16px">${videos.map(v=>`
+    <div style="background:var(--w);border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.06);border:1px solid var(--g100)">
+      ${v.data?`<video src="${v.data}" controls style="width:100%;height:200px;object-fit:cover;background:#000" preload="metadata"></video>`:`<div style="width:100%;height:200px;background:var(--g900);display:flex;align-items:center;justify-content:center;font-size:3rem">🎬</div>`}
+      <div style="padding:12px 16px">
+        <h4 style="font-weight:600;margin-bottom:4px" id="vidTitle_${v.id}">${v.name||'未命名视频'}</h4>
+        <p style="font-size:.78rem;color:var(--g600)">${v.type||'未知类型'} | ${v.size?(v.size/1048576).toFixed(1)+' MB':'未知大小'} | ${v.createdAt?new Date(v.createdAt).toLocaleDateString():''}</p>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-primary" onclick="playVideoModal(${v.id})">▶ 播放</button>
+          <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="editVideoModal(${v.id})">✏️ 编辑</button>
+          <button class="btn btn-sm btn-outline" style="color:var(--p);border-color:var(--p)" onclick="replaceVideoFile(${v.id})">🔄 替换</button>
+          <button class="btn btn-sm btn-success" onclick="downloadVideo(${v.id})">⬇ 下载</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteVideo(${v.id})">🗑 删除</button>
+        </div>
+      </div>
+    </div>`).join('')}</div>`:''}`;
 }
 async function uploadVideo(file){
   if(!file){return}
+  if(file.size>200*1048576){showToast('文件过大，请选择小于200MB的视频','error');return}
+  showToast('正在上传视频...','info');
   const reader=new FileReader();
-  reader.onload=async()=>{await dbPut('videos',{name:file.name,size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});renderPage();showToast('视频已上传','success')};
+  reader.onload=async()=>{
+    await dbPut('videos',{name:file.name.replace(/\.[^.]+$/,''),size:file.size,type:file.type,data:reader.result,createdAt:new Date().toISOString()});
+    renderPage();showToast('视频上传成功！','success');
+  };
+  reader.onerror=()=>showToast('上传失败，请重试','error');
   reader.readAsDataURL(file);
+}
+function playVideoModal(id){
+  dbGet('videos',id).then(v=>{
+    if(!v||!v.data){showToast('暂无视频数据','error');return}
+    const modal=document.createElement('div');modal.className='modal-overlay';
+    modal.innerHTML=`<div class="modal" style="max-width:800px;padding:16px"><h3 style="margin-bottom:8px">▶ ${v.name||'视频播放'}</h3><video src="${v.data}" controls autoplay style="width:100%;max-height:70vh;border-radius:8px;background:#000"></video><div style="text-align:right;margin-top:12px"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">关闭</button><button class="btn btn-primary btn-sm" style="margin-left:8px" onclick="downloadVideo(${v.id})">⬇ 下载视频</button></div></div>`;
+    document.body.appendChild(modal);modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+  });
+}
+function editVideoModal(id){
+  dbGet('videos',id).then(v=>{
+    if(!v){return}
+    const modal=document.createElement('div');modal.className='modal-overlay';
+    modal.innerHTML=`<div class="modal"><h3>✏️ 编辑视频信息</h3><div class="form-group"><label>视频标题</label><input type="text" id="vidEditName" value="${v.name||''}"></div><p style="color:var(--g600);font-size:.8rem;margin-bottom:12px">文件: ${v.type||'未知'} | ${v.size?(v.size/1048576).toFixed(1)+' MB':'未知'}</p><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-outline" onclick="this.closest('.modal-overlay').remove()">取消</button><button class="btn btn-primary" id="saveVidEdit">保存</button></div></div>`;
+    document.body.appendChild(modal);
+    document.getElementById('saveVidEdit').onclick=async()=>{
+      v.name=document.getElementById('vidEditName').value||v.name;await dbPut('videos',v);modal.remove();renderPage();showToast('视频信息已更新','success');
+    };
+    modal.addEventListener('click',e=>{if(e.target===modal) modal.remove()});
+  });
+}
+function replaceVideoFile(id){
+  const input=document.createElement('input');input.type='file';input.accept='video/*,.mov,.avi,.mkv,.wmv,.flv';
+  input.onchange=async()=>{
+    const file=input.files[0];if(!file)return;
+    if(file.size>200*1048576){showToast('文件过大，请选择小于200MB的视频','error');return}
+    const v=await dbGet('videos',id);if(!v)return;
+    showToast('正在替换视频...','info');
+    const reader=new FileReader();
+    reader.onload=async()=>{v.data=reader.result;v.size=file.size;v.type=file.type;v.name=v.name||file.name.replace(/\.[^.]+$/,'');await dbPut('videos',v);renderPage();showToast('视频已替换！','success')};
+    reader.readAsDataURL(file);
+  };
+  input.click();
 }
 async function downloadVideo(id){
   const v=await dbGet('videos',id);
-  if(v&&v.data){const a=document.createElement('a');a.href=v.data;a.download=v.name;a.click();showToast('下载已开始','success')}
+  if(v&&v.data){const a=document.createElement('a');a.href=v.data;a.download=v.name+'.'+(v.type?.split('/')[1]||'mp4');a.click();showToast('下载已开始','success')}
   else{showToast('该视频暂无数据','info')}
 }
-async function deleteVideo(id){if(confirm('确认删除此视频？')){await dbDelete('videos',id);renderPage();showToast('已删除','success')}}
+async function deleteVideo(id){if(confirm('确认删除此视频？此操作不可恢复。')){await dbDelete('videos',id);renderPage();showToast('已删除','success')}}
 
 // Admin - News
 function adminNews(){
@@ -850,10 +997,20 @@ function initParticles(){
 // DRAG & DROP
 // ============================================
 function setupDragDrop(){
-  const zone=document.getElementById('imgDropZone');if(!zone)return;
-  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag')});
-  zone.addEventListener('dragleave',()=>zone.classList.remove('drag'));
-  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag');if(e.dataTransfer.files.length){uploadImages(e.dataTransfer.files)}});
+  // Image drop zone
+  const imgZone=document.getElementById('imgDropZone');
+  if(imgZone){
+    imgZone.addEventListener('dragover',e=>{e.preventDefault();imgZone.classList.add('drag')});
+    imgZone.addEventListener('dragleave',()=>imgZone.classList.remove('drag'));
+    imgZone.addEventListener('drop',e=>{e.preventDefault();imgZone.classList.remove('drag');if(e.dataTransfer.files.length){uploadImages(e.dataTransfer.files)}});
+  }
+  // Video drop zone
+  const vidZone=document.getElementById('vidDropZone');
+  if(vidZone){
+    vidZone.addEventListener('dragover',e=>{e.preventDefault();vidZone.classList.add('drag')});
+    vidZone.addEventListener('dragleave',()=>vidZone.classList.remove('drag'));
+    vidZone.addEventListener('drop',e=>{e.preventDefault();vidZone.classList.remove('drag');if(e.dataTransfer.files.length){uploadVideo(e.dataTransfer.files[0])}});
+  }
 }
 
 // Add ripple effect to all buttons
